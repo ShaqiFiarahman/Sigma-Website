@@ -52,7 +52,7 @@
                         <div class="col-sm-6 mt-3">
                             <p class="text-muted mb-1 small">Tingkat Bencana</p>
                             <p class="mb-0 fw-semibold">
-                                @if(isset($laporan['tingkat_bencana']))
+                                @if(!empty($laporan['tingkat_bencana']))
                                     @if($laporan['tingkat_bencana'] == 'Awas')
                                         <span class="badge bg-danger fs-6 px-2 py-1">{{ $laporan['tingkat_bencana'] }}</span>
                                     @elseif(str_contains($laporan['tingkat_bencana'], 'Siaga'))
@@ -61,7 +61,7 @@
                                         <span class="badge bg-info text-dark fs-6 px-2 py-1">{{ $laporan['tingkat_bencana'] }}</span>
                                     @endif
                                 @else
-                                    <span class="text-muted">-</span>
+                                    <span class="badge bg-secondary fs-6 px-2 py-1">Belum Ditetapkan</span>
                                 @endif
                             </p>
                         </div>
@@ -91,9 +91,21 @@
 
                     <div class="d-grid gap-3">
                         @if(strtolower($laporan['status']) == 'pending')
-                        <form action="{{ route('laporan.update_status', $laporan['id']) }}" method="POST">
+                        <form action="{{ route('laporan.update_status', $laporan['id']) }}" method="POST" class="mb-2">
                             @csrf
                             <input type="hidden" name="status" value="Verified">
+                            
+                            <div class="mb-3">
+                                <label for="tingkat_bencana" class="form-label small fw-semibold text-dark">Tetapkan Tingkat Bencana:</label>
+                                <select name="tingkat_bencana" id="tingkat_bencana" class="form-select" required>
+                                    <option value="">Pilih tingkat darurat...</option>
+                                    <option value="Awas">Awas (Tertinggi/Kritis)</option>
+                                    <option value="Siaga 1">Siaga 1 (Sangat Bahaya)</option>
+                                    <option value="Siaga 2">Siaga 2 (Bahaya)</option>
+                                    <option value="Waspada">Waspada (Potensi Bahaya)</option>
+                                </select>
+                            </div>
+                            
                             <button type="submit" class="btn btn-success py-3 rounded-3 shadow-sm d-flex justify-content-center align-items-center w-100">
                                 <i class="bi bi-check-circle-fill fs-5 me-2"></i>
                                 <span class="fs-6 fw-semibold">Approve (Setujui)</span>

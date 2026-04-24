@@ -50,7 +50,7 @@
                                 <td class="text-muted"><i class="bi bi-geo-alt me-1 text-danger"></i>{{ $laporan['lokasi'] }}
                                 </td>
                                 <td>
-                                    @if(isset($laporan['tingkat_bencana']))
+                                    @if(!empty($laporan['tingkat_bencana']))
                                         @if($laporan['tingkat_bencana'] == 'Awas')
                                             <span class="badge bg-danger">{{ $laporan['tingkat_bencana'] }}</span>
                                         @elseif(str_contains($laporan['tingkat_bencana'], 'Siaga'))

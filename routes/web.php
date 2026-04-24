@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 // Helper to initialize session data
 function getInitLaporans() {
     return [
-        ['id' => 1, 'judul' => 'Banjir bandang di pemukiman warga', 'lokasi' => 'Sukoharjo', 'tanggal' => '15 Apr 2026', 'tingkat_bencana' => 'Awas', 'status' => 'Pending', 'deskripsi' => 'Telah terjadi banjir bandang yang merendam lebih dari 50 rumah warga di sekitar bantaran sungai. Air mulai naik sejak dini hari setelah hujan lebat yang tidak kunjung reda dari semalam. Saat ini warga banyak yang terjebak di atap rumah dan membutuhkan bantuan evakuasi, perahu karet, tenda darurat, dan logistik secepatnya. Aliran listrik terputus total sejak jam 3 pagi dan stok makanan mulai menipis. Harap tim segera meluncur sebelum air semakin tinggi karena cuaca masih mendung gelap.'],
+        ['id' => 1, 'judul' => 'Banjir bandang di pemukiman warga', 'lokasi' => 'Sukoharjo', 'tanggal' => '15 Apr 2026', 'tingkat_bencana' => null, 'status' => 'Pending', 'deskripsi' => 'Telah terjadi banjir bandang yang merendam lebih dari 50 rumah warga di sekitar bantaran sungai. Air mulai naik sejak dini hari setelah hujan lebat yang tidak kunjung reda dari semalam. Saat ini warga banyak yang terjebak di atap rumah dan membutuhkan bantuan evakuasi, perahu karet, tenda darurat, dan logistik secepatnya. Aliran listrik terputus total sejak jam 3 pagi dan stok makanan mulai menipis. Harap tim segera meluncur sebelum air semakin tinggi karena cuaca masih mendung gelap.'],
         ['id' => 2, 'judul' => 'Pohon tumbang menutup jalan provinsi', 'lokasi' => 'Bantul', 'tanggal' => '14 Apr 2026', 'tingkat_bencana' => 'Waspada', 'status' => 'Verified', 'deskripsi' => 'Pohon beringin besar tumbang akibat angin kencang. Menutupi seluruh ruas jalan provinsi dan menyebabkan kemacetan total sepanjang 5 km.'],
         ['id' => 3, 'judul' => 'Tanah longsor di lereng gunung', 'lokasi' => 'Sleman', 'tanggal' => '12 Apr 2026', 'tingkat_bencana' => 'Siaga 1', 'status' => 'Danger', 'deskripsi' => 'Longsor terjadi setelah hujan deras berturut-turut selama 2 hari. Beberapa rumah warga rusak berat.'],
     ];
@@ -53,7 +53,7 @@ Route::post('/laporan/store', function (Request $request) {
         'judul' => $request->judul,
         'lokasi' => $request->lokasi,
         'tanggal' => date('d M Y'),
-        'tingkat_bencana' => $request->tingkat_bencana,
+        'tingkat_bencana' => null,
         'status' => 'Pending',
         'deskripsi' => $request->deskripsi
     ];
@@ -78,8 +78,11 @@ Route::post('/laporan/update-status/{id}', function (Request $request, $id) {
     foreach ($laporans as &$l) {
         if ($l['id'] == (int)$id) {
             $l['status'] = $request->status; // 'Verified' or 'Danger'
-            if ($request->status == 'Danger') {
+            if ($request->status == 'Verified') {
+                $l['tingkat_bencana'] = $request->tingkat_bencana;
+            } elseif ($request->status == 'Danger') {
                 $msg = 'rejected';
+                $l['tingkat_bencana'] = null;
             }
             break;
         }
