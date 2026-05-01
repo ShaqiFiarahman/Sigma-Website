@@ -9,11 +9,40 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Bootstrap Icons -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
-    <!-- Google Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Local Fonts -->
     <style>
+        @font-face {
+            font-family: 'Plus Jakarta Sans';
+            src: url('{{ asset('fonts/PlusJakartaSans-Regular.ttf') }}') format('truetype');
+            font-weight: 400;
+            font-style: normal;
+            font-display: swap;
+        }
+
+        @font-face {
+            font-family: 'Plus Jakarta Sans';
+            src: url('{{ asset('fonts/PlusJakartaSans-Medium.ttf') }}') format('truetype');
+            font-weight: 500;
+            font-style: normal;
+            font-display: swap;
+        }
+
+        @font-face {
+            font-family: 'Plus Jakarta Sans';
+            src: url('{{ asset('fonts/PlusJakartaSans-SemiBold.ttf') }}') format('truetype');
+            font-weight: 600;
+            font-style: normal;
+            font-display: swap;
+        }
+
+        @font-face {
+            font-family: 'Plus Jakarta Sans';
+            src: url('{{ asset('fonts/PlusJakartaSans-Bold.ttf') }}') format('truetype');
+            font-weight: 700;
+            font-style: normal;
+            font-display: swap;
+        }
+
         :root {
             --bs-primary: #19376D; /* Deep Navy */
             --bs-primary-rgb: 25, 55, 109;
