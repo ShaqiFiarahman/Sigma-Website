@@ -2,11 +2,6 @@
 @section('title', 'Data Laporan')
 @section('subtitle', 'Daftar keseluruhan laporan bencana yang masuk ke sistem.')
 
-@section('page-actions')
-    <a href="{{ route('create') }}" class="inline-flex items-center justify-center px-4 py-2 text-sm font-medium text-white bg-primary-600 rounded-lg hover:bg-primary-700 transition-colors">
-        <i class="bi bi-plus-lg mr-2 text-xs"></i> Buat Laporan
-    </a>
-@endsection
 
 @section('content')
 
