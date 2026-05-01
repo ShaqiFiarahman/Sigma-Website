@@ -1,203 +1,184 @@
 <!DOCTYPE html>
 <html lang="id">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SIGMA Admin - @yield('title')</title>
-    <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <title>SIGMA Admin — @yield('title')</title>
+    <meta name="description" content="SIGMA — Sistem Informasi Gerak Maju Tanggap Bencana.">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🛡️</text></svg>">
     <!-- Bootstrap Icons -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
-    <!-- Local Fonts -->
-    <style>
-        @font-face {
-            font-family: 'Plus Jakarta Sans';
-            src: url('{{ asset('fonts/PlusJakartaSans-Regular.ttf') }}') format('truetype');
-            font-weight: 400;
-            font-style: normal;
-            font-display: swap;
-        }
-
-        @font-face {
-            font-family: 'Plus Jakarta Sans';
-            src: url('{{ asset('fonts/PlusJakartaSans-Medium.ttf') }}') format('truetype');
-            font-weight: 500;
-            font-style: normal;
-            font-display: swap;
-        }
-
-        @font-face {
-            font-family: 'Plus Jakarta Sans';
-            src: url('{{ asset('fonts/PlusJakartaSans-SemiBold.ttf') }}') format('truetype');
-            font-weight: 600;
-            font-style: normal;
-            font-display: swap;
-        }
-
-        @font-face {
-            font-family: 'Plus Jakarta Sans';
-            src: url('{{ asset('fonts/PlusJakartaSans-Bold.ttf') }}') format('truetype');
-            font-weight: 700;
-            font-style: normal;
-            font-display: swap;
-        }
-
-        :root {
-            --bs-primary: #19376D; /* Deep Navy */
-            --bs-primary-rgb: 25, 55, 109;
-            --bs-font-sans-serif: 'Plus Jakarta Sans', sans-serif;
-            --bs-body-font-family: 'Plus Jakarta Sans', sans-serif;
-            --bs-body-bg: #F8FAFC; /* Clean off-white background */
-            --bs-body-color: #1E293B; /* Slate dark text */
-        }
-
-        body {
-            font-family: 'Plus Jakarta Sans', sans-serif;
-            background-color: var(--bs-body-bg);
-            color: var(--bs-body-color);
-        }
-
-        /* Clean Cards */
-        .card {
-            border: none;
-            border-radius: 16px;
-            box-shadow: 0 4px 24px rgba(0, 0, 0, 0.04);
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
-        }
-
-        /* Primary Elements */
-        .text-primary { color: #19376D !important; }
-        .bg-primary { background-color: #19376D !important; }
-        
-        /* Modern Buttons */
-        .btn {
-            font-weight: 600;
-            border-radius: 10px;
-            padding: 0.6rem 1.5rem;
-            transition: all 0.3s ease;
-        }
-        .btn-primary { 
-            background-color: #19376D !important; 
-            border-color: #19376D !important; 
-            color: #FFFFFF !important;
-            box-shadow: 0 4px 12px rgba(25, 55, 109, 0.2);
-        }
-        .btn-primary:hover, .btn-primary:active { 
-            background-color: #0B2447 !important; 
-            border-color: #0B2447 !important; 
-            transform: translateY(-2px);
-            box-shadow: 0 6px 16px rgba(25, 55, 109, 0.3);
-        }
-
-        /* Navbar */
-        .navbar-custom {
-            background-color: #FFFFFF;
-            border-bottom: 1px solid rgba(0,0,0,0.05) !important;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.02);
-            padding: 16px 24px;
-        }
-
-        .navbar-brand {
-            font-weight: 700;
-            color: #19376D !important;
-            letter-spacing: -0.5px;
-        }
-
-        .nav-item .nav-link {
-            color: #64748B;
-            font-weight: 600;
-            padding: 0.6rem 1.2rem;
-            border-radius: 8px;
-            transition: all 0.3s;
-            margin: 0 0.2rem;
-        }
-
-        .nav-item .nav-link:hover,
-        .nav-item .nav-link.active {
-            color: #19376D !important;
-            background-color: #F1F5F9;
-        }
-
-        /* General layout */
-        .content-area {
-            padding: 32px 24px;
-            max-width: 1400px;
-            margin: 0 auto;
-        }
-        
-        .bg-light { background-color: #F8FAFC !important; }
-        
-        /* Typography overrides */
-        h1, h2, h3, h4, h5, h6 {
-            color: #0F172A;
-            font-weight: 700;
-            letter-spacing: -0.5px;
-        }
-        
-        .text-muted { color: #64748B !important; }
-        .text-dark { color: #0F172A !important; }
-    </style>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 
-<body>
-    <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg border-bottom navbar-custom sticky-top">
-        <div class="container-fluid">
-            <a class="navbar-brand d-flex align-items-center" href="{{ route('dashboard') }}">
-                <i class="bi bi-shield-shaded fs-3 me-2"></i>
-                <span class="fs-4">SIGMA</span>
-            </a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
-                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav me-auto mb-2 mb-lg-0 ms-lg-4">
-                    <li class="nav-item">
-                        <a class="nav-link {{ Route::is('dashboard') ? 'active' : '' }}"
-                            href="{{ route('dashboard') }}">
-                            <i class="bi bi-grid-1x2-fill me-1"></i> Dashboard
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link {{ Route::is('laporan') || Route::is('detail') ? 'active' : '' }}"
-                            href="{{ route('laporan') }}">
-                            <i class="bi bi-file-earmark-text-fill me-1"></i> Data Laporan
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link {{ Route::is('create') ? 'active' : '' }}"
-                            href="{{ route('create') }}">
-                            <i class="bi bi-plus-circle-fill me-1"></i> Buat Laporan
-                        </a>
-                    </li>
-                </ul>
-                <div class="d-flex align-items-center mt-3 mt-lg-0">
-                    <span class="me-3 text-muted fw-medium">Admin User</span>
-                    <img src="https://ui-avatars.com/api/?name=Admin&background=82A2E7&color=fff&rounded=true"
-                        alt="Admin" width="36" height="36" class="rounded-circle me-3 border">
-                    <a href="{{ route('login') }}" class="btn btn-outline-danger btn-sm px-3 rounded-pill">
-                        <i class="bi bi-box-arrow-left me-1"></i> Logout
-                    </a>
+<body class="bg-slate-100 text-slate-900 min-h-screen">
+
+    {{-- ══════════════════════════════════════════
+         NAVBAR
+    ══════════════════════════════════════════ --}}
+    <nav id="mainNavbar"
+         class="bg-white border-b border-slate-200 sticky top-0 z-50 transition-shadow duration-300">
+        <div class="max-w-screen-xl mx-auto px-6 h-16 flex items-center gap-4">
+
+            {{-- Brand --}}
+            <a href="{{ route('dashboard') }}"
+               class="flex items-center gap-2.5 shrink-0 mr-4 group">
+                <div class="w-9 h-9 rounded-[10px] bg-gradient-to-br from-blue-600 to-blue-400
+                            flex items-center justify-center text-white text-base
+                            shadow-[0_3px_10px_rgba(29,78,216,0.35)]
+                            group-hover:scale-105 transition-transform duration-200">
+                    <i class="bi bi-shield-fill-check"></i>
                 </div>
+                <span class="text-[1.1rem] font-extrabold tracking-tight text-slate-900">
+                    SIG<span class="text-blue-600">MA</span>
+                </span>
+            </a>
+
+            {{-- Desktop nav links --}}
+            <ul class="hidden md:flex items-center gap-1 mr-auto">
+                <li>
+                    <a href="{{ route('dashboard') }}"
+                       class="flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm font-semibold transition-all duration-150
+                              {{ Route::is('dashboard')
+                                 ? 'bg-blue-50 text-blue-600'
+                                 : 'text-slate-500 hover:bg-slate-100 hover:text-slate-800' }}">
+                        <i class="bi bi-grid-fill text-[0.85rem]"></i> Dashboard
+                    </a>
+                </li>
+                <li>
+                    <a href="{{ route('laporan') }}"
+                       class="flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm font-semibold transition-all duration-150
+                              {{ Route::is('laporan') || Route::is('detail')
+                                 ? 'bg-blue-50 text-blue-600'
+                                 : 'text-slate-500 hover:bg-slate-100 hover:text-slate-800' }}">
+                        <i class="bi bi-file-earmark-text-fill text-[0.85rem]"></i> Data Laporan
+                    </a>
+                </li>
+                <li>
+                    <a href="{{ route('create') }}"
+                       class="flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm font-semibold transition-all duration-150
+                              {{ Route::is('create')
+                                 ? 'bg-blue-50 text-blue-600'
+                                 : 'text-slate-500 hover:bg-slate-100 hover:text-slate-800' }}">
+                        <i class="bi bi-plus-circle-fill text-[0.85rem]"></i> Buat Laporan
+                    </a>
+                </li>
+            </ul>
+
+            {{-- Separator --}}
+            <div class="hidden md:block w-px h-6 bg-slate-200 shrink-0"></div>
+
+            {{-- User + Logout --}}
+            <div class="hidden md:flex items-center gap-2 ml-auto md:ml-0">
+                <div class="flex items-center gap-2 px-2 py-1.5 rounded-lg hover:bg-slate-100 transition-colors cursor-default">
+                    <div class="w-8 h-8 rounded-full bg-gradient-to-br from-blue-600 to-sky-400
+                                flex items-center justify-center text-white text-xs font-bold shrink-0">
+                        AD
+                    </div>
+                    <div class="hidden xl:block">
+                        <p class="text-xs font-semibold text-slate-800 leading-none">Admin</p>
+                        <p class="text-[0.68rem] text-slate-400 leading-none mt-0.5">Super Admin</p>
+                    </div>
+                </div>
+                <a href="{{ route('login') }}"
+                   class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-slate-200 text-slate-500
+                          text-xs font-semibold transition-all hover:border-red-300 hover:text-red-600 hover:bg-red-50">
+                    <i class="bi bi-box-arrow-left"></i> Logout
+                </a>
+            </div>
+
+            {{-- Mobile hamburger --}}
+            <button id="mobileToggle" type="button"
+                    class="md:hidden ml-auto p-2 rounded-lg border border-slate-200 text-slate-500
+                           hover:bg-slate-100 transition-colors"
+                    aria-label="Toggle menu">
+                <i class="bi bi-list text-xl" id="mobileIcon"></i>
+            </button>
+        </div>
+
+        {{-- Mobile dropdown --}}
+        <div id="mobileMenu"
+             class="md:hidden hidden border-t border-slate-200 bg-white px-4 py-3 flex flex-col gap-1">
+            <a href="{{ route('dashboard') }}"
+               class="flex items-center gap-2 px-3 py-2.5 rounded-lg text-sm font-semibold transition-colors
+                      {{ Route::is('dashboard') ? 'bg-blue-50 text-blue-600' : 'text-slate-600 hover:bg-slate-100' }}">
+                <i class="bi bi-grid-fill"></i> Dashboard
+            </a>
+            <a href="{{ route('laporan') }}"
+               class="flex items-center gap-2 px-3 py-2.5 rounded-lg text-sm font-semibold transition-colors
+                      {{ Route::is('laporan') || Route::is('detail') ? 'bg-blue-50 text-blue-600' : 'text-slate-600 hover:bg-slate-100' }}">
+                <i class="bi bi-file-earmark-text-fill"></i> Data Laporan
+            </a>
+            <a href="{{ route('create') }}"
+               class="flex items-center gap-2 px-3 py-2.5 rounded-lg text-sm font-semibold transition-colors
+                      {{ Route::is('create') ? 'bg-blue-50 text-blue-600' : 'text-slate-600 hover:bg-slate-100' }}">
+                <i class="bi bi-plus-circle-fill"></i> Buat Laporan
+            </a>
+            <div class="border-t border-slate-100 mt-1 pt-2 flex items-center justify-between">
+                <div class="flex items-center gap-2 px-2">
+                    <div class="w-7 h-7 rounded-full bg-gradient-to-br from-blue-600 to-sky-400
+                                flex items-center justify-center text-white text-[0.65rem] font-bold">AD</div>
+                    <span class="text-xs font-semibold text-slate-700">Admin</span>
+                </div>
+                <a href="{{ route('login') }}"
+                   class="flex items-center gap-1 px-3 py-1.5 rounded-lg border border-slate-200 text-xs font-semibold
+                          text-slate-500 hover:text-red-600 hover:border-red-300 hover:bg-red-50 transition-all">
+                    <i class="bi bi-box-arrow-left"></i> Logout
+                </a>
             </div>
         </div>
     </nav>
 
-    <!-- Main Content Area -->
-    <div class="bg-light flex-grow-1" style="min-height: calc(100vh - 76px);">
-        <!-- Content -->
-        <div class="container-fluid content-area">
-            <div class="d-flex justify-content-between align-items-center mb-4">
-                <h4 class="mb-0 fw-bold text-dark">@yield('title')</h4>
+    {{-- ══════════════════════════════════════════
+         MAIN CONTENT
+    ══════════════════════════════════════════ --}}
+    <main>
+        <div class="max-w-screen-xl mx-auto px-6 py-8 pb-16 animate-fade-up">
+
+            {{-- Page Header --}}
+            <div class="flex items-center justify-between mb-7 flex-wrap gap-3">
+                <h1 class="flex items-center gap-2.5 text-xl font-bold text-slate-900">
+                    <span class="w-9 h-9 rounded-lg bg-blue-50 flex items-center justify-center text-blue-600 text-base shrink-0">
+                        @if(Route::is('dashboard'))
+                            <i class="bi bi-grid-fill"></i>
+                        @elseif(Route::is('laporan'))
+                            <i class="bi bi-file-earmark-text-fill"></i>
+                        @elseif(Route::is('create'))
+                            <i class="bi bi-plus-circle-fill"></i>
+                        @elseif(Route::is('detail'))
+                            <i class="bi bi-file-earmark-check-fill"></i>
+                        @else
+                            <i class="bi bi-circle-fill"></i>
+                        @endif
+                    </span>
+                    @yield('title')
+                </h1>
+                @yield('page-actions')
             </div>
+
             @yield('content')
         </div>
-    </div>
+    </main>
 
-    <!-- Bootstrap JS Bundle -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Mobile menu toggle
+        const toggle = document.getElementById('mobileToggle');
+        const menu   = document.getElementById('mobileMenu');
+        const icon   = document.getElementById('mobileIcon');
+        toggle?.addEventListener('click', () => {
+            menu.classList.toggle('hidden');
+            icon.className = menu.classList.contains('hidden')
+                ? 'bi bi-list text-xl'
+                : 'bi bi-x-lg text-xl';
+        });
+
+        // Navbar shadow on scroll
+        window.addEventListener('scroll', () => {
+            document.getElementById('mainNavbar')
+                    ?.classList.toggle('shadow-md', window.scrollY > 8);
+        });
+    </script>
+
+    @yield('scripts')
 </body>
-
 </html>
