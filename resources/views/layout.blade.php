@@ -80,6 +80,7 @@
     <main class="flex-1 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 pb-16 animate-fade-up">
         
         {{-- Page Header --}}
+        @if(!Route::is('dashboard'))
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
             <div>
                 <h1 class="text-2xl font-bold text-slate-900 tracking-tight">@yield('title')</h1>
@@ -89,6 +90,7 @@
             </div>
             @yield('page-actions')
         </div>
+        @endif
 
         @yield('content')
     </main>

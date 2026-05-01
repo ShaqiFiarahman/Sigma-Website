@@ -5,9 +5,12 @@ use Illuminate\Http\Request;
 
 // Helper to initialize session data
 function getInitLaporans() {
+    $yesterday = date('d M Y', strtotime("-1 days"));
+    $twoDaysAgo = date('d M Y', strtotime("-2 days"));
+    
     return [
-        ['id' => 2, 'judul' => 'Pohon tumbang menutup jalan provinsi', 'lokasi' => 'Bantul', 'tanggal' => '14 Apr 2026', 'tingkat_bencana' => 'Waspada', 'status' => 'Verified', 'deskripsi' => 'Pohon beringin besar tumbang akibat angin kencang. Menutupi seluruh ruas jalan provinsi dan menyebabkan kemacetan total sepanjang 5 km.'],
-        ['id' => 3, 'judul' => 'Tanah longsor di lereng gunung', 'lokasi' => 'Sleman', 'tanggal' => '12 Apr 2026', 'tingkat_bencana' => null, 'status' => 'Decline', 'deskripsi' => 'Longsor terjadi setelah hujan deras berturut-turut selama 2 hari. Beberapa rumah warga rusak berat.'],
+        ['id' => 2, 'judul' => 'Pohon tumbang menutup jalan provinsi', 'lokasi' => 'Bantul', 'tanggal' => $yesterday, 'tingkat_bencana' => 'Waspada', 'status' => 'Verified', 'deskripsi' => 'Pohon beringin besar tumbang akibat angin kencang. Menutupi seluruh ruas jalan provinsi dan menyebabkan kemacetan total sepanjang 5 km.'],
+        ['id' => 3, 'judul' => 'Tanah longsor di lereng gunung', 'lokasi' => 'Sleman', 'tanggal' => $twoDaysAgo, 'tingkat_bencana' => null, 'status' => 'Decline', 'deskripsi' => 'Longsor terjadi setelah hujan deras berturut-turut selama 2 hari. Beberapa rumah warga rusak berat.'],
     ];
 }
 
@@ -25,7 +28,20 @@ Route::get('/dashboard', function () {
     $pending = collect($laporans)->where('status', 'Pending')->count();
     $selesai = collect($laporans)->where('status', 'Verified')->count();
 
-    return view('dashboard', compact('total', 'pending', 'selesai'));
+    $chartLabels = [];
+    $chartData = [];
+    for ($i = 6; $i >= 0; $i--) {
+        $dateStr = date('d M Y', strtotime("-$i days"));
+        $labelStr = date('d M', strtotime("-$i days"));
+        $chartLabels[] = $labelStr;
+        
+        $count = collect($laporans)->filter(function ($laporan) use ($dateStr) {
+            return $laporan['tanggal'] == $dateStr;
+        })->count();
+        $chartData[] = $count;
+    }
+
+    return view('dashboard', compact('total', 'pending', 'selesai', 'chartLabels', 'chartData'));
 })->name('dashboard');
 
 Route::get('/laporan', function () {
