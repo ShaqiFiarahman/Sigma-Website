@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,8 +10,7 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 
-<body class="min-h-screen bg-slate-100 flex items-center justify-center p-5"
-      style="background-image: radial-gradient(#19376D 0.5px, transparent 0.5px), radial-gradient(#19376D 0.5px, #F1F5F9 0.5px);
+<body class="min-h-screen bg-slate-100 flex items-center justify-center p-5" style="background-image: radial-gradient(#1d4ed8 0.5px, transparent 0.5px), radial-gradient(#1d4ed8 0.5px, #F1F5F9 0.5px);
              background-size: 20px 20px;
              background-position: 0 0, 10px 10px;
              background-attachment: fixed;">
@@ -19,7 +19,7 @@
                 relative z-10">
 
         {{-- ════════════ LEFT — BRANDING ════════════ --}}
-        <div class="flex-1 bg-gradient-to-br from-[#19376D] to-[#0B2447] flex flex-col justify-center
+        <div class="flex-1 bg-gradient-to-br from-blue-700 to-blue-900 flex flex-col justify-center
                     items-center text-center px-10 py-16 relative overflow-hidden">
             {{-- Decorative circles --}}
             <div class="absolute w-72 h-72 rounded-full bg-white/5 -top-24 -left-24
@@ -48,19 +48,17 @@
                 {{-- Email --}}
                 <div class="mb-5">
                     <div class="relative">
-                        <input type="email" id="email" name="email"
-                               value="admin@sigma.com" required
-                               placeholder=" "
-                               class="peer w-full px-5 pt-5 pb-2.5 rounded-xl border-[1.5px] border-slate-200
+                        <input type="email" id="email" name="email" value="admin@sigma.com" required placeholder=" "
+                            class="peer w-full px-5 pt-7 pb-2 rounded-xl border-[1.5px] border-slate-200
                                       bg-slate-50 text-slate-900 text-sm font-medium
-                                      focus:outline-none focus:border-[#19376D] focus:bg-white
-                                      focus:shadow-[0_0_0_4px_rgba(25,55,109,0.1)]
+                                      focus:outline-none focus:border-blue-600 focus:bg-white
+                                      focus:shadow-[0_0_0_4px_rgba(37,99,235,0.1)]
                                       transition-all duration-200">
                         <label for="email"
-                               class="absolute left-5 top-1/2 -translate-y-1/2 text-slate-400 text-sm font-medium
+                            class="absolute left-5 top-1/2 -translate-y-1/2 text-slate-400 text-sm font-medium
                                       pointer-events-none transition-all duration-200
-                                      peer-focus:top-3.5 peer-focus:text-xs peer-focus:text-[#19376D] peer-focus:translate-y-0
-                                      peer-[:not(:placeholder-shown)]:top-3.5 peer-[:not(:placeholder-shown)]:text-xs peer-[:not(:placeholder-shown)]:translate-y-0">
+                                      peer-focus:top-2.5 peer-focus:text-xs peer-focus:text-blue-600 peer-focus:translate-y-0
+                                      peer-[:not(:placeholder-shown)]:top-2.5 peer-[:not(:placeholder-shown)]:text-xs peer-[:not(:placeholder-shown)]:translate-y-0">
                             <i class="bi bi-envelope me-1"></i> Alamat Email
                         </label>
                     </div>
@@ -69,24 +67,22 @@
                 {{-- Password --}}
                 <div class="mb-5">
                     <div class="relative">
-                        <input type="password" id="password" name="password"
-                               value="password" required
-                               placeholder=" "
-                               class="peer w-full px-5 pt-5 pb-2.5 pr-12 rounded-xl border-[1.5px] border-slate-200
+                        <input type="password" id="password" name="password" value="password" required placeholder=" "
+                            class="peer w-full px-5 pt-7 pb-2 pr-12 rounded-xl border-[1.5px] border-slate-200
                                       bg-slate-50 text-slate-900 text-sm font-medium
-                                      focus:outline-none focus:border-[#19376D] focus:bg-white
-                                      focus:shadow-[0_0_0_4px_rgba(25,55,109,0.1)]
+                                      focus:outline-none focus:border-blue-600 focus:bg-white
+                                      focus:shadow-[0_0_0_4px_rgba(37,99,235,0.1)]
                                       transition-all duration-200">
                         <label for="password"
-                               class="absolute left-5 top-1/2 -translate-y-1/2 text-slate-400 text-sm font-medium
+                            class="absolute left-5 top-1/2 -translate-y-1/2 text-slate-400 text-sm font-medium
                                       pointer-events-none transition-all duration-200
-                                      peer-focus:top-3.5 peer-focus:text-xs peer-focus:text-[#19376D] peer-focus:translate-y-0
-                                      peer-[:not(:placeholder-shown)]:top-3.5 peer-[:not(:placeholder-shown)]:text-xs peer-[:not(:placeholder-shown)]:translate-y-0">
+                                      peer-focus:top-2.5 peer-focus:text-xs peer-focus:text-blue-600 peer-focus:translate-y-0
+                                      peer-[:not(:placeholder-shown)]:top-2.5 peer-[:not(:placeholder-shown)]:text-xs peer-[:not(:placeholder-shown)]:translate-y-0">
                             <i class="bi bi-lock me-1"></i> Password
                         </label>
                         {{-- Eye toggle --}}
                         <button type="button" id="passToggle"
-                                class="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-[#19376D] transition-colors">
+                            class="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-blue-600 transition-colors">
                             <i class="bi bi-eye-fill" id="passIcon"></i>
                         </button>
                     </div>
@@ -95,20 +91,19 @@
                 {{-- Remember + Forgot --}}
                 <div class="flex items-center justify-between mb-8">
                     <label class="flex items-center gap-2 cursor-pointer select-none">
-                        <input type="checkbox" checked
-                               class="w-4 h-4 rounded accent-[#19376D] cursor-pointer">
+                        <input type="checkbox" checked class="w-4 h-4 rounded accent-blue-600 cursor-pointer">
                         <span class="text-sm text-slate-500">Ingat saya</span>
                     </label>
-                    <a href="#" class="text-sm font-semibold text-[#19376D] hover:text-[#0B2447]
+                    <a href="#" class="text-sm font-semibold text-blue-600 hover:text-blue-800
                                       hover:underline transition-colors">Lupa password?</a>
                 </div>
 
                 {{-- Submit --}}
                 <button type="submit" id="loginBtn"
-                        class="w-full py-3.5 rounded-xl bg-[#19376D] text-white font-semibold text-base
-                               shadow-[0_4px_12px_rgba(25,55,109,0.25)]
-                               hover:bg-[#0B2447] hover:-translate-y-0.5
-                               hover:shadow-[0_8px_16px_rgba(25,55,109,0.3)]
+                    class="w-full py-3.5 rounded-xl bg-blue-600 text-white font-semibold text-base
+                               shadow-[0_4px_12px_rgba(37,99,235,0.25)]
+                               hover:bg-blue-700 hover:-translate-y-0.5
+                               hover:shadow-[0_8px_16px_rgba(37,99,235,0.3)]
                                active:translate-y-0 transition-all duration-200 flex items-center justify-center gap-2">
                     Masuk <i class="bi bi-box-arrow-in-right"></i>
                 </button>
@@ -118,9 +113,9 @@
 
     <script>
         // Password toggle
-        const passInput  = document.getElementById('password');
+        const passInput = document.getElementById('password');
         const passToggle = document.getElementById('passToggle');
-        const passIcon   = document.getElementById('passIcon');
+        const passIcon = document.getElementById('passIcon');
         passToggle?.addEventListener('click', () => {
             const show = passInput.type === 'password';
             passInput.type = show ? 'text' : 'password';
@@ -136,4 +131,5 @@
         });
     </script>
 </body>
+
 </html>
