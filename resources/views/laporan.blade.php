@@ -59,7 +59,11 @@
                                             <span class="badge bg-info text-dark">{{ $laporan['tingkat_bencana'] }}</span>
                                         @endif
                                     @else
-                                        -
+                                        @if(strtolower($laporan['status']) == 'decline' || strtolower($laporan['status']) == 'danger')
+                                            <span class="badge bg-secondary text-white">Tidak Ada</span>
+                                        @else
+                                            -
+                                        @endif
                                     @endif
                                 </td>
                                 <td class="text-muted"><small>{{ $laporan['tanggal'] }}</small></td>
@@ -70,8 +74,10 @@
                                     @elseif(strtolower($laporan['status']) == 'verified')
                                         <span class="badge bg-success px-2 py-1"><i
                                                 class="bi bi-check-circle me-1"></i>Verified</span>
-                                    @elseif(strtolower($laporan['status']) == 'danger')
-                                        <span class="badge bg-danger px-2 py-1"><i class="bi bi-x-circle me-1"></i>Danger</span>
+                                    @elseif(strtolower($laporan['status']) == 'decline' || strtolower($laporan['status']) == 'danger')
+                                        <span class="badge bg-danger px-2 py-1"><i class="bi bi-x-circle me-1"></i>Decline</span>
+                                    @else
+                                        <span class="badge bg-secondary px-2 py-1">{{ $laporan['status'] }}</span>
                                     @endif
                                 </td>
                                 <td class="text-center">

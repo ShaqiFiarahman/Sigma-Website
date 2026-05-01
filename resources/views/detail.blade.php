@@ -24,9 +24,13 @@
                         <span class="badge bg-success px-3 py-2 fs-6 rounded-pill d-flex align-items-center">
                             <i class="bi bi-check-circle me-2"></i>Status: Verified
                         </span>
-                        @elseif(strtolower($laporan['status']) == 'danger')
+                        @elseif(strtolower($laporan['status']) == 'decline' || strtolower($laporan['status']) == 'danger')
                         <span class="badge bg-danger px-3 py-2 fs-6 rounded-pill d-flex align-items-center">
-                            <i class="bi bi-x-circle me-2"></i>Status: Danger
+                            <i class="bi bi-x-circle me-2"></i>Status: Decline
+                        </span>
+                        @else
+                        <span class="badge bg-secondary px-3 py-2 fs-6 rounded-pill d-flex align-items-center">
+                            <i class="bi bi-info-circle me-2"></i>Status: {{ $laporan['status'] }}
                         </span>
                         @endif
                     </div>
@@ -61,7 +65,11 @@
                                         <span class="badge bg-info text-dark fs-6 px-2 py-1">{{ $laporan['tingkat_bencana'] }}</span>
                                     @endif
                                 @else
-                                    <span class="badge bg-secondary fs-6 px-2 py-1">Belum Ditetapkan</span>
+                                    @if(strtolower($laporan['status']) == 'decline' || strtolower($laporan['status']) == 'danger')
+                                        <span class="badge bg-secondary fs-6 px-2 py-1">Tidak Ada</span>
+                                    @else
+                                        <span class="badge bg-secondary fs-6 px-2 py-1">Belum Ditetapkan</span>
+                                    @endif
                                 @endif
                             </p>
                         </div>
@@ -114,7 +122,7 @@
 
                         <form action="{{ route('laporan.update_status', $laporan['id']) }}" method="POST">
                             @csrf
-                            <input type="hidden" name="status" value="Danger">
+                            <input type="hidden" name="status" value="Decline">
                             <button type="submit" class="btn btn-outline-danger py-3 rounded-3 d-flex justify-content-center align-items-center w-100 mt-2">
                                 <i class="bi bi-x-circle fs-5 me-2"></i>
                                 <span class="fs-6 fw-semibold">Decline (Tolak)</span>

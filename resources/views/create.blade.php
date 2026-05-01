@@ -23,6 +23,8 @@
                         <div class="input-group">
                             <span class="input-group-text bg-light"><i class="bi bi-geo-alt text-danger"></i></span>
                             <input type="text" name="lokasi" class="form-control" id="lokasi" placeholder="Contoh: Jl. Merdeka No. 10, Jakarta" required>
+                        </div>
+                    </div>
                     <div class="mb-4">
                         <label for="deskripsi" class="form-label fw-semibold">Deskripsi Kejadian <span class="text-danger">*</span></label>
                         <textarea name="deskripsi" class="form-control" id="deskripsi" rows="6" placeholder="Ceritakan detail kejadian secara singkat dan jelas..." required></textarea>
