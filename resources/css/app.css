@@ -48,17 +48,17 @@
 @theme {
     --font-sans: 'Plus Jakarta Sans', ui-sans-serif, system-ui, sans-serif;
 
-    /* Brand palette */
-    --color-primary-50:  #EFF6FF;
-    --color-primary-100: #DBEAFE;
-    --color-primary-500: #3B82F6;
-    --color-primary-600: #1D4ED8;
-    --color-primary-700: #1E3A8A;
-    --color-primary-800: #0B2447;
+    /* Refined Brand palette */
+    --color-primary-50:  #f5f3ff;
+    --color-primary-100: #ede9fe;
+    --color-primary-500: #8b5cf6;
+    --color-primary-600: #7c3aed;
+    --color-primary-700: #6d28d9;
+    --color-primary-800: #5b21b6;
 
     --color-surface: #FFFFFF;
-    --color-bg:      #F1F5F9;
-    --color-border:  #E2E8F0;
+    --color-bg:      #FAFAFA;
+    --color-border:  #E5E7EB;
 }
 
 /* Smooth scrolling + antialiasing */
@@ -68,41 +68,22 @@ body {
     font-family: 'Plus Jakarta Sans', ui-sans-serif, system-ui, sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    background-color: #FAFAFA;
 }
 
 /* Fade-up animation for page content */
 @keyframes fade-up {
-    from { opacity: 0; transform: translateY(10px); }
+    from { opacity: 0; transform: translateY(8px); }
     to   { opacity: 1; transform: translateY(0); }
 }
 
 .animate-fade-up {
-    animation: fade-up 0.3s ease both;
+    animation: fade-up 0.4s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
-
-/* Floating animation */
-@keyframes float {
-    0%, 100% { transform: translateY(0px); }
-    50%       { transform: translateY(-8px); }
-}
-
-.animate-float {
-    animation: float 4s ease-in-out infinite;
-}
-
-/* Ring pulse */
-@keyframes ring-pulse {
-    0%, 100% { opacity: 0.15; transform: translate(-50%, -50%) scale(1); }
-    50%       { opacity: 0.35; transform: translate(-50%, -50%) scale(1.04); }
-}
-
-.animate-ring { animation: ring-pulse 3s ease-in-out infinite; }
-.animate-ring-2 { animation: ring-pulse 3s ease-in-out 0.5s infinite; }
-.animate-ring-3 { animation: ring-pulse 3s ease-in-out 1s infinite; }
 
 /* Spin for loading */
 @keyframes spin-fast {
     from { transform: rotate(0deg); }
     to   { transform: rotate(360deg); }
 }
-.animate-spin-fast { animation: spin-fast 0.7s linear infinite; }
+.animate-spin-fast { animation: spin-fast 0.6s linear infinite; }

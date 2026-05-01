@@ -10,31 +10,31 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 
-<body class="min-h-screen bg-slate-100 flex items-center justify-center p-5" style="background-image: radial-gradient(#1d4ed8 0.5px, transparent 0.5px), radial-gradient(#1d4ed8 0.5px, #F1F5F9 0.5px);
-             background-size: 20px 20px;
-             background-position: 0 0, 10px 10px;
+<body class="min-h-screen bg-slate-50 flex items-center justify-center p-5" style="background-image: radial-gradient(#e2e8f0 1px, transparent 1px), radial-gradient(#e2e8f0 1px, #f8fafc 1px);
+             background-size: 24px 24px;
+             background-position: 0 0, 12px 12px;
              background-attachment: fixed;">
 
-    <div class="w-full max-w-[960px] bg-white rounded-3xl shadow-2xl overflow-hidden flex flex-row my-5
+    <div class="w-full max-w-[960px] bg-white rounded-3xl shadow-xl border border-slate-200 overflow-hidden flex flex-col md:flex-row my-5
                 relative z-10">
 
         {{-- ════════════ LEFT — BRANDING ════════════ --}}
-        <div class="flex-1 bg-gradient-to-br from-blue-700 to-blue-900 flex flex-col justify-center
+        <div class="flex-1 bg-gradient-to-br from-slate-800 to-slate-900 flex flex-col justify-center
                     items-center text-center px-10 py-16 relative overflow-hidden">
             {{-- Decorative circles --}}
             <div class="absolute w-72 h-72 rounded-full bg-white/5 -top-24 -left-24
-                        transition-transform duration-500 group-hover:scale-110"></div>
-            <div class="absolute w-96 h-96 rounded-full bg-white/5 -bottom-36 -right-36"></div>
+                        transition-transform duration-500 group-hover:scale-110 pointer-events-none"></div>
+            <div class="absolute w-96 h-96 rounded-full bg-white/5 -bottom-36 -right-36 pointer-events-none"></div>
 
             {{-- Icon --}}
             <div class="relative z-10 w-24 h-24 rounded-3xl bg-white/10 border border-white/20
-                        backdrop-blur-sm shadow-xl flex items-center justify-center mb-6">
+                        backdrop-blur-sm shadow-lg flex items-center justify-center mb-6">
                 <i class="bi bi-shield-check text-5xl text-white"></i>
             </div>
 
             {{-- Text --}}
             <h1 class="relative z-10 text-5xl font-extrabold tracking-tighter text-white mb-2">SIGMA</h1>
-            <p class="relative z-10 text-white/80 text-base font-medium">Sistem Informasi Tanggap Bencana</p>
+            <p class="relative z-10 text-slate-300 text-base font-medium">Sistem Informasi Tanggap Bencana</p>
         </div>
 
         {{-- ════════════ RIGHT — FORM ════════════ --}}
@@ -49,15 +49,15 @@
                 <div class="mb-5">
                     <div class="relative">
                         <input type="email" id="email" name="email" value="admin@sigma.com" required placeholder=" "
-                            class="peer w-full px-5 pt-7 pb-2 rounded-xl border-[1.5px] border-slate-200
+                            class="peer w-full px-5 pt-7 pb-2 rounded-xl border border-slate-200
                                       bg-slate-50 text-slate-900 text-sm font-medium
-                                      focus:outline-none focus:border-blue-600 focus:bg-white
-                                      focus:shadow-[0_0_0_4px_rgba(37,99,235,0.1)]
+                                      focus:outline-none focus:border-primary-500 focus:bg-white
+                                      focus:ring-4 focus:ring-primary-500/10
                                       transition-all duration-200">
                         <label for="email"
                             class="absolute left-5 top-1/2 -translate-y-1/2 text-slate-400 text-sm font-medium
                                       pointer-events-none transition-all duration-200
-                                      peer-focus:top-2.5 peer-focus:text-xs peer-focus:text-blue-600 peer-focus:translate-y-0
+                                      peer-focus:top-2.5 peer-focus:text-xs peer-focus:text-primary-600 peer-focus:translate-y-0
                                       peer-[:not(:placeholder-shown)]:top-2.5 peer-[:not(:placeholder-shown)]:text-xs peer-[:not(:placeholder-shown)]:translate-y-0">
                             <i class="bi bi-envelope me-1"></i> Alamat Email
                         </label>
@@ -68,21 +68,21 @@
                 <div class="mb-5">
                     <div class="relative">
                         <input type="password" id="password" name="password" value="password" required placeholder=" "
-                            class="peer w-full px-5 pt-7 pb-2 pr-12 rounded-xl border-[1.5px] border-slate-200
+                            class="peer w-full px-5 pt-7 pb-2 pr-12 rounded-xl border border-slate-200
                                       bg-slate-50 text-slate-900 text-sm font-medium
-                                      focus:outline-none focus:border-blue-600 focus:bg-white
-                                      focus:shadow-[0_0_0_4px_rgba(37,99,235,0.1)]
+                                      focus:outline-none focus:border-primary-500 focus:bg-white
+                                      focus:ring-4 focus:ring-primary-500/10
                                       transition-all duration-200">
                         <label for="password"
                             class="absolute left-5 top-1/2 -translate-y-1/2 text-slate-400 text-sm font-medium
                                       pointer-events-none transition-all duration-200
-                                      peer-focus:top-2.5 peer-focus:text-xs peer-focus:text-blue-600 peer-focus:translate-y-0
+                                      peer-focus:top-2.5 peer-focus:text-xs peer-focus:text-primary-600 peer-focus:translate-y-0
                                       peer-[:not(:placeholder-shown)]:top-2.5 peer-[:not(:placeholder-shown)]:text-xs peer-[:not(:placeholder-shown)]:translate-y-0">
                             <i class="bi bi-lock me-1"></i> Password
                         </label>
                         {{-- Eye toggle --}}
                         <button type="button" id="passToggle"
-                            class="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-blue-600 transition-colors">
+                            class="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-primary-600 transition-colors">
                             <i class="bi bi-eye-fill" id="passIcon"></i>
                         </button>
                     </div>
@@ -91,19 +91,18 @@
                 {{-- Remember + Forgot --}}
                 <div class="flex items-center justify-between mb-8">
                     <label class="flex items-center gap-2 cursor-pointer select-none">
-                        <input type="checkbox" checked class="w-4 h-4 rounded accent-blue-600 cursor-pointer">
-                        <span class="text-sm text-slate-500">Ingat saya</span>
+                        <input type="checkbox" checked class="w-4 h-4 rounded text-primary-600 border-slate-300 focus:ring-primary-500/20 cursor-pointer">
+                        <span class="text-sm font-medium text-slate-600">Ingat saya</span>
                     </label>
-                    <a href="#" class="text-sm font-semibold text-blue-600 hover:text-blue-800
+                    <a href="#" class="text-sm font-semibold text-primary-600 hover:text-primary-700
                                       hover:underline transition-colors">Lupa password?</a>
                 </div>
 
                 {{-- Submit --}}
                 <button type="submit" id="loginBtn"
-                    class="w-full py-3.5 rounded-xl bg-blue-600 text-white font-semibold text-base
-                               shadow-[0_4px_12px_rgba(37,99,235,0.25)]
-                               hover:bg-blue-700 hover:-translate-y-0.5
-                               hover:shadow-[0_8px_16px_rgba(37,99,235,0.3)]
+                    class="w-full py-3.5 rounded-xl bg-slate-900 text-white font-semibold text-base
+                               hover:bg-slate-800 hover:-translate-y-0.5
+                               hover:shadow-[0_8px_16px_rgba(15,23,42,0.15)]
                                active:translate-y-0 transition-all duration-200 flex items-center justify-center gap-2">
                     Masuk <i class="bi bi-box-arrow-in-right"></i>
                 </button>
@@ -127,7 +126,8 @@
             const btn = document.getElementById('loginBtn');
             btn.innerHTML = '<i class="bi bi-arrow-repeat animate-spin-fast"></i> Memverifikasi...';
             btn.disabled = true;
-            btn.style.opacity = '0.75';
+            btn.style.opacity = '0.8';
+            btn.classList.add('cursor-not-allowed');
         });
     </script>
 </body>

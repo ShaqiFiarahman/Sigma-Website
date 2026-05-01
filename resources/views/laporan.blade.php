@@ -1,194 +1,117 @@
 @extends('layout')
 @section('title', 'Data Laporan')
+@section('subtitle', 'Daftar keseluruhan laporan bencana yang masuk ke sistem.')
 
 @section('page-actions')
-    <a href="{{ route('create') }}"
-       class="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg bg-blue-600 text-white
-              text-sm font-semibold shadow-[0_2px_8px_rgba(29,78,216,0.25)]
-              hover:bg-blue-700 hover:-translate-y-px hover:shadow-[0_4px_14px_rgba(29,78,216,0.32)]
-              transition-all duration-200">
-        <i class="bi bi-plus-lg"></i> Buat Laporan
+    <a href="{{ route('create') }}" class="inline-flex items-center justify-center px-4 py-2 text-sm font-medium text-white bg-primary-600 rounded-lg hover:bg-primary-700 transition-colors">
+        <i class="bi bi-plus-lg mr-2 text-xs"></i> Buat Laporan
     </a>
 @endsection
 
 @section('content')
 
-    {{-- ── FLASH MESSAGES ────────────────────────────────────── --}}
-    @if(session('msg') == 'approved')
-        <div class="flex items-center gap-2.5 px-4 py-3 mb-5 rounded-xl bg-emerald-50 border border-emerald-200
-                    text-emerald-800 text-sm font-medium" role="alert">
-            <i class="bi bi-check-circle-fill text-emerald-500 shrink-0"></i>
-            <span>Laporan berhasil di-<strong>approve</strong> dan sudah terverifikasi.</span>
-            <button onclick="this.parentElement.remove()" class="ml-auto text-emerald-400 hover:text-emerald-600">
-                <i class="bi bi-x text-base"></i>
-            </button>
-        </div>
-    @elseif(session('msg') == 'rejected')
-        <div class="flex items-center gap-2.5 px-4 py-3 mb-5 rounded-xl bg-red-50 border border-red-200
-                    text-red-800 text-sm font-medium" role="alert">
-            <i class="bi bi-x-circle-fill text-red-500 shrink-0"></i>
-            <span>Laporan berhasil di-<strong>reject</strong>.</span>
-            <button onclick="this.parentElement.remove()" class="ml-auto text-red-400 hover:text-red-600">
-                <i class="bi bi-x text-base"></i>
-            </button>
-        </div>
-    @elseif(session('msg') == 'created')
-        <div class="flex items-center gap-2.5 px-4 py-3 mb-5 rounded-xl bg-blue-50 border border-blue-200
-                    text-blue-800 text-sm font-medium" role="alert">
-            <i class="bi bi-info-circle-fill text-blue-500 shrink-0"></i>
-            <span>Laporan baru berhasil <strong>dibuat</strong> dan menunggu verifikasi.</span>
-            <button onclick="this.parentElement.remove()" class="ml-auto text-blue-400 hover:text-blue-600">
-                <i class="bi bi-x text-base"></i>
-            </button>
+    @if(session('msg'))
+        <div class="mb-6 p-4 rounded-lg flex items-center gap-3 text-sm font-medium
+            {{ session('msg') == 'approved' ? 'bg-emerald-50 text-emerald-800 border border-emerald-200' : '' }}
+            {{ session('msg') == 'rejected' ? 'bg-red-50 text-red-800 border border-red-200' : '' }}
+            {{ session('msg') == 'created' ? 'bg-blue-50 text-blue-800 border border-blue-200' : '' }}
+        ">
+            @if(session('msg') == 'approved')
+                <i class="bi bi-check-circle-fill text-emerald-500"></i> Laporan berhasil diverifikasi.
+            @elseif(session('msg') == 'rejected')
+                <i class="bi bi-x-circle-fill text-red-500"></i> Laporan berhasil ditolak.
+            @elseif(session('msg') == 'created')
+                <i class="bi bi-info-circle-fill text-blue-500"></i> Laporan baru berhasil dibuat.
+            @endif
+            <button onclick="this.parentElement.remove()" class="ml-auto opacity-70 hover:opacity-100"><i class="bi bi-x-lg"></i></button>
         </div>
     @endif
 
-    {{-- ── TABLE CARD ────────────────────────────────────────── --}}
-    <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
-
-        {{-- Header --}}
-        <div class="flex items-center justify-between gap-4 px-6 py-4 border-b border-slate-100 flex-wrap">
-            <div>
-                <p class="text-sm font-bold text-slate-900">Daftar Laporan Bencana</p>
-                <p class="text-xs text-slate-400 mt-0.5">Semua laporan yang masuk ke sistem SIGMA</p>
+    <div class="bg-white border border-slate-200 rounded-xl shadow-sm overflow-hidden">
+        
+        {{-- Toolbar --}}
+        <div class="px-5 py-4 border-b border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div class="relative w-full sm:w-64">
+                <i class="bi bi-search absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
+                <input type="text" id="tableSearch" placeholder="Cari laporan..." 
+                       class="w-full pl-9 pr-4 py-2 text-sm border border-slate-300 rounded-lg focus:outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500 transition-all">
             </div>
-            {{-- Search --}}
-            <div class="relative">
-                <i class="bi bi-search absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
-                <input type="text" id="tableSearch" placeholder="Cari laporan..."
-                       class="pl-8 pr-4 py-2 rounded-lg border border-slate-200 bg-slate-50
-                              text-sm font-medium text-slate-900 w-52
-                              focus:outline-none focus:border-blue-400 focus:bg-white focus:shadow-[0_0_0_3px_rgba(59,130,246,0.1)]
-                              transition-all duration-200 placeholder:text-slate-400">
+            <div class="flex items-center gap-2">
+                <button class="px-3 py-2 text-sm font-medium text-slate-600 bg-slate-50 border border-slate-200 rounded-lg hover:bg-slate-100 transition-colors">
+                    <i class="bi bi-filter mr-1"></i> Filter
+                </button>
             </div>
         </div>
 
         {{-- Table --}}
         <div class="overflow-x-auto">
-            <table class="w-full text-sm" id="laporanTable">
-                <thead>
-                    <tr class="bg-slate-50 border-b border-slate-100">
-                        <th class="px-4 py-3 text-left text-[0.7rem] font-bold text-slate-400 uppercase tracking-wider w-12">#</th>
-                        <th class="px-4 py-3 text-left text-[0.7rem] font-bold text-slate-400 uppercase tracking-wider">Judul Laporan</th>
-                        <th class="px-4 py-3 text-left text-[0.7rem] font-bold text-slate-400 uppercase tracking-wider">Lokasi</th>
-                        <th class="px-4 py-3 text-left text-[0.7rem] font-bold text-slate-400 uppercase tracking-wider">Tingkat</th>
-                        <th class="px-4 py-3 text-left text-[0.7rem] font-bold text-slate-400 uppercase tracking-wider">Tanggal</th>
-                        <th class="px-4 py-3 text-left text-[0.7rem] font-bold text-slate-400 uppercase tracking-wider">Status</th>
-                        <th class="px-4 py-3 text-center text-[0.7rem] font-bold text-slate-400 uppercase tracking-wider w-24">Aksi</th>
+            <table class="w-full text-left text-sm whitespace-nowrap" id="laporanTable">
+                <thead class="bg-slate-50 border-b border-slate-200 text-slate-500">
+                    <tr>
+                        <th class="px-5 py-3 font-medium">Judul Laporan</th>
+                        <th class="px-5 py-3 font-medium">Lokasi</th>
+                        <th class="px-5 py-3 font-medium">Tingkat</th>
+                        <th class="px-5 py-3 font-medium">Tanggal</th>
+                        <th class="px-5 py-3 font-medium">Status</th>
+                        <th class="px-5 py-3 font-medium text-right">Aksi</th>
                     </tr>
                 </thead>
-                <tbody class="divide-y divide-slate-100">
-                    @forelse($laporans as $index => $laporan)
-                        <tr class="hover:bg-blue-50/50 transition-colors duration-150 group">
-                            <td class="px-4 py-3.5 text-slate-400 font-medium">{{ $index + 1 }}</td>
-                            <td class="px-4 py-3.5">
-                                <span class="font-semibold text-slate-800">{{ $laporan['judul'] }}</span>
-                            </td>
-                            <td class="px-4 py-3.5">
-                                <span class="flex items-center gap-1.5 text-slate-500 text-[0.83rem]">
-                                    <i class="bi bi-geo-alt-fill text-red-400 text-xs"></i>
-                                    {{ $laporan['lokasi'] }}
-                                </span>
-                            </td>
-                            <td class="px-4 py-3.5">
+                <tbody class="divide-y divide-slate-200 text-slate-700">
+                    @forelse($laporans as $laporan)
+                        <tr class="hover:bg-slate-50 transition-colors">
+                            <td class="px-5 py-3.5 font-medium text-slate-900">{{ $laporan['judul'] }}</td>
+                            <td class="px-5 py-3.5 text-slate-500"><i class="bi bi-geo-alt mr-1 text-slate-400"></i>{{ $laporan['lokasi'] }}</td>
+                            <td class="px-5 py-3.5">
                                 @if(!empty($laporan['tingkat_bencana']))
                                     @if($laporan['tingkat_bencana'] == 'Awas')
-                                        <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[0.68rem] font-bold
-                                                     bg-red-50 text-red-700 border border-red-200">
-                                            <i class="bi bi-exclamation-triangle-fill text-[0.6rem]"></i> Awas
-                                        </span>
+                                        <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-red-100 text-red-800">{{ $laporan['tingkat_bencana'] }}</span>
                                     @elseif(str_contains($laporan['tingkat_bencana'], 'Siaga'))
-                                        <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[0.68rem] font-bold
-                                                     bg-amber-50 text-amber-700 border border-amber-200">
-                                            <i class="bi bi-exclamation-circle-fill text-[0.6rem]"></i> {{ $laporan['tingkat_bencana'] }}
-                                        </span>
+                                        <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-amber-100 text-amber-800">{{ $laporan['tingkat_bencana'] }}</span>
                                     @else
-                                        <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[0.68rem] font-bold
-                                                     bg-blue-50 text-blue-700 border border-blue-200">
-                                            <i class="bi bi-info-circle-fill text-[0.6rem]"></i> {{ $laporan['tingkat_bencana'] }}
-                                        </span>
+                                        <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-blue-100 text-blue-800">{{ $laporan['tingkat_bencana'] }}</span>
                                     @endif
                                 @else
-                                    @if(strtolower($laporan['status']) == 'decline' || strtolower($laporan['status']) == 'danger')
-                                        <span class="px-2.5 py-1 rounded-full text-[0.68rem] font-bold bg-slate-100 text-slate-500 border border-slate-200">
-                                            Tidak Ada
-                                        </span>
-                                    @else
-                                        <span class="text-slate-300">—</span>
-                                    @endif
+                                    <span class="text-slate-400 text-xs">—</span>
                                 @endif
                             </td>
-                            <td class="px-4 py-3.5 text-[0.8rem] text-slate-400 font-medium">{{ $laporan['tanggal'] }}</td>
-                            <td class="px-4 py-3.5">
+                            <td class="px-5 py-3.5 text-slate-500">{{ $laporan['tanggal'] }}</td>
+                            <td class="px-5 py-3.5">
                                 @if(strtolower($laporan['status']) == 'pending')
-                                    <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[0.68rem] font-bold
-                                                 bg-amber-50 text-amber-700 border border-amber-200">
-                                        <i class="bi bi-hourglass-split text-[0.6rem]"></i> Pending
+                                    <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-amber-100 text-amber-800 border border-amber-200/50">
+                                        <span class="w-1.5 h-1.5 rounded-full bg-amber-500 mr-1.5"></span> Pending
                                     </span>
                                 @elseif(strtolower($laporan['status']) == 'verified')
-                                    <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[0.68rem] font-bold
-                                                 bg-emerald-50 text-emerald-700 border border-emerald-200">
-                                        <i class="bi bi-check-circle-fill text-[0.6rem]"></i> Verified
-                                    </span>
-                                @elseif(strtolower($laporan['status']) == 'decline' || strtolower($laporan['status']) == 'danger')
-                                    <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[0.68rem] font-bold
-                                                 bg-red-50 text-red-700 border border-red-200">
-                                        <i class="bi bi-x-circle-fill text-[0.6rem]"></i> Decline
+                                    <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-emerald-100 text-emerald-800 border border-emerald-200/50">
+                                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 mr-1.5"></span> Verified
                                     </span>
                                 @else
-                                    <span class="px-2.5 py-1 rounded-full text-[0.68rem] font-bold bg-slate-100 text-slate-500 border border-slate-200">
-                                        {{ $laporan['status'] }}
+                                    <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800 border border-red-200/50">
+                                        <span class="w-1.5 h-1.5 rounded-full bg-red-500 mr-1.5"></span> Decline
                                     </span>
                                 @endif
                             </td>
-                            <td class="px-4 py-3.5 text-center">
-                                <a href="{{ route('detail', ['id' => $laporan['id']]) }}"
-                                   class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg
-                                          bg-blue-50 text-blue-600 border border-blue-200 text-[0.72rem] font-bold
-                                          hover:bg-blue-600 hover:text-white hover:border-blue-600 hover:-translate-y-px
-                                          hover:shadow-[0_4px_10px_rgba(29,78,216,0.25)]
-                                          transition-all duration-200">
-                                    <i class="bi bi-eye"></i> Detail
+                            <td class="px-5 py-3.5 text-right">
+                                <a href="{{ route('detail', ['id' => $laporan['id']]) }}" class="inline-flex items-center justify-center px-3 py-1.5 text-xs font-medium text-slate-700 bg-white border border-slate-300 rounded-md hover:bg-slate-50 transition-colors">
+                                    Detail
                                 </a>
                             </td>
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="7" class="py-16 text-center">
-                                <div class="flex flex-col items-center gap-3">
-                                    <div class="w-16 h-16 rounded-full bg-slate-100 flex items-center justify-center
-                                                text-3xl text-slate-300">
-                                        <i class="bi bi-inbox"></i>
-                                    </div>
-                                    <p class="text-sm font-bold text-slate-700">Belum ada laporan</p>
-                                    <p class="text-xs text-slate-400">Laporan yang masuk akan muncul di sini.</p>
-                                    <a href="{{ route('create') }}"
-                                       class="mt-1 inline-flex items-center gap-1.5 px-4 py-2 rounded-lg
-                                              bg-blue-600 text-white text-xs font-semibold
-                                              hover:bg-blue-700 transition-colors">
-                                        <i class="bi bi-plus-lg"></i> Buat Laporan Pertama
-                                    </a>
-                                </div>
+                            <td colspan="6" class="px-5 py-16 text-center text-slate-500">
+                                <i class="bi bi-inbox text-3xl mb-3 block text-slate-300"></i>
+                                <p class="text-sm font-medium text-slate-900">Tidak ada laporan</p>
+                                <p class="text-xs mt-1">Data laporan belum tersedia di sistem.</p>
                             </td>
                         </tr>
                     @endforelse
                 </tbody>
             </table>
         </div>
-
+        
         {{-- Footer --}}
-        <div class="flex items-center justify-between px-6 py-3.5 border-t border-slate-100">
-            <span class="text-xs text-slate-400">
-                Menampilkan <strong class="text-slate-600">{{ count($laporans) }}</strong> laporan
-            </span>
-            <nav class="flex items-center gap-1" aria-label="Paginasi">
-                <button class="w-7 h-7 rounded-lg border border-slate-200 text-slate-400 text-xs
-                               flex items-center justify-center opacity-50 cursor-not-allowed">‹</button>
-                <button class="w-7 h-7 rounded-lg bg-blue-600 text-white text-xs font-bold
-                               flex items-center justify-center">1</button>
-                <button class="w-7 h-7 rounded-lg border border-slate-200 text-slate-400 text-xs
-                               flex items-center justify-center opacity-50 cursor-not-allowed">›</button>
-            </nav>
+        <div class="px-5 py-3 border-t border-slate-200 bg-slate-50 flex items-center justify-between text-xs text-slate-500">
+            <span>Menampilkan {{ count($laporans) }} laporan</span>
         </div>
     </div>
 
@@ -196,7 +119,6 @@
 
 @section('scripts')
 <script>
-    // Live search
     document.getElementById('tableSearch')?.addEventListener('input', function () {
         const q = this.value.toLowerCase();
         document.querySelectorAll('#laporanTable tbody tr').forEach(row => {
