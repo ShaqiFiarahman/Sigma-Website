@@ -73,8 +73,8 @@
     </div>
 
     {{-- Kanan: Panel Aksi --}}
-    <div class="lg:col-span-1">
-        <div class="bg-white border border-slate-200 rounded-xl shadow-sm lg:sticky lg:top-24">
+    <div class="lg:col-span-1 space-y-6">
+        <div class="bg-white border border-slate-200 rounded-xl shadow-sm">
             <div class="px-5 py-4 border-b border-slate-100">
                 <h3 class="text-sm font-semibold text-slate-900">Panel Tindakan</h3>
             </div>
@@ -148,7 +148,48 @@
 
             </div>
         </div>
+
+        {{-- Map Lokasi --}}
+        <div class="bg-white border border-slate-200 rounded-xl shadow-sm overflow-hidden">
+            <div class="px-5 py-4 border-b border-slate-100">
+                <h3 class="text-sm font-semibold text-slate-900">Lokasi pada Peta</h3>
+            </div>
+            <div class="p-5">
+                <div id="detailMap" class="w-full h-64 rounded-lg border border-slate-200"></div>
+            </div>
+        </div>
     </div>
 
 </div>
+@endsection
+
+@section('scripts')
+    <script src="https://maps.googleapis.com/maps/api/js?key={{ config('services.google_maps.key') }}&callback=initDetailMap" async defer></script>
+    <script>
+        function initDetailMap() {
+            const geoMapping = {
+                'Bantul': { lat: -7.8897, lng: 110.3289 },
+                'Sleman': { lat: -7.7233, lng: 110.3650 },
+                'Kulon Progo': { lat: -7.8333, lng: 110.1583 },
+                'Gunung Kidul': { lat: -7.9999, lng: 110.6000 },
+                'Yogyakarta': { lat: -7.7956, lng: 110.3695 }
+            };
+
+            const lokasi = "{{ $laporan['lokasi'] }}";
+            const center = geoMapping[lokasi] || { lat: -7.7956, lng: 110.3695 };
+            
+            const map = new google.maps.Map(document.getElementById("detailMap"), {
+                zoom: 13,
+                center: center,
+                disableDefaultUI: true,
+                zoomControl: true,
+            });
+
+            new google.maps.Marker({
+                position: center,
+                map: map,
+                title: "{{ $laporan['judul'] }}"
+            });
+        }
+    </script>
 @endsection

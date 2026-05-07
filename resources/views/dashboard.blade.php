@@ -113,18 +113,27 @@
 @endsection
 
 @section('scripts')
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    {{-- Google Maps API --}}
+    <script src="https://maps.googleapis.com/maps/api/js?key={{ config('services.google_maps.key') }}&callback=initMap" async defer></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     
     <style>
-        .leaflet-popup-content-wrapper { padding: 0; overflow: hidden; border-radius: 12px; }
-        .leaflet-popup-content { margin: 0; width: 280px !important; }
-        .leaflet-popup-tip-container { display: none; }
-        
-        /* Custom Map Popup Styling */
-        .leaflet-popup-close-button { display: none !important; }
-        .leaflet-popup-content a { color: white !important; text-decoration: none !important; }
+        /* Custom Map Info Window Styling */
+        .gm-style-iw {
+            padding: 0 !important;
+            max-width: 280px !important;
+            border-radius: 12px !important;
+        }
+        .gm-style-iw-d {
+            overflow: hidden !important;
+            max-height: none !important;
+        }
+        .gm-style-iw-tc {
+            display: none !important;
+        }
+        .gm-ui-hover-effect {
+            display: none !important;
+        }
 
         @keyframes marker-pulse {
             0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); }
@@ -132,10 +141,22 @@
             100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
         }
         .pulse-red { animation: marker-pulse 2s infinite; }
+
+        /* Custom marker container */
+        .custom-marker {
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            border: 2px solid white;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        }
     </style>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
+        let map;
+        let infoWindow;
+
+        function initMap() {
             // --- CHART.JS ---
             const ctx = document.getElementById('reportChart').getContext('2d');
             const labels = {!! json_encode($chartLabels ?? []) !!};
@@ -170,55 +191,64 @@
                 }
             });
 
-            // --- LEAFLET MAP ---
-            const map = L.map('map', {
-                scrollWheelZoom: true, // Diaktifkan sesuai request
-                fadeAnimation: true
-            }).setView([-7.7956, 110.3695], 11);
+            // --- GOOGLE MAPS ---
+            const center = { lat: -7.7956, lng: 110.3695 };
+            map = new google.maps.Map(document.getElementById("map"), {
+                zoom: 11,
+                center: center,
+                styles: [
+                    { "featureType": "administrative", "elementType": "geometry", "stylers": [{ "visibility": "off" }] },
+                    { "featureType": "poi", "stylers": [{ "visibility": "off" }] },
+                    { "featureType": "road", "elementType": "labels.icon", "stylers": [{ "visibility": "off" }] },
+                    { "featureType": "transit", "stylers": [{ "visibility": "off" }] }
+                ],
+                disableDefaultUI: false,
+                mapTypeControl: false,
+                streetViewControl: false,
+                fullscreenControl: true
+            });
 
-            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                attribution: '&copy; OpenStreetMap'
-            }).addTo(map);
+            infoWindow = new google.maps.InfoWindow();
 
-            // Sinkronisasi data dari session Laravel
             const disasterData = {!! json_encode(session('laporans', [])) !!};
-
-            // Mapping lokasi ke koordinat (Sederhana)
             const geoMapping = {
-                'Bantul': [-7.8897, 110.3289],
-                'Sleman': [-7.7233, 110.3650],
-                'Kulon Progo': [-7.8333, 110.1583],
-                'Gunung Kidul': [-7.9999, 110.6000],
-                'Yogyakarta': [-7.7956, 110.3695]
-            };
-
-                    const createCustomIcon = (tingkat) => {
-                let colorClass = tingkat === 'Darurat' ? 'bg-red-500' : (tingkat === 'Bahaya' ? 'bg-blue-900' : 'bg-slate-400');
-                let extraClass = tingkat === 'Darurat' ? 'pulse-red' : '';
-                return L.divIcon({
-                    className: 'custom-div-icon',
-                    html: `<div class="w-4 h-4 rounded-full border-2 border-white shadow-lg ${colorClass} ${extraClass}"></div>`,
-                    iconSize: [16, 16],
-                    iconAnchor: [8, 8]
-                });
+                'Bantul': { lat: -7.8897, lng: 110.3289 },
+                'Sleman': { lat: -7.7233, lng: 110.3650 },
+                'Kulon Progo': { lat: -7.8333, lng: 110.1583 },
+                'Gunung Kidul': { lat: -7.9999, lng: 110.6000 },
+                'Yogyakarta': { lat: -7.7956, lng: 110.3695 }
             };
 
             disasterData.forEach(item => {
-                // Hanya tampilkan yang sudah terverifikasi (Verified)
                 if (item.status === 'Verified') {
-                    // Cari koordinat berdasarkan lokasi string, jika tidak ada gunakan default sedikit acak
-                    let coords = geoMapping[item.lokasi] || [-7.7956 + (Math.random() * 0.1), 110.3695 + (Math.random() * 0.1)];
+                    let coords = geoMapping[item.lokasi] || { 
+                        lat: -7.7956 + (Math.random() * 0.1 - 0.05), 
+                        lng: 110.3695 + (Math.random() * 0.1 - 0.05) 
+                    };
                     
-                    const marker = L.marker(coords, {
-                        icon: createCustomIcon(item.tingkat_bencana)
-                    }).addTo(map);
+                    let color = item.tingkat_bencana === 'Darurat' ? '#ef4444' : 
+                                (item.tingkat_bencana === 'Bahaya' ? '#1e3a8a' : '#94a3b8');
 
-                    // Dynamic button color based on disaster level
+                    // Using simple SVG marker for consistent styling
+                    const marker = new google.maps.Marker({
+                        position: coords,
+                        map: map,
+                        icon: {
+                            path: google.maps.SymbolPath.CIRCLE,
+                            fillColor: color,
+                            fillOpacity: 1,
+                            strokeWeight: 2,
+                            strokeColor: '#ffffff',
+                            scale: 8
+                        },
+                        title: item.judul
+                    });
+
                     const btnColor = item.tingkat_bencana === 'Darurat' ? 'bg-red-600 hover:bg-red-700' : 
                                     (item.tingkat_bencana === 'Bahaya' ? 'bg-blue-900 hover:bg-blue-950' : 'bg-slate-800 hover:bg-slate-900');
 
                     const popupContent = `
-                        <div class="overflow-hidden font-sans">
+                        <div class="overflow-hidden font-sans" style="width: 280px">
                             <div class="p-5 bg-slate-900 text-white relative">
                                 <div class="flex items-center justify-between mb-2">
                                     <span class="text-[10px] font-bold uppercase tracking-widest opacity-60">${item.tanggal}</span>
@@ -244,10 +274,12 @@
                         </div>
                     `;
 
-                    marker.bindPopup(popupContent, { maxWidth: 280 });
-                    marker.on('mouseover', function() { this.openPopup(); });
+                    marker.addListener("mouseover", () => {
+                        infoWindow.setContent(popupContent);
+                        infoWindow.open(map, marker);
+                    });
                 }
             });
-        });
+        }
     </script>
 @endsection
