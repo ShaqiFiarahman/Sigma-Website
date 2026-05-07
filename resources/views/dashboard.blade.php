@@ -76,22 +76,71 @@
         </div>
 
     </div>
+
+    {{-- MAP AREA --}}
+    <div class="mt-8 bg-white border border-slate-200 rounded-xl p-6 shadow-sm">
+        <div class="flex items-center justify-between mb-6">
+            <div>
+                <h3 class="text-base font-semibold text-slate-900">Peta Pantauan Bencana</h3>
+                <p class="text-xs text-slate-500 mt-1">Pemantauan lokasi bencana terverifikasi secara real-time.</p>
+            </div>
+        </div>
+        
+        {{-- Map Container --}}
+        <div class="relative group">
+            <div id="map" class="w-full h-[500px] rounded-xl border border-slate-200 z-0 shadow-inner"></div>
+            
+            {{-- Custom Legend --}}
+            <div class="absolute bottom-6 right-6 z-[1000] bg-white/90 backdrop-blur-md border border-slate-200 p-3 rounded-xl shadow-xl pointer-events-none">
+                <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-2">Tingkat Bencana</p>
+                <div class="space-y-2">
+                    <div class="flex items-center gap-2">
+                        <span class="w-3 h-3 rounded-full bg-red-500 shadow-[0_0_8px_rgba(239,68,68,0.5)]"></span>
+                        <span class="text-xs font-semibold text-slate-700">Darurat</span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <span class="w-3 h-3 rounded-full bg-blue-900 shadow-[0_0_8px_rgba(30,58,138,0.5)]"></span>
+                        <span class="text-xs font-semibold text-slate-700">Bahaya</span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <span class="w-3 h-3 rounded-full bg-slate-400 shadow-[0_0_8px_rgba(148,163,184,0.5)]"></span>
+                        <span class="text-xs font-semibold text-slate-700">Waspada</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 @endsection
 
 @section('scripts')
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <style>
+        .leaflet-popup-content-wrapper { padding: 0; overflow: hidden; border-radius: 12px; }
+        .leaflet-popup-content { margin: 0; width: 280px !important; }
+        .leaflet-popup-tip-container { display: none; }
+        
+        /* Custom Map Popup Styling */
+        .leaflet-popup-close-button { display: none !important; }
+        .leaflet-popup-content a { color: white !important; text-decoration: none !important; }
+
+        @keyframes marker-pulse {
+            0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); }
+            70% { transform: scale(1); box-shadow: 0 0 0 10px rgba(239, 68, 68, 0); }
+            100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+        }
+        .pulse-red { animation: marker-pulse 2s infinite; }
+    </style>
+
     <script>
         document.addEventListener('DOMContentLoaded', function () {
+            // --- CHART.JS ---
             const ctx = document.getElementById('reportChart').getContext('2d');
-
-            // Data from backend
             const labels = {!! json_encode($chartLabels ?? []) !!};
             const data = {!! json_encode($chartData ?? []) !!};
-
-            // Theme colors
-            const primaryColor = '#4f46e5';
-            const primaryColorLight = 'rgba(79, 70, 229, 0.1)';
-
+            
             new Chart(ctx, {
                 type: 'line',
                 data: {
@@ -99,14 +148,13 @@
                     datasets: [{
                         label: 'Jumlah Laporan',
                         data: data,
-                        borderColor: primaryColor,
-                        backgroundColor: primaryColorLight,
+                        borderColor: '#4f46e5',
+                        backgroundColor: 'rgba(79, 70, 229, 0.1)',
                         borderWidth: 3,
                         pointBackgroundColor: '#ffffff',
-                        pointBorderColor: primaryColor,
+                        pointBorderColor: '#4f46e5',
                         pointBorderWidth: 2,
                         pointRadius: 4,
-                        pointHoverRadius: 6,
                         fill: true,
                         tension: 0.4
                     }]
@@ -114,49 +162,90 @@
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
-                    plugins: {
-                        legend: {
-                            display: false
-                        },
-                        tooltip: {
-                            backgroundColor: '#1e293b',
-                            padding: 12,
-                            titleFont: { size: 13, family: "'Inter', sans-serif" },
-                            bodyFont: { size: 13, family: "'Inter', sans-serif" },
-                            displayColors: false,
-                            cornerRadius: 8,
-                        }
-                    },
+                    plugins: { legend: { display: false } },
                     scales: {
-                        y: {
-                            beginAtZero: true,
-                            ticks: {
-                                stepSize: 1,
-                                font: { family: "'Inter', sans-serif", size: 12 },
-                                color: '#64748b'
-                            },
-                            grid: {
-                                color: '#f1f5f9',
-                                drawBorder: false,
-                            },
-                            border: { display: false }
-                        },
-                        x: {
-                            ticks: {
-                                font: { family: "'Inter', sans-serif", size: 12 },
-                                color: '#64748b'
-                            },
-                            grid: {
-                                display: false,
-                                drawBorder: false,
-                            },
-                            border: { display: false }
-                        }
-                    },
-                    interaction: {
-                        intersect: false,
-                        mode: 'index',
-                    },
+                        y: { beginAtZero: true, grid: { color: '#f1f5f9' }, border: { display: false } },
+                        x: { grid: { display: false }, border: { display: false } }
+                    }
+                }
+            });
+
+            // --- LEAFLET MAP ---
+            const map = L.map('map', {
+                scrollWheelZoom: true, // Diaktifkan sesuai request
+                fadeAnimation: true
+            }).setView([-7.7956, 110.3695], 11);
+
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '&copy; OpenStreetMap'
+            }).addTo(map);
+
+            // Sinkronisasi data dari session Laravel
+            const disasterData = {!! json_encode(session('laporans', [])) !!};
+
+            // Mapping lokasi ke koordinat (Sederhana)
+            const geoMapping = {
+                'Bantul': [-7.8897, 110.3289],
+                'Sleman': [-7.7233, 110.3650],
+                'Kulon Progo': [-7.8333, 110.1583],
+                'Gunung Kidul': [-7.9999, 110.6000],
+                'Yogyakarta': [-7.7956, 110.3695]
+            };
+
+                    const createCustomIcon = (tingkat) => {
+                let colorClass = tingkat === 'Darurat' ? 'bg-red-500' : (tingkat === 'Bahaya' ? 'bg-blue-900' : 'bg-slate-400');
+                let extraClass = tingkat === 'Darurat' ? 'pulse-red' : '';
+                return L.divIcon({
+                    className: 'custom-div-icon',
+                    html: `<div class="w-4 h-4 rounded-full border-2 border-white shadow-lg ${colorClass} ${extraClass}"></div>`,
+                    iconSize: [16, 16],
+                    iconAnchor: [8, 8]
+                });
+            };
+
+            disasterData.forEach(item => {
+                // Hanya tampilkan yang sudah terverifikasi (Verified)
+                if (item.status === 'Verified') {
+                    // Cari koordinat berdasarkan lokasi string, jika tidak ada gunakan default sedikit acak
+                    let coords = geoMapping[item.lokasi] || [-7.7956 + (Math.random() * 0.1), 110.3695 + (Math.random() * 0.1)];
+                    
+                    const marker = L.marker(coords, {
+                        icon: createCustomIcon(item.tingkat_bencana)
+                    }).addTo(map);
+
+                    // Dynamic button color based on disaster level
+                    const btnColor = item.tingkat_bencana === 'Darurat' ? 'bg-red-600 hover:bg-red-700' : 
+                                    (item.tingkat_bencana === 'Bahaya' ? 'bg-blue-900 hover:bg-blue-950' : 'bg-slate-800 hover:bg-slate-900');
+
+                    const popupContent = `
+                        <div class="overflow-hidden font-sans">
+                            <div class="p-5 bg-slate-900 text-white relative">
+                                <div class="flex items-center justify-between mb-2">
+                                    <span class="text-[10px] font-bold uppercase tracking-widest opacity-60">${item.tanggal}</span>
+                                    <span class="px-2 py-0.5 rounded text-[9px] font-extrabold ${
+                                        item.tingkat_bencana === 'Darurat' ? 'bg-red-500' : 
+                                        (item.tingkat_bencana === 'Bahaya' ? 'bg-blue-600' : 'bg-slate-500')
+                                    }">${item.tingkat_bencana}</span>
+                                </div>
+                                <h4 class="font-bold text-base leading-tight pr-6">${item.judul}</h4>
+                            </div>
+                            <div class="p-5 bg-white">
+                                <div class="flex items-center gap-2 mb-4">
+                                    <div class="w-7 h-7 rounded-full bg-slate-50 flex items-center justify-center border border-slate-100">
+                                        <i class="bi bi-geo-alt text-primary-600 text-xs"></i>
+                                    </div>
+                                    <p class="text-xs text-slate-700 font-bold">${item.lokasi}</p>
+                                </div>
+                                <p class="text-[11px] text-slate-500 leading-relaxed mb-5 line-clamp-3">${item.deskripsi.substring(0, 100)}...</p>
+                                <a href="/laporan/detail/${item.id}" class="block w-full py-2.5 ${btnColor} text-white text-center text-xs font-bold rounded-lg transition-all shadow-sm">
+                                    Detail Laporan
+                                </a>
+                            </div>
+                        </div>
+                    `;
+
+                    marker.bindPopup(popupContent, { maxWidth: 280 });
+                    marker.on('mouseover', function() { this.openPopup(); });
                 }
             });
         });
