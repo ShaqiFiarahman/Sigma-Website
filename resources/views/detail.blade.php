@@ -108,10 +108,9 @@
                             <select name="tingkat_bencana" id="tingkat_bencana" required
                                     class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500 transition-all bg-white text-slate-700">
                                 <option value="">Pilih tingkat darurat...</option>
-                                <option value="Awas">Awas (Kritis)</option>
-                                <option value="Siaga 1">Siaga 1 (Sangat Bahaya)</option>
-                                <option value="Siaga 2">Siaga 2 (Bahaya)</option>
-                                <option value="Waspada">Waspada (Potensi)</option>
+                                <option value="Darurat">Darurat (Awas)</option>
+                                <option value="Bahaya">Bahaya (Siaga 1)</option>
+                                <option value="Waspada">Waspada (Siaga 2)</option>
                             </select>
                         </div>
 

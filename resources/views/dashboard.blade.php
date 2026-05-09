@@ -135,12 +135,21 @@
             display: none !important;
         }
 
-        @keyframes marker-pulse {
-            0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); }
-            70% { transform: scale(1); box-shadow: 0 0 0 10px rgba(239, 68, 68, 0); }
-            100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+        @keyframes pulse-red {
+            0% { transform: translate(-50%, -50%) scale(0.95); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); }
+            70% { transform: translate(-50%, -50%) scale(1); box-shadow: 0 0 0 10px rgba(239, 68, 68, 0); }
+            100% { transform: translate(-50%, -50%) scale(0.95); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
         }
-        .pulse-red { animation: marker-pulse 2s infinite; }
+        @keyframes pulse-blue {
+            0% { transform: translate(-50%, -50%) scale(0.95); box-shadow: 0 0 0 0 rgba(30, 58, 138, 0.7); }
+            70% { transform: translate(-50%, -50%) scale(1); box-shadow: 0 0 0 10px rgba(30, 58, 138, 0); }
+            100% { transform: translate(-50%, -50%) scale(0.95); box-shadow: 0 0 0 0 rgba(30, 58, 138, 0); }
+        }
+        @keyframes pulse-slate {
+            0% { transform: translate(-50%, -50%) scale(0.95); box-shadow: 0 0 0 0 rgba(148, 163, 184, 0.7); }
+            70% { transform: translate(-50%, -50%) scale(1); box-shadow: 0 0 0 10px rgba(148, 163, 184, 0); }
+            100% { transform: translate(-50%, -50%) scale(0.95); box-shadow: 0 0 0 0 rgba(148, 163, 184, 0); }
+        }
 
         /* Custom marker container */
         .custom-marker {
@@ -148,13 +157,25 @@
             height: 16px;
             border-radius: 50%;
             border: 2px solid white;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+            position: absolute;
+            cursor: pointer;
+            transform: translate(-50%, -50%);
         }
+        
+        .marker-darurat { background-color: #ef4444; animation: pulse-red 2s infinite; }
+        .marker-bahaya { background-color: #1e3a8a; animation: pulse-blue 2s infinite; }
+        .marker-waspada { background-color: #94a3b8; animation: pulse-slate 2s infinite; }
     </style>
 
     <script>
         let map;
         let infoWindow;
+
+        window.closeMapPopup = function() {
+            if (infoWindow) {
+                infoWindow.close();
+            }
+        };
 
         function initMap() {
             // --- CHART.JS ---
@@ -185,13 +206,49 @@
                     maintainAspectRatio: false,
                     plugins: { legend: { display: false } },
                     scales: {
-                        y: { beginAtZero: true, grid: { color: '#f1f5f9' }, border: { display: false } },
+                        y: { 
+                            beginAtZero: true, 
+                            grid: { color: '#f1f5f9' }, 
+                            border: { display: false },
+                            ticks: { precision: 0 }
+                        },
                         x: { grid: { display: false }, border: { display: false } }
                     }
                 }
             });
 
             // --- GOOGLE MAPS ---
+            class CustomMarker extends google.maps.OverlayView {
+                constructor(position, element, map, onClick) {
+                    super();
+                    this.position = position;
+                    this.element = element;
+                    this.element.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        if (onClick) onClick();
+                    });
+                    this.setMap(map);
+                }
+                onAdd() {
+                    this.getPanes().overlayMouseTarget.appendChild(this.element);
+                }
+                draw() {
+                    const pos = this.getProjection().fromLatLngToDivPixel(this.position);
+                    if (pos) {
+                        this.element.style.left = pos.x + 'px';
+                        this.element.style.top = pos.y + 'px';
+                    }
+                }
+                onRemove() {
+                    if (this.element.parentNode) {
+                        this.element.parentNode.removeChild(this.element);
+                    }
+                }
+                getPosition() {
+                    return this.position;
+                }
+            }
+
             const center = { lat: -7.7956, lng: 110.3695 };
             map = new google.maps.Map(document.getElementById("map"), {
                 zoom: 11,
@@ -205,7 +262,8 @@
                 disableDefaultUI: false,
                 mapTypeControl: false,
                 streetViewControl: false,
-                fullscreenControl: true
+                fullscreenControl: true,
+                gestureHandling: 'greedy'
             });
 
             infoWindow = new google.maps.InfoWindow();
@@ -226,57 +284,56 @@
                         lng: 110.3695 + (Math.random() * 0.1 - 0.05) 
                     };
                     
-                    let color = item.tingkat_bencana === 'Darurat' ? '#ef4444' : 
-                                (item.tingkat_bencana === 'Bahaya' ? '#1e3a8a' : '#94a3b8');
+                    let colorClass = item.tingkat_bencana === 'Darurat' ? 'marker-darurat' : 
+                                     (item.tingkat_bencana === 'Bahaya' ? 'marker-bahaya' : 'marker-waspada');
 
-                    // Using simple SVG marker for consistent styling
-                    const marker = new google.maps.Marker({
-                        position: coords,
-                        map: map,
-                        icon: {
-                            path: google.maps.SymbolPath.CIRCLE,
-                            fillColor: color,
-                            fillOpacity: 1,
-                            strokeWeight: 2,
-                            strokeColor: '#ffffff',
-                            scale: 8
-                        },
-                        title: item.judul
-                    });
+                    const markerEl = document.createElement('div');
+                    markerEl.className = `custom-marker ${colorClass}`;
+                    markerEl.title = item.judul;
 
                     const btnColor = item.tingkat_bencana === 'Darurat' ? 'bg-red-600 hover:bg-red-700' : 
                                     (item.tingkat_bencana === 'Bahaya' ? 'bg-blue-900 hover:bg-blue-950' : 'bg-slate-800 hover:bg-slate-900');
 
                     const popupContent = `
-                        <div class="overflow-hidden font-sans" style="width: 280px">
+                        <div class="overflow-hidden font-sans relative" style="width: 280px">
+                            <button type="button" class="absolute top-4 right-4 w-6 h-6 flex items-center justify-center rounded-full bg-slate-700 hover:bg-slate-600 text-white transition-colors z-[100]" onclick="closeMapPopup()">
+                                <i class="bi bi-x"></i>
+                            </button>
                             <div class="p-5 bg-slate-900 text-white relative">
-                                <div class="flex items-center justify-between mb-2">
+                                <div class="flex items-center justify-between mb-3 pr-6">
                                     <span class="text-[10px] font-bold uppercase tracking-widest opacity-60">${item.tanggal}</span>
                                     <span class="px-2 py-0.5 rounded text-[9px] font-extrabold ${
                                         item.tingkat_bencana === 'Darurat' ? 'bg-red-500' : 
                                         (item.tingkat_bencana === 'Bahaya' ? 'bg-blue-600' : 'bg-slate-500')
                                     }">${item.tingkat_bencana}</span>
                                 </div>
-                                <h4 class="font-bold text-base leading-tight pr-6">${item.judul}</h4>
+                                <h4 class="font-bold text-base leading-tight pr-2">${item.judul}</h4>
                             </div>
                             <div class="p-5 bg-white">
-                                <div class="flex items-center gap-2 mb-4">
-                                    <div class="w-7 h-7 rounded-full bg-slate-50 flex items-center justify-center border border-slate-100">
-                                        <i class="bi bi-geo-alt text-primary-600 text-xs"></i>
+                                <div class="flex items-center gap-3 mb-4">
+                                    <div class="w-8 h-8 rounded-full bg-slate-50 flex items-center justify-center border border-slate-100 shrink-0">
+                                        <i class="bi bi-geo-alt text-primary-600 text-sm"></i>
                                     </div>
-                                    <p class="text-xs text-slate-700 font-bold">${item.lokasi}</p>
+                                    <div>
+                                        <p class="text-[10px] text-slate-400 font-bold uppercase tracking-wider mb-0.5">Lokasi Kejadian</p>
+                                        <p class="text-xs text-slate-800 font-bold leading-none">${item.lokasi}</p>
+                                    </div>
                                 </div>
-                                <p class="text-[11px] text-slate-500 leading-relaxed mb-5 line-clamp-3">${item.deskripsi.substring(0, 100)}...</p>
-                                <a href="/laporan/detail/${item.id}" class="block w-full py-2.5 ${btnColor} text-white text-center text-xs font-bold rounded-lg transition-all shadow-sm">
-                                    Detail Laporan
+                                <div class="bg-slate-50 border border-slate-100 rounded-lg p-3 mb-5">
+                                    <p class="text-[11px] text-slate-600 leading-relaxed line-clamp-3 m-0">${item.deskripsi}</p>
+                                </div>
+                                <a href="/laporan/detail/${item.id}" class="block w-full py-2.5 bg-slate-900 hover:bg-slate-800 text-white text-center text-xs font-bold rounded-lg transition-all shadow-sm flex items-center justify-center gap-2">
+                                    <span>Detail Laporan</span>
+                                    <i class="bi bi-arrow-right"></i>
                                 </a>
                             </div>
                         </div>
                     `;
 
-                    marker.addListener("mouseover", () => {
+                    const marker = new CustomMarker(coords, markerEl, map, () => {
                         infoWindow.setContent(popupContent);
-                        infoWindow.open(map, marker);
+                        infoWindow.setPosition(coords);
+                        infoWindow.open(map);
                     });
                 }
             });

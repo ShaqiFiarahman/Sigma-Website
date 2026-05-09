@@ -32,9 +32,24 @@
                        class="w-full pl-9 pr-4 py-2 text-sm border border-slate-300 rounded-lg focus:outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500 transition-all">
             </div>
             <div class="flex items-center gap-2">
-                <button class="px-3 py-2 text-sm font-medium text-slate-600 bg-slate-50 border border-slate-200 rounded-lg hover:bg-slate-100 transition-colors">
-                    <i class="bi bi-filter mr-1"></i> Filter
-                </button>
+                <div class="relative hidden sm:block">
+                    <select id="tingkatFilter" class="appearance-none pl-3 pr-8 py-2 text-sm font-medium text-slate-600 bg-slate-50 border border-slate-200 rounded-lg hover:bg-slate-100 transition-colors focus:outline-none focus:ring-1 focus:ring-primary-500 cursor-pointer">
+                        <option value="">Semua Tingkat</option>
+                        <option value="darurat">Darurat (Awas)</option>
+                        <option value="bahaya">Bahaya (Siaga 1)</option>
+                        <option value="waspada">Waspada (Siaga 2)</option>
+                    </select>
+                    <i class="bi bi-chevron-down absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs pointer-events-none"></i>
+                </div>
+                <div class="relative">
+                    <select id="statusFilter" class="appearance-none pl-3 pr-8 py-2 text-sm font-medium text-slate-600 bg-slate-50 border border-slate-200 rounded-lg hover:bg-slate-100 transition-colors focus:outline-none focus:ring-1 focus:ring-primary-500 cursor-pointer">
+                        <option value="">Semua Status</option>
+                        <option value="pending">Pending</option>
+                        <option value="verified">Verified</option>
+                        <option value="decline">Decline</option>
+                    </select>
+                    <i class="bi bi-chevron-down absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs pointer-events-none"></i>
+                </div>
             </div>
         </div>
 
@@ -46,7 +61,12 @@
                         <th class="px-5 py-3 font-medium">Judul Laporan</th>
                         <th class="px-5 py-3 font-medium">Lokasi</th>
                         <th class="px-5 py-3 font-medium">Tingkat</th>
-                        <th class="px-5 py-3 font-medium">Tanggal</th>
+                        <th class="px-5 py-3 font-medium cursor-pointer select-none group" id="sortTanggal">
+                            <div class="flex items-center gap-1.5">
+                                Tanggal
+                                <i class="bi bi-arrow-down-short text-slate-400 group-hover:text-slate-600 transition-colors text-lg leading-none" id="sortIcon"></i>
+                            </div>
+                        </th>
                         <th class="px-5 py-3 font-medium">Status</th>
                         <th class="px-5 py-3 font-medium text-right">Aksi</th>
                     </tr>
@@ -58,9 +78,9 @@
                             <td class="px-5 py-3.5 text-slate-500"><i class="bi bi-geo-alt mr-1 text-slate-400"></i>{{ $laporan['lokasi'] }}</td>
                             <td class="px-5 py-3.5">
                                 @if(!empty($laporan['tingkat_bencana']))
-                                    @if($laporan['tingkat_bencana'] == 'Awas')
+                                    @if(in_array($laporan['tingkat_bencana'], ['Darurat', 'Awas']))
                                         <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-red-100 text-red-800">{{ $laporan['tingkat_bencana'] }}</span>
-                                    @elseif(str_contains($laporan['tingkat_bencana'], 'Siaga'))
+                                    @elseif(in_array($laporan['tingkat_bencana'], ['Bahaya', 'Siaga 1', 'Siaga 2']))
                                         <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-amber-100 text-amber-800">{{ $laporan['tingkat_bencana'] }}</span>
                                     @else
                                         <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-blue-100 text-blue-800">{{ $laporan['tingkat_bencana'] }}</span>
@@ -114,11 +134,83 @@
 
 @section('scripts')
 <script>
-    document.getElementById('tableSearch')?.addEventListener('input', function () {
-        const q = this.value.toLowerCase();
+    const searchInput = document.getElementById('tableSearch');
+    const statusFilter = document.getElementById('statusFilter');
+    const tingkatFilter = document.getElementById('tingkatFilter');
+
+    function filterTable() {
+        const q = searchInput?.value.toLowerCase() || '';
+        const status = statusFilter?.value.toLowerCase() || '';
+        const tingkat = tingkatFilter?.value.toLowerCase() || '';
+
         document.querySelectorAll('#laporanTable tbody tr').forEach(row => {
-            row.style.display = row.textContent.toLowerCase().includes(q) ? '' : 'none';
+            // Check if this is the "Tidak ada laporan" row
+            if (row.cells.length === 1) return; 
+
+            const tingkatCell = row.querySelector('td:nth-child(3)');
+            const tingkatText = tingkatCell ? tingkatCell.textContent.toLowerCase().trim() : '';
+
+            const statusCell = row.querySelector('td:nth-child(5)');
+            const statusText = statusCell ? statusCell.textContent.toLowerCase().trim() : '';
+            
+            const matchSearch = row.textContent.toLowerCase().includes(q);
+            const matchStatus = status === '' || statusText.includes(status);
+            
+            let matchTingkat = true;
+            if (tingkat !== '') {
+                if (tingkat === 'darurat') {
+                    matchTingkat = tingkatText.includes('darurat') || tingkatText.includes('awas');
+                } else if (tingkat === 'bahaya') {
+                    matchTingkat = tingkatText.includes('bahaya') || tingkatText.includes('siaga 1');
+                } else if (tingkat === 'waspada') {
+                    matchTingkat = tingkatText.includes('waspada') || tingkatText.includes('siaga 2');
+                }
+            }
+
+            if (matchSearch && matchStatus && matchTingkat) {
+                row.style.display = '';
+            } else {
+                row.style.display = 'none';
+            }
         });
+    }
+
+    searchInput?.addEventListener('input', filterTable);
+    statusFilter?.addEventListener('change', filterTable);
+    tingkatFilter?.addEventListener('change', filterTable);
+
+    // Sorting Logic
+    let sortAsc = false; // Default is descending (newest first)
+    const sortBtn = document.getElementById('sortTanggal');
+    const sortIcon = document.getElementById('sortIcon');
+    const tbody = document.querySelector('#laporanTable tbody');
+
+    sortBtn?.addEventListener('click', () => {
+        sortAsc = !sortAsc;
+        
+        // Update icon based on sort direction
+        if (sortAsc) {
+            sortIcon.className = 'bi bi-arrow-up-short text-primary-600 transition-colors text-lg leading-none';
+        } else {
+            sortIcon.className = 'bi bi-arrow-down-short text-primary-600 transition-colors text-lg leading-none';
+        }
+
+        const rows = Array.from(tbody.querySelectorAll('tr'));
+        // Exclude the "Tidak ada laporan" row if present
+        const dataRows = rows.filter(row => row.cells.length > 1);
+        const emptyRow = rows.find(row => row.cells.length === 1);
+        
+        if (dataRows.length === 0) return;
+
+        dataRows.sort((a, b) => {
+            const dateA = new Date(a.querySelector('td:nth-child(4)').textContent.trim());
+            const dateB = new Date(b.querySelector('td:nth-child(4)').textContent.trim());
+            return sortAsc ? dateA - dateB : dateB - dateA;
+        });
+
+        // Re-append sorted rows
+        dataRows.forEach(row => tbody.appendChild(row));
+        if (emptyRow) tbody.appendChild(emptyRow);
     });
 </script>
 @endsection

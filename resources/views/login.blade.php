@@ -43,7 +43,18 @@
             <h2 class="text-[1.75rem] font-extrabold text-slate-900 tracking-tight mb-1">Selamat Datang</h2>
             <p class="text-slate-500 text-sm mb-10">Silakan masuk menggunakan akun admin Anda.</p>
 
-            <form action="{{ route('dashboard') }}" method="GET" id="loginForm">
+            @if ($errors->any())
+                <div class="mb-4 p-4 rounded-xl bg-red-50 border border-red-100 text-red-600 text-sm font-medium">
+                    <ul class="list-disc list-inside">
+                        @foreach ($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+            @endif
+
+            <form action="{{ route('login.post') }}" method="POST" id="loginForm">
+                @csrf
 
                 {{-- Email --}}
                 <div class="mb-5">

@@ -51,7 +51,10 @@
                 <div class="hidden md:flex items-center gap-3 pl-4 border-l border-slate-200">
                     <div class="text-right">
                         <p class="text-sm font-semibold text-slate-900 leading-none">Admin</p>
-                        <a href="{{ route('login') }}" class="text-xs text-slate-500 hover:text-red-600 transition-colors mt-1 inline-block">Logout</a>
+                        <form action="{{ route('logout') }}" method="POST" class="inline">
+                            @csrf
+                            <button type="submit" class="text-xs text-slate-500 hover:text-red-600 transition-colors mt-1 inline-block">Logout</button>
+                        </form>
                     </div>
                     <div class="w-9 h-9 rounded-full bg-slate-100 border border-slate-200 flex items-center justify-center text-slate-600 text-sm font-bold">
                         A
@@ -71,7 +74,10 @@
             <a href="{{ route('laporan') }}" class="block px-3 py-2.5 rounded-lg text-sm font-medium {{ Route::is('laporan') || Route::is('detail') ? 'bg-slate-50 text-slate-900' : 'text-slate-600' }}">Laporan</a>
             <a href="{{ route('create') }}" class="block px-3 py-2.5 rounded-lg text-sm font-medium {{ Route::is('create') ? 'bg-slate-50 text-slate-900' : 'text-slate-600' }}">Buat Laporan</a>
             <div class="border-t border-slate-100 mt-2 pt-2">
-                <a href="{{ route('login') }}" class="block px-3 py-2.5 text-sm font-medium text-red-600 hover:bg-red-50 rounded-lg">Logout</a>
+                <form action="{{ route('logout') }}" method="POST">
+                    @csrf
+                    <button type="submit" class="w-full text-left px-3 py-2.5 text-sm font-medium text-red-600 hover:bg-red-50 rounded-lg">Logout</button>
+                </form>
             </div>
         </div>
     </nav>
