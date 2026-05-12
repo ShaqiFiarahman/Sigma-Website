@@ -1,4 +1,4 @@
-@extends('layout')
+@extends('layouts.app')
 @section('title', 'Buat Laporan Baru')
 @section('subtitle', 'Masukkan detail laporan bencana secara akurat.')
 

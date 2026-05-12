@@ -1,8 +1,8 @@
-@extends('layout')
+@extends('layouts.app')
 @section('title', 'Detail Laporan')
 
 @section('page-actions')
-    <a href="{{ route('laporan') }}" class="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-slate-600 bg-white border border-slate-200 rounded-lg hover:bg-slate-50 hover:border-slate-300 transition-all duration-200 shadow-sm">
+    <a href="{{ route('laporan.index') }}" class="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-slate-600 bg-white border border-slate-200 rounded-lg hover:bg-slate-50 hover:border-slate-300 transition-all duration-200 shadow-sm">
         <i class="bi bi-arrow-left text-xs"></i> Kembali
     </a>
 @endsection
@@ -126,62 +126,66 @@
 
                 <div class="border-t border-slate-100 my-5"></div>
 
-                @if(strtolower($laporan['status']) == 'pending')
-                    
-                    <p class="text-sm text-slate-500 mb-4 leading-relaxed">Tinjau laporan ini dan tentukan tingkat keparahan sebelum disetujui.</p>
-
-                    <form action="{{ route('laporan.update_status', $laporan['id']) }}" method="POST" class="mb-3">
-                        @csrf
-                        <input type="hidden" name="status" value="Verified">
+                @if(in_array(auth()->user()->role, ['admin', 'relawan']))
+                    @if(strtolower($laporan['status']) == 'pending')
                         
-                        <div class="mb-4">
-                            <label for="tingkat_bencana" class="block text-xs font-bold text-slate-700 mb-2 uppercase tracking-wider">
-                                Pilih Tingkat <span class="text-red-500">*</span>
-                            </label>
-                            <select name="tingkat_bencana" id="tingkat_bencana" required
-                                    class="w-full px-3 py-2.5 text-sm border border-slate-200 rounded-xl focus:outline-none focus:border-blue-400 focus:ring-2 focus:ring-blue-500/20 transition-all bg-white text-slate-700">
-                                <option value="">Pilih tingkat darurat...</option>
-                                <option value="Darurat">🔴 Darurat (Awas)</option>
-                                <option value="Bahaya">🟡 Bahaya (Siaga 1)</option>
-                                <option value="Waspada">🔵 Waspada (Siaga 2)</option>
-                            </select>
+                        <p class="text-sm text-slate-500 mb-4 leading-relaxed">Tinjau laporan ini dan tentukan tingkat keparahan sebelum disetujui.</p>
+
+                        <form action="{{ route('laporan.update_status', $laporan['id']) }}" method="POST" class="mb-3">
+                            @csrf
+                            <input type="hidden" name="status" value="Verified">
+                            
+                            <div class="mb-4">
+                                <label for="tingkat_bencana" class="block text-xs font-bold text-slate-700 mb-2 uppercase tracking-wider">
+                                    Pilih Tingkat <span class="text-red-500">*</span>
+                                </label>
+                                <select name="tingkat_bencana" id="tingkat_bencana" required
+                                        class="w-full px-3 py-2.5 text-sm border border-slate-200 rounded-xl focus:outline-none focus:border-blue-400 focus:ring-2 focus:ring-blue-500/20 transition-all bg-white text-slate-700">
+                                    <option value="">Pilih tingkat darurat...</option>
+                                    <option value="Darurat">🔴 Darurat (Awas)</option>
+                                    <option value="Bahaya">🟡 Bahaya (Siaga 1)</option>
+                                    <option value="Waspada">🔵 Waspada (Siaga 2)</option>
+                                </select>
+                            </div>
+
+                            <button type="submit" class="w-full flex items-center justify-center gap-2 px-4 py-2.5 text-sm font-semibold text-white rounded-xl transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg"
+                                    style="background: linear-gradient(135deg, #059669 0%, #10b981 100%); box-shadow: 0 2px 8px rgba(16,185,129,0.25);">
+                                <i class="bi bi-check-circle"></i> Setujui Laporan
+                            </button>
+                        </form>
+
+                        <form action="{{ route('laporan.update_status', $laporan['id']) }}" method="POST">
+                            @csrf
+                            <input type="hidden" name="status" value="Decline">
+                            <button type="submit" class="w-full flex items-center justify-center gap-2 px-4 py-2.5 text-sm font-semibold text-red-600 bg-white border border-red-200 rounded-xl hover:bg-red-50 hover:border-red-300 transition-all duration-200">
+                                <i class="bi bi-x-circle"></i> Tolak Laporan
+                            </button>
+                        </form>
+                    @else
+                        <div class="text-center p-5 rounded-xl border {{ strtolower($laporan['status']) == 'verified' ? 'border-emerald-100' : 'border-red-100' }}"
+                             style="{{ strtolower($laporan['status']) == 'verified' ? 'background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);' : 'background: linear-gradient(135deg, #fff5f5 0%, #fee2e2 100%);' }}">
+                            @if(strtolower($laporan['status']) == 'verified')
+                                <div class="w-12 h-12 rounded-2xl flex items-center justify-center mx-auto mb-3"
+                                     style="background: linear-gradient(135deg, #059669 0%, #10b981 100%);">
+                                    <i class="bi bi-check-lg text-2xl text-white"></i>
+                                </div>
+                                <p class="text-sm font-bold text-emerald-800">Laporan Telah Disetujui</p>
+                                <p class="text-xs text-emerald-600 mt-1">Data ini sudah terverifikasi</p>
+                            @else
+                                <div class="w-12 h-12 rounded-2xl flex items-center justify-center mx-auto mb-3"
+                                     style="background: linear-gradient(135deg, #dc2626 0%, #ef4444 100%);">
+                                    <i class="bi bi-x-lg text-2xl text-white"></i>
+                                </div>
+                                <p class="text-sm font-bold text-red-800">Laporan Ditolak</p>
+                                <p class="text-xs text-red-500 mt-1">Laporan ini tidak dapat diproses</p>
+                            @endif
                         </div>
-
-                        <button type="submit" class="w-full flex items-center justify-center gap-2 px-4 py-2.5 text-sm font-semibold text-white rounded-xl transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg"
-                                style="background: linear-gradient(135deg, #059669 0%, #10b981 100%); box-shadow: 0 2px 8px rgba(16,185,129,0.25);">
-                            <i class="bi bi-check-circle"></i> Setujui Laporan
-                        </button>
-                    </form>
-
-                    <form action="{{ route('laporan.update_status', $laporan['id']) }}" method="POST">
-                        @csrf
-                        <input type="hidden" name="status" value="Decline">
-                        <button type="submit" class="w-full flex items-center justify-center gap-2 px-4 py-2.5 text-sm font-semibold text-red-600 bg-white border border-red-200 rounded-xl hover:bg-red-50 hover:border-red-300 transition-all duration-200">
-                            <i class="bi bi-x-circle"></i> Tolak Laporan
-                        </button>
-                    </form>
-
+                    @endif
                 @else
-                    
-                    <div class="text-center p-5 rounded-xl border {{ strtolower($laporan['status']) == 'verified' ? 'border-emerald-100' : 'border-red-100' }}"
-                         style="{{ strtolower($laporan['status']) == 'verified' ? 'background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);' : 'background: linear-gradient(135deg, #fff5f5 0%, #fee2e2 100%);' }}">
-                        @if(strtolower($laporan['status']) == 'verified')
-                            <div class="w-12 h-12 rounded-2xl flex items-center justify-center mx-auto mb-3"
-                                 style="background: linear-gradient(135deg, #059669 0%, #10b981 100%);">
-                                <i class="bi bi-check-lg text-2xl text-white"></i>
-                            </div>
-                            <p class="text-sm font-bold text-emerald-800">Laporan Telah Disetujui</p>
-                            <p class="text-xs text-emerald-600 mt-1">Data ini sudah terverifikasi</p>
-                        @else
-                            <div class="w-12 h-12 rounded-2xl flex items-center justify-center mx-auto mb-3"
-                                 style="background: linear-gradient(135deg, #dc2626 0%, #ef4444 100%);">
-                                <i class="bi bi-x-lg text-2xl text-white"></i>
-                            </div>
-                            <p class="text-sm font-bold text-red-800">Laporan Ditolak</p>
-                            <p class="text-xs text-red-500 mt-1">Laporan ini tidak dapat diproses</p>
-                        @endif
+                    <div class="p-4 rounded-xl bg-slate-50 border border-slate-100 text-center">
+                        <i class="bi bi-info-circle text-slate-400 mb-2 block text-xl"></i>
+                        <p class="text-xs text-slate-500 leading-relaxed">Anda masuk sebagai <b>{{ auth()->user()->role }}</b>. Hanya Admin dan Relawan yang dapat memverifikasi laporan ini.</p>
                     </div>
-
                 @endif
 
             </div>

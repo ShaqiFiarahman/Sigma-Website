@@ -1,4 +1,4 @@
-@extends('layout')
+@extends('layouts.app')
 @section('title', 'Data Laporan')
 @section('subtitle', 'Daftar keseluruhan laporan bencana yang masuk ke sistem.')
 
@@ -129,7 +129,7 @@
                                 @endif
                             </td>
                             <td class="px-6 py-4 text-right">
-                                <a href="{{ route('detail', ['id' => $laporan['id']]) }}"
+                                <a href="{{ route('laporan.show', ['id' => $laporan['id']]) }}"
                                    class="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-slate-700 bg-white border border-slate-200 rounded-lg hover:border-blue-300 hover:text-blue-700 hover:bg-blue-50 transition-all duration-200 shadow-sm">
                                     Detail <i class="bi bi-arrow-right text-[10px]"></i>
                                 </a>

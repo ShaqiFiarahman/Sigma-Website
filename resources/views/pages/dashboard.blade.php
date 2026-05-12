@@ -1,4 +1,4 @@
-@extends('layout')
+@extends('layouts.app')
 @section('title', 'Dashboard')
 @section('subtitle', 'Ikhtisar data dan status laporan terkini.')
 
@@ -18,8 +18,8 @@
 
         <div class="relative z-10 px-12 sm:px-16 py-14 flex flex-col sm:flex-row sm:items-center justify-between gap-12">
             <div class="max-w-3xl">
-                <h2 class="text-3xl sm:text-4xl font-extrabold text-white tracking-tight mb-3">Selamat datang, Admin.</h2>
-                <p class="text-base sm:text-lg leading-relaxed" style="color: rgba(228,240,246,0.7);">
+                <h2 class="text-2xl sm:text-3xl font-extrabold text-white tracking-tight mb-3">Selamat datang, Admin.</h2>
+                <p class="text-sm sm:text-base leading-relaxed" style="color: rgba(228,240,246,0.7);">
                     Pantau laporan bencana, verifikasi kejadian, dan ambil tindakan cepat dari satu panel kendali terpusat. SIGMA siap membantu koordinasi tim Anda secara real-time hari ini.
                 </p>
             </div>

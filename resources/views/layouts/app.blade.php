@@ -89,9 +89,9 @@
                         </a>
                     </li>
                     <li>
-                        <a href="{{ route('laporan') }}" 
+                        <a href="{{ route('laporan.index') }}" 
                            class="px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 
-                                  {{ Route::is('laporan') || Route::is('detail') ? 'nav-active' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100/70' }}">
+                                  {{ Route::is('laporan.index') || Route::is('laporan.show') ? 'nav-active' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100/70' }}">
                             <i class="bi bi-file-earmark-text mr-1.5 text-xs opacity-70"></i>Laporan
                         </a>
                     </li>
@@ -99,21 +99,22 @@
             </div>
 
             <div class="flex items-center gap-4">
-                <a href="{{ route('create') }}" class="btn-primary hidden md:inline-flex items-center justify-center px-4 py-2 text-sm font-medium text-white rounded-lg transition-all duration-200">
+                <a href="{{ route('laporan.create') }}" class="btn-primary hidden md:inline-flex items-center justify-center px-4 py-2 text-sm font-medium text-white rounded-lg transition-all duration-200">
                     <i class="bi bi-plus-lg mr-1.5 text-xs"></i> Buat Laporan
                 </a>
                 
                 {{-- User profile --}}
                 <div class="hidden md:flex items-center gap-3 pl-4 border-l border-slate-200">
                     <div class="text-right">
-                        <p class="text-sm font-semibold text-slate-900 leading-none">Admin</p>
+                        <p class="text-sm font-semibold text-slate-900 leading-none">{{ auth()->user()->name }}</p>
+                        <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1">{{ auth()->user()->role }}</p>
                         <form action="{{ route('logout') }}" method="POST" class="inline">
                             @csrf
-                            <button type="submit" class="text-xs text-slate-400 hover:text-red-500 transition-colors mt-1 inline-block">Logout</button>
+                            <button type="submit" class="text-[10px] text-slate-400 hover:text-red-500 transition-colors mt-1 inline-block font-semibold">Logout</button>
                         </form>
                     </div>
                     <div class="w-9 h-9 rounded-full flex items-center justify-center text-white text-sm font-bold" style="background: linear-gradient(135deg, #0A0F1E 0%, #1e3a8a 100%);">
-                        A
+                        {{ substr(auth()->user()->name, 0, 1) }}
                     </div>
                 </div>
 
@@ -129,10 +130,10 @@
             <a href="{{ route('dashboard') }}" class="flex items-center gap-2 px-3 py-2.5 rounded-lg text-sm font-medium {{ Route::is('dashboard') ? 'bg-blue-50 text-blue-700' : 'text-slate-600' }}">
                 <i class="bi bi-grid-1x2"></i>Dashboard
             </a>
-            <a href="{{ route('laporan') }}" class="flex items-center gap-2 px-3 py-2.5 rounded-lg text-sm font-medium {{ Route::is('laporan') || Route::is('detail') ? 'bg-blue-50 text-blue-700' : 'text-slate-600' }}">
+            <a href="{{ route('laporan.index') }}" class="flex items-center gap-2 px-3 py-2.5 rounded-lg text-sm font-medium {{ Route::is('laporan.index') || Route::is('laporan.show') ? 'bg-blue-50 text-blue-700' : 'text-slate-600' }}">
                 <i class="bi bi-file-earmark-text"></i>Laporan
             </a>
-            <a href="{{ route('create') }}" class="flex items-center gap-2 px-3 py-2.5 rounded-lg text-sm font-medium {{ Route::is('create') ? 'bg-blue-50 text-blue-700' : 'text-slate-600' }}">
+            <a href="{{ route('laporan.create') }}" class="flex items-center gap-2 px-3 py-2.5 rounded-lg text-sm font-medium {{ Route::is('laporan.create') ? 'bg-blue-50 text-blue-700' : 'text-slate-600' }}">
                 <i class="bi bi-plus-circle"></i>Buat Laporan
             </a>
             <div class="border-t border-slate-100 mt-2 pt-2">
