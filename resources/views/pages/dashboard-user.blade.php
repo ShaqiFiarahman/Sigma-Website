@@ -238,7 +238,11 @@
             @foreach($menu as $item)
                 @php
                     $href = match($item['id']) {
+                        1       => route('map'),               // Peta Bencana
                         2       => route('laporan.create'),     // Lapor Bencana
+                        3       => route('shelter'),            // Info Posko
+                        5       => route('volunteer.create'),   // Registrasi Relawan
+                        7       => route('search'),             // Cari Bencana
                         10      => route('panduan'),            // Panduan Bencana
                         6       => route('laporan.index'),      // Verifikasi Laporan (BNPB)
                         default => '#',
