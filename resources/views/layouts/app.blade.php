@@ -79,7 +79,8 @@
                     <span class="font-bold tracking-tight text-slate-900">SIGMA</span>
                 </a>
 
-                {{-- Desktop nav links --}}
+                {{-- Desktop nav links — hanya untuk Admin/BNPB --}}
+                @if(in_array(auth()->user()->role ?? '', ['admin', 'BNPB']))
                 <ul class="hidden md:flex items-center gap-1">
                     <li>
                         <a href="{{ route('dashboard') }}" 
@@ -96,17 +97,21 @@
                         </a>
                     </li>
                 </ul>
+                @endif
             </div>
 
             <div class="flex items-center gap-4">
+                {{-- Tombol Buat Laporan — hanya untuk Admin/BNPB --}}
+                @if(in_array(auth()->user()->role ?? '', ['admin', 'BNPB']))
                 <a href="{{ route('laporan.create') }}" class="btn-primary hidden md:inline-flex items-center justify-center px-4 py-2 text-sm font-medium text-white rounded-lg transition-all duration-200">
                     <i class="bi bi-plus-lg mr-1.5 text-xs"></i> Buat Laporan
                 </a>
+                @endif
                 
                 {{-- User profile --}}
                 <div class="hidden md:flex items-center gap-3 pl-4 border-l border-slate-200">
                     <div class="text-right">
-                        <p class="text-sm font-semibold text-slate-900 leading-none">{{ auth()->user()->name }}</p>
+                        <p class="text-sm font-semibold text-slate-900 leading-none">{{ auth()->user()->full_name }}</p>
                         <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1">{{ auth()->user()->role }}</p>
                         <form action="{{ route('logout') }}" method="POST" class="inline">
                             @csrf
@@ -114,7 +119,7 @@
                         </form>
                     </div>
                     <div class="w-9 h-9 rounded-full flex items-center justify-center text-white text-sm font-bold" style="background: linear-gradient(135deg, #0A0F1E 0%, #1e3a8a 100%);">
-                        {{ substr(auth()->user()->name, 0, 1) }}
+                        {{ substr(auth()->user()->full_name ?? 'U', 0, 1) }}
                     </div>
                 </div>
 

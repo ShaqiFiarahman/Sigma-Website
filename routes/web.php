@@ -11,6 +11,10 @@ Route::post('/register', [AuthController::class, 'register'])->name('register.po
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
 Route::middleware('auth')->group(function () {
+    Route::get('/panduan-bencana', function () {
+        return view('pages.panduan-bencana');
+    })->name('panduan');
+
     Route::get('/dashboard', [LaporanController::class, 'dashboard'])->name('dashboard');
     
     Route::get('/laporan', [LaporanController::class, 'index'])->name('laporan.index');
