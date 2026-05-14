@@ -23,6 +23,6 @@ Route::middleware('auth')->group(function () {
     Route::get('/laporan/detail/{id}', [LaporanController::class, 'show'])->name('laporan.show');
     Route::post('/laporan/update-status/{id}', [LaporanController::class, 'updateStatus'])
         ->name('laporan.update_status')
-        ->middleware('role:admin,relawan');
+        ->middleware('role:admin,BNPB');
 });
 

@@ -118,13 +118,17 @@
                                     <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-bold bg-amber-50 text-amber-700 border border-amber-100">
                                         <span class="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse"></span> Pending
                                     </span>
-                                @elseif(strtolower($laporan['status']) == 'verified')
+                                @elseif(in_array(strtolower($laporan['status']), ['verified', 'resolved']))
                                     <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-100">
-                                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> Verified
+                                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> {{ $laporan['status'] }}
                                     </span>
-                                @else
+                                @elseif(strtolower($laporan['status']) == 'decline')
                                     <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-bold bg-red-50 text-red-700 border border-red-100">
                                         <span class="w-1.5 h-1.5 rounded-full bg-red-400"></span> Decline
+                                    </span>
+                                @else
+                                    <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-bold bg-blue-50 text-blue-700 border border-blue-100">
+                                        <span class="w-1.5 h-1.5 rounded-full bg-blue-500"></span> {{ $laporan['status'] }}
                                     </span>
                                 @endif
                             </td>

@@ -2,79 +2,196 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Disaster;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\Storage;
 
 class LaporanController extends Controller
 {
-    private function getInitLaporans() {
-        $yesterday = date('d M Y', strtotime("-1 days"));
-        $twoDaysAgo = date('d M Y', strtotime("-2 days"));
-        
-        return [
-            ['id' => 2, 'judul' => 'Pohon tumbang menutup jalan provinsi', 'lokasi' => 'Bantul', 'tanggal' => $yesterday, 'tingkat_bencana' => 'Waspada', 'status' => 'Verified', 'deskripsi' => 'Pohon beringin besar tumbang akibat angin kencang. Menutupi seluruh ruas jalan provinsi dan menyebabkan kemacetan total sepanjang 5 km.'],
-            ['id' => 3, 'judul' => 'Tanah longsor di lereng gunung', 'lokasi' => 'Sleman', 'tanggal' => $twoDaysAgo, 'tingkat_bencana' => null, 'status' => 'Decline', 'deskripsi' => 'Longsor terjadi setelah hujan deras berturut-turut selama 2 hari. Beberapa rumah warga rusak berat.'],
-        ];
-    }
+    // ─────────────────────────────────────────────
+    //  DASHBOARD
+    // ─────────────────────────────────────────────
 
     public function dashboard()
     {
         $user = auth()->user();
-        $role = $user?->role ?? 'masyarakat';
+        $role = $user?->role ?? 'MASYARAKAT';
 
-        // Jika Admin/BNPB, tampilkan dashboard admin (dengan chart & map)
+        // Admin / BNPB → dashboard dengan chart & map
         if (in_array($role, ['admin', 'BNPB'])) {
-            if (!session()->has('laporans')) {
-                session()->put('laporans', $this->getInitLaporans());
-            }
-            
-            $laporans = session('laporans');
-            $total = count($laporans);
-            $pending = collect($laporans)->where('status', 'Pending')->count();
-            $selesai = collect($laporans)->where('status', 'Verified')->count();
+            $total   = Disaster::count();
+            $pending = Disaster::where('status', Disaster::STATUS_PENDING)->count();
+            $selesai = Disaster::where('status', Disaster::STATUS_RESOLVED)->count();
 
+            // Chart: 7 hari terakhir
             $chartLabels = [];
-            $chartData = [];
+            $chartData   = [];
             for ($i = 6; $i >= 0; $i--) {
-                $dateStr = date('d M Y', strtotime("-$i days"));
-                $labelStr = date('d M', strtotime("-$i days"));
-                $chartLabels[] = $labelStr;
-                
-                $count = collect($laporans)->filter(function ($laporan) use ($dateStr) {
-                    return $laporan['tanggal'] == $dateStr;
-                })->count();
-                $chartData[] = $count;
+                $date          = now()->subDays($i);
+                $chartLabels[] = $date->format('d M');
+                $chartData[]   = Disaster::whereDate('created_at', $date->toDateString())->count();
             }
 
             return view('pages.dashboard', compact('total', 'pending', 'selesai', 'chartLabels', 'chartData'));
         }
 
-        // Jika Masyarakat/Relawan, tampilkan dashboard user (sesuai Android)
+        // Masyarakat / Relawan → dashboard user (sesuai Android)
         $news = $this->getDashboardNews();
         $menu = $this->getDashboardMenu($role);
 
         return view('pages.dashboard-user', compact('user', 'news', 'menu'));
     }
 
-    private function getDashboardNews()
+    // ─────────────────────────────────────────────
+    //  INDEX
+    // ─────────────────────────────────────────────
+
+    public function index()
     {
+        $user  = auth()->user();
+        $role  = $user?->role ?? 'MASYARAKAT';
+
+        // Admin & BNPB lihat semua laporan, user biasa lihat laporan sendiri
+        $query = Disaster::with('user')->latest();
+        if (!in_array($role, ['admin', 'BNPB'])) {
+            $query->where('user_id', $user->id);
+        }
+
+        $laporans = $query->get()->map(fn($d) => $this->toArray($d));
+
+        return view('laporan.index', compact('laporans'));
+    }
+
+    // ─────────────────────────────────────────────
+    //  CREATE
+    // ─────────────────────────────────────────────
+
+    public function create()
+    {
+        $riwayat = Disaster::where('user_id', auth()->id())
+            ->latest()
+            ->get();
+
+        return view('laporan.create', compact('riwayat'));
+    }
+
+    // ─────────────────────────────────────────────
+    //  STORE
+    // ─────────────────────────────────────────────
+
+    public function store(Request $request)
+    {
+        $request->validate([
+            'judul'     => 'required|string|max:255',
+            'lokasi'    => 'required|string|max:255',
+            'deskripsi' => 'required|string',
+            'latitude'  => 'required|numeric',
+            'longitude' => 'required|numeric',
+            'foto'      => 'nullable|image|max:5120', // maks 5 MB
+        ]);
+
+        $user     = auth()->user();
+        $photoUrl = null;
+
+        // Simpan foto ke storage/public/laporan
+        if ($request->hasFile('foto')) {
+            $path     = $request->file('foto')->store('laporan', 'public');
+            $photoUrl = Storage::url($path);
+        }
+
+        Disaster::create([
+            'user_id'       => $user->id,
+            'title'         => $request->judul,
+            'description'   => $request->deskripsi,
+            'photo_url'     => $photoUrl,
+            'latitude'      => $request->latitude,
+            'longitude'     => $request->longitude,
+            'status'        => Disaster::STATUS_PENDING,
+            'reporter_name' => $user->full_name ?? $user->email,
+        ]);
+
+        return redirect()->route('laporan.index')->with('msg', 'created');
+    }
+
+    // ─────────────────────────────────────────────
+    //  SHOW
+    // ─────────────────────────────────────────────
+
+    public function show($id)
+    {
+        $disaster = Disaster::with('user')->findOrFail($id);
+        $laporan  = $this->toArray($disaster);
+
+        return view('laporan.detail', compact('laporan'));
+    }
+
+    // ─────────────────────────────────────────────
+    //  UPDATE STATUS (Admin / BNPB)
+    // ─────────────────────────────────────────────
+
+    public function updateStatus(Request $request, $id)
+    {
+        $request->validate([
+            'status' => 'required|in:DECLINE,RESOLVED,SIAGA_1,SIAGA_2,AWAS',
+        ]);
+
+        $disaster = Disaster::findOrFail($id);
+        $disaster->update(['status' => $request->status]);
+
+        $msg = $request->status === Disaster::STATUS_DECLINE ? 'rejected' : 'approved';
+
+        // Redirect kembali ke detail laporan dengan flash message
+        return redirect()->route('laporan.show', $id)->with('msg', $msg);
+    }
+
+    // ─────────────────────────────────────────────
+    //  HELPERS
+    // ─────────────────────────────────────────────
+
+    /**
+     * Convert Disaster model to array format used by views
+     */
+    private function toArray(Disaster $d): array
+    {
+        // Lokasi: gunakan nama lokasi jika ada, fallback ke koordinat
+        $lokasi = ($d->latitude && $d->longitude)
+            ? 'Lat: ' . round($d->latitude, 4) . ', Long: ' . round($d->longitude, 4)
+            : 'Lokasi tidak diketahui';
+
         return [
-            ['id' => 1, 'title' => 'Banjir bandang melanda wilayah Sukoharjo',                                'time' => '10 menit lalu', 'category' => 'INFO',    'tone' => 'info'],
-            ['id' => 2, 'title' => 'Gempa bumi M 5,0 SR di Ternate, Maluku Utara',                            'time' => '3 jam lalu',    'category' => 'DARURAT', 'tone' => 'danger'],
-            ['id' => 3, 'title' => 'Prakiraan cuaca: Hujan lebat esok hari di Soloraya',                      'time' => '1 jam lalu',    'category' => 'WASPADA', 'tone' => 'warning'],
-            ['id' => 4, 'title' => 'Penyaluran bantuan logistik terkendala jembatan terputus',                'time' => '2 jam lalu',    'category' => 'INFO',    'tone' => 'info'],
+            'id'              => $d->id,
+            'judul'           => $d->title,
+            'lokasi'          => $lokasi,
+            'tanggal'         => $d->created_at?->format('d M Y') ?? '-',
+            'status'          => $d->status_label,
+            'tingkat_bencana' => $d->tingkat,
+            'deskripsi'       => $d->description,
+            'photo_url'       => $d->photo_url,
+            'latitude'        => $d->latitude,
+            'longitude'       => $d->longitude,
+            'reporter_name'   => $d->reporter_name,
         ];
     }
 
-    private function getDashboardMenu($role)
+    private function getDashboardNews(): array
+    {
+        return [
+            ['id' => 1, 'title' => 'Banjir bandang melanda wilayah Sukoharjo',             'time' => '10 menit lalu', 'category' => 'INFO',    'tone' => 'info'],
+            ['id' => 2, 'title' => 'Gempa bumi M 5,0 SR di Ternate, Maluku Utara',         'time' => '3 jam lalu',    'category' => 'DARURAT', 'tone' => 'danger'],
+            ['id' => 3, 'title' => 'Prakiraan cuaca: Hujan lebat esok hari di Soloraya',   'time' => '1 jam lalu',    'category' => 'WASPADA', 'tone' => 'warning'],
+            ['id' => 4, 'title' => 'Penyaluran bantuan logistik terkendala jembatan putus', 'time' => '2 jam lalu',   'category' => 'INFO',    'tone' => 'info'],
+        ];
+    }
+
+    private function getDashboardMenu(string $role): array
     {
         $baseMenu = [
-            ['id' => 1,  'title' => 'Peta Bencana',        'description' => 'Zona bahaya',       'icon' => 'bi-map-fill'],
-            ['id' => 2,  'title' => 'Lapor Bencana',       'description' => 'Kirim laporan',     'icon' => 'bi-megaphone-fill'],
-            ['id' => 3,  'title' => 'Info Posko',          'description' => 'Titik pengungsian', 'icon' => 'bi-house-heart-fill'],
-            ['id' => 10, 'title' => 'Panduan Bencana',     'description' => 'Tips mitigasi',     'icon' => 'bi-book-fill'],
-            ['id' => 5,  'title' => 'Registrasi Relawan',  'description' => 'Daftar relawan',    'icon' => 'bi-person-plus-fill'],
-            ['id' => 7,  'title' => 'Cari Bencana',        'description' => 'Pencarian & filter','icon' => 'bi-search'],
+            ['id' => 1,  'title' => 'Peta Bencana',       'description' => 'Zona bahaya',        'icon' => 'bi-map-fill'],
+            ['id' => 2,  'title' => 'Lapor Bencana',      'description' => 'Kirim laporan',      'icon' => 'bi-megaphone-fill'],
+            ['id' => 3,  'title' => 'Info Posko',         'description' => 'Titik pengungsian',  'icon' => 'bi-house-heart-fill'],
+            ['id' => 10, 'title' => 'Panduan Bencana',    'description' => 'Tips mitigasi',      'icon' => 'bi-book-fill'],
+            ['id' => 5,  'title' => 'Registrasi Relawan', 'description' => 'Daftar relawan',     'icon' => 'bi-person-plus-fill'],
+            ['id' => 7,  'title' => 'Cari Bencana',       'description' => 'Pencarian & filter', 'icon' => 'bi-search'],
         ];
 
         if ($role === 'BNPB') {
@@ -82,73 +199,5 @@ class LaporanController extends Controller
         }
 
         return $baseMenu;
-    }
-
-    public function index()
-    {
-        if (!session()->has('laporans')) {
-            session()->put('laporans', $this->getInitLaporans());
-        }
-        
-        $laporans = collect(session('laporans'))->sortByDesc('id')->values()->all();
-        return view('laporan.index', compact('laporans'));
-    }
-
-    public function create()
-    {
-        return view('laporan.create');
-    }
-
-    public function store(Request $request)
-    {
-        if (!session()->has('laporans')) session()->put('laporans', $this->getInitLaporans());
-        $laporans = session('laporans');
-        
-        $newId = count($laporans) > 0 ? max(array_column($laporans, 'id')) + 1 : 1;
-        
-        $laporans[] = [
-            'id' => $newId,
-            'judul' => $request->judul,
-            'lokasi' => $request->lokasi,
-            'tanggal' => date('d M Y'),
-            'tingkat_bencana' => null,
-            'status' => 'Pending',
-            'deskripsi' => $request->deskripsi
-        ];
-        
-        session()->put('laporans', $laporans);
-        return redirect()->route('laporan.index')->with('msg', 'created');
-    }
-
-    public function show($id)
-    {
-        $laporans = collect(session('laporans', $this->getInitLaporans()));
-        $laporan = $laporans->firstWhere('id', (int)$id);
-        
-        if (!$laporan) abort(404);
-        
-        return view('laporan.detail', compact('laporan'));
-    }
-
-    public function updateStatus(Request $request, $id)
-    {
-        $laporans = session('laporans', $this->getInitLaporans());
-        $msg = 'approved';
-        
-        foreach ($laporans as &$l) {
-            if ($l['id'] == (int)$id) {
-                $l['status'] = $request->status; // 'Verified' or 'Decline'
-                if ($request->status == 'Verified') {
-                    $l['tingkat_bencana'] = $request->tingkat_bencana;
-                } elseif ($request->status == 'Decline') {
-                    $msg = 'rejected';
-                    $l['tingkat_bencana'] = null;
-                }
-                break;
-            }
-        }
-        
-        session()->put('laporans', $laporans);
-        return redirect()->route('laporan.index')->with('msg', $msg);
     }
 }

@@ -8,6 +8,20 @@
 @endsection
 
 @section('content')
+
+{{-- Flash message --}}
+@if(session('msg'))
+    <div class="mb-5 p-4 rounded-xl flex items-center gap-3 text-sm font-medium
+        {{ session('msg') === 'approved' ? 'bg-emerald-50 text-emerald-800 border border-emerald-200' : 'bg-red-50 text-red-800 border border-red-200' }}">
+        @if(session('msg') === 'approved')
+            <i class="bi bi-check-circle-fill text-emerald-500"></i> Status laporan berhasil diperbarui.
+        @else
+            <i class="bi bi-x-circle-fill text-red-500"></i> Laporan berhasil ditolak.
+        @endif
+        <button onclick="this.parentElement.remove()" class="ml-auto opacity-60 hover:opacity-100"><i class="bi bi-x-lg"></i></button>
+    </div>
+@endif
+
 <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
 
     {{-- Kiri: Detail Utama --}}
@@ -27,24 +41,35 @@
                             </span>
                             <span class="text-slate-600">•</span>
                             <span class="text-[10px] font-bold uppercase tracking-widest" style="color: rgba(228,240,246,0.5);">
-                                <i class="bi bi-person mr-1"></i>Huda Febri
+                                <i class="bi bi-person mr-1"></i>{{ $laporan['reporter_name'] }}
                             </span>
                         </div>
                         <h2 class="text-xl sm:text-2xl font-bold text-white leading-tight">{{ $laporan['judul'] }}</h2>
                     </div>
                     
                     <div class="shrink-0">
-                        @if(strtolower($laporan['status']) == 'pending')
+                        @php
+                            $s = $laporan['status']; // e.g. "Pending", "Awas", "Siaga 1", "Decline", "Resolved"
+                        @endphp
+                        @if($s === 'Pending')
                             <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold bg-amber-400/20 text-amber-300 border border-amber-400/30">
                                 <span class="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse"></span> Pending
                             </span>
-                        @elseif(strtolower($laporan['status']) == 'verified')
-                            <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold bg-emerald-400/20 text-emerald-300 border border-emerald-400/30">
-                                <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span> Verified
-                            </span>
-                        @else
+                        @elseif($s === 'Decline')
                             <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold bg-red-400/20 text-red-300 border border-red-400/30">
                                 <span class="w-1.5 h-1.5 rounded-full bg-red-400"></span> Decline
+                            </span>
+                        @elseif($s === 'Awas')
+                            <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold bg-red-400/20 text-red-300 border border-red-400/30">
+                                <span class="w-1.5 h-1.5 rounded-full bg-red-400 animate-pulse"></span> Awas
+                            </span>
+                        @elseif(in_array($s, ['Siaga 1', 'Siaga 2']))
+                            <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold bg-amber-400/20 text-amber-300 border border-amber-400/30">
+                                <span class="w-1.5 h-1.5 rounded-full bg-amber-400"></span> {{ $s }}
+                            </span>
+                        @else
+                            <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold bg-emerald-400/20 text-emerald-300 border border-emerald-400/30">
+                                <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span> {{ $s }}
                             </span>
                         @endif
                     </div>
@@ -56,8 +81,15 @@
                 {{-- Foto --}}
                 <div class="mb-8 rounded-xl overflow-hidden border border-slate-100"
                      style="box-shadow: 0 2px 10px rgba(10,15,30,0.06);">
-                    <img src="https://akcdn.detik.net.id/community/media/visual/2026/04/15/banjir-sukoharjo-1776224414251_169.jpeg?w=700&q=90" 
-                         alt="Dokumentasi Bencana" class="w-full h-auto object-cover max-h-80">
+                    @if(!empty($laporan['photo_url']))
+                        <img src="{{ $laporan['photo_url'] }}"
+                             alt="Dokumentasi Bencana" class="w-full h-auto object-cover max-h-80">
+                    @else
+                        <div class="w-full h-48 flex flex-col items-center justify-center bg-slate-50 text-slate-400">
+                            <i class="bi bi-image text-4xl mb-2"></i>
+                            <p class="text-sm">Tidak ada foto dokumentasi</p>
+                        </div>
+                    @endif
                 </div>
 
                 {{-- Deskripsi & Lokasi --}}
@@ -106,17 +138,21 @@
                 <div class="mb-5">
                     <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-2.5">Tingkat Bencana</p>
                     @if(!empty($laporan['tingkat_bencana']))
-                        @if($laporan['tingkat_bencana'] == 'Darurat')
+                        @if($laporan['tingkat_bencana'] === 'Awas')
                             <div class="inline-flex items-center gap-2 px-3 py-2 rounded-xl text-sm font-bold bg-red-50 text-red-700 border border-red-100">
-                                <span class="w-2 h-2 rounded-full bg-red-500 animate-pulse"></span>{{ $laporan['tingkat_bencana'] }}
+                                <span class="w-2 h-2 rounded-full bg-red-500 animate-pulse"></span>Awas
                             </div>
-                        @elseif($laporan['tingkat_bencana'] == 'Bahaya')
+                        @elseif($laporan['tingkat_bencana'] === 'Siaga 1')
                             <div class="inline-flex items-center gap-2 px-3 py-2 rounded-xl text-sm font-bold bg-amber-50 text-amber-700 border border-amber-100">
-                                <span class="w-2 h-2 rounded-full bg-amber-500"></span>{{ $laporan['tingkat_bencana'] }}
+                                <span class="w-2 h-2 rounded-full bg-amber-500"></span>Siaga 1
+                            </div>
+                        @elseif($laporan['tingkat_bencana'] === 'Siaga 2')
+                            <div class="inline-flex items-center gap-2 px-3 py-2 rounded-xl text-sm font-bold bg-blue-50 text-blue-700 border border-blue-100">
+                                <span class="w-2 h-2 rounded-full bg-blue-500"></span>Siaga 2
                             </div>
                         @else
-                            <div class="inline-flex items-center gap-2 px-3 py-2 rounded-xl text-sm font-bold bg-blue-50 text-blue-700 border border-blue-100">
-                                <span class="w-2 h-2 rounded-full bg-blue-500"></span>{{ $laporan['tingkat_bencana'] }}
+                            <div class="inline-flex items-center gap-2 px-3 py-2 rounded-xl text-sm font-bold bg-emerald-50 text-emerald-700 border border-emerald-100">
+                                <span class="w-2 h-2 rounded-full bg-emerald-500"></span>{{ $laporan['tingkat_bencana'] }}
                             </div>
                         @endif
                     @else
@@ -126,59 +162,54 @@
 
                 <div class="border-t border-slate-100 my-5"></div>
 
-                @if(in_array(auth()->user()->role, ['admin', 'relawan']))
-                    @if(strtolower($laporan['status']) == 'pending')
-                        
-                        <p class="text-sm text-slate-500 mb-4 leading-relaxed">Tinjau laporan ini dan tentukan tingkat keparahan sebelum disetujui.</p>
+                @if(in_array(auth()->user()->role, ['admin', 'BNPB']))
 
-                        <form action="{{ route('laporan.update_status', $laporan['id']) }}" method="POST" class="mb-3">
-                            @csrf
-                            <input type="hidden" name="status" value="Verified">
-                            
-                            <div class="mb-4">
-                                <label for="tingkat_bencana" class="block text-xs font-bold text-slate-700 mb-2 uppercase tracking-wider">
-                                    Pilih Tingkat <span class="text-red-500">*</span>
-                                </label>
-                                <select name="tingkat_bencana" id="tingkat_bencana" required
-                                        class="w-full px-3 py-2.5 text-sm border border-slate-200 rounded-xl focus:outline-none focus:border-blue-400 focus:ring-2 focus:ring-blue-500/20 transition-all bg-white text-slate-700">
-                                    <option value="">Pilih tingkat darurat...</option>
-                                    <option value="Darurat">🔴 Darurat (Awas)</option>
-                                    <option value="Bahaya">🟡 Bahaya (Siaga 1)</option>
-                                    <option value="Waspada">🔵 Waspada (Siaga 2)</option>
-                                </select>
-                            </div>
+                    @php
+                        $currentStatus = $laporan['status']; // "Pending", "Awas", "Siaga 1", etc.
+                    @endphp
 
-                            <button type="submit" class="w-full flex items-center justify-center gap-2 px-4 py-2.5 text-sm font-semibold text-white rounded-xl transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg"
-                                    style="background: linear-gradient(135deg, #059669 0%, #10b981 100%); box-shadow: 0 2px 8px rgba(16,185,129,0.25);">
-                                <i class="bi bi-check-circle"></i> Setujui Laporan
-                            </button>
-                        </form>
+                    {{-- Selalu tampilkan form update status untuk admin/BNPB --}}
+                    <p class="text-xs text-slate-500 mb-3 leading-relaxed">
+                        @if($currentStatus === 'Pending')
+                            Tinjau laporan ini dan tentukan tingkat keparahan.
+                        @else
+                            Update status bencana sesuai kondisi terkini di lapangan.
+                        @endif
+                    </p>
 
-                        <form action="{{ route('laporan.update_status', $laporan['id']) }}" method="POST">
-                            @csrf
-                            <input type="hidden" name="status" value="Decline">
-                            <button type="submit" class="w-full flex items-center justify-center gap-2 px-4 py-2.5 text-sm font-semibold text-red-600 bg-white border border-red-200 rounded-xl hover:bg-red-50 hover:border-red-300 transition-all duration-200">
-                                <i class="bi bi-x-circle"></i> Tolak Laporan
-                            </button>
-                        </form>
-                    @else
-                        <div class="text-center p-5 rounded-xl border {{ strtolower($laporan['status']) == 'verified' ? 'border-emerald-100' : 'border-red-100' }}"
-                             style="{{ strtolower($laporan['status']) == 'verified' ? 'background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);' : 'background: linear-gradient(135deg, #fff5f5 0%, #fee2e2 100%);' }}">
-                            @if(strtolower($laporan['status']) == 'verified')
-                                <div class="w-12 h-12 rounded-2xl flex items-center justify-center mx-auto mb-3"
-                                     style="background: linear-gradient(135deg, #059669 0%, #10b981 100%);">
-                                    <i class="bi bi-check-lg text-2xl text-white"></i>
-                                </div>
-                                <p class="text-sm font-bold text-emerald-800">Laporan Telah Disetujui</p>
-                                <p class="text-xs text-emerald-600 mt-1">Data ini sudah terverifikasi</p>
-                            @else
-                                <div class="w-12 h-12 rounded-2xl flex items-center justify-center mx-auto mb-3"
-                                     style="background: linear-gradient(135deg, #dc2626 0%, #ef4444 100%);">
-                                    <i class="bi bi-x-lg text-2xl text-white"></i>
-                                </div>
-                                <p class="text-sm font-bold text-red-800">Laporan Ditolak</p>
-                                <p class="text-xs text-red-500 mt-1">Laporan ini tidak dapat diproses</p>
-                            @endif
+                    <form action="{{ route('laporan.update_status', $laporan['id']) }}" method="POST" class="mb-3">
+                        @csrf
+                        <div class="mb-3">
+                            <label class="block text-xs font-bold text-slate-700 mb-2 uppercase tracking-wider">
+                                Ubah Status
+                            </label>
+                            <select name="status" required
+                                    class="w-full px-3 py-2.5 text-sm border border-slate-200 rounded-xl focus:outline-none focus:border-blue-400 focus:ring-2 focus:ring-blue-500/20 transition-all bg-white text-slate-700">
+                                <option value="">-- Pilih status --</option>
+                                <option value="AWAS"     {{ $currentStatus === 'Awas'     ? 'selected' : '' }}>🔴 Awas (Darurat)</option>
+                                <option value="SIAGA_1"  {{ $currentStatus === 'Siaga 1'  ? 'selected' : '' }}>🟡 Siaga 1 (Bahaya)</option>
+                                <option value="SIAGA_2"  {{ $currentStatus === 'Siaga 2'  ? 'selected' : '' }}>🔵 Siaga 2 (Waspada)</option>
+                                <option value="RESOLVED" {{ $currentStatus === 'Resolved' ? 'selected' : '' }}>✅ Resolved (Selesai)</option>
+                                <option value="DECLINE"  {{ $currentStatus === 'Decline'  ? 'selected' : '' }}>❌ Decline (Tolak)</option>
+                            </select>
+                        </div>
+                        <button type="submit"
+                                class="w-full flex items-center justify-center gap-2 px-4 py-2.5 text-sm font-semibold text-white rounded-xl transition-all duration-200 hover:-translate-y-0.5"
+                                style="background: linear-gradient(135deg, #059669 0%, #10b981 100%); box-shadow: 0 2px 8px rgba(16,185,129,0.25);">
+                            <i class="bi bi-arrow-repeat"></i> Update Status
+                        </button>
+                    </form>
+
+                    {{-- Status saat ini --}}
+                    @if($currentStatus !== 'Pending')
+                        <div class="mt-2 p-3 rounded-xl text-xs font-medium text-center
+                            {{ $currentStatus === 'Decline'  ? 'bg-red-50 text-red-700 border border-red-100' : '' }}
+                            {{ $currentStatus === 'Awas'     ? 'bg-red-50 text-red-700 border border-red-100' : '' }}
+                            {{ $currentStatus === 'Siaga 1'  ? 'bg-amber-50 text-amber-700 border border-amber-100' : '' }}
+                            {{ $currentStatus === 'Siaga 2'  ? 'bg-blue-50 text-blue-700 border border-blue-100' : '' }}
+                            {{ $currentStatus === 'Resolved' ? 'bg-emerald-50 text-emerald-700 border border-emerald-100' : '' }}
+                        ">
+                            Status saat ini: <span class="font-bold">{{ $currentStatus }}</span>
                         </div>
                     @endif
                 @else
@@ -213,19 +244,12 @@
     <script src="https://maps.googleapis.com/maps/api/js?key={{ config('services.google_maps.key') }}&callback=initDetailMap" async defer></script>
     <script>
         function initDetailMap() {
-            const geoMapping = {
-                'Bantul':       { lat: -7.8897, lng: 110.3289 },
-                'Sleman':       { lat: -7.7233, lng: 110.3650 },
-                'Kulon Progo':  { lat: -7.8333, lng: 110.1583 },
-                'Gunung Kidul': { lat: -7.9999, lng: 110.6000 },
-                'Yogyakarta':   { lat: -7.7956, lng: 110.3695 }
-            };
-
-            const lokasi = "{{ $laporan['lokasi'] }}";
-            const center = geoMapping[lokasi] || { lat: -7.7956, lng: 110.3695 };
+            const lat = {{ $laporan['latitude'] ?? -7.5505 }};
+            const lng = {{ $laporan['longitude'] ?? 110.8063 }};
+            const center = { lat, lng };
             
             const map = new google.maps.Map(document.getElementById("detailMap"), {
-                zoom: 13,
+                zoom: 14,
                 center: center,
                 disableDefaultUI: true,
                 zoomControl: true,
@@ -239,7 +263,8 @@
             new google.maps.Marker({
                 position: center,
                 map: map,
-                title: "{{ $laporan['judul'] }}"
+                title: "{{ addslashes($laporan['judul']) }}",
+                animation: google.maps.Animation.DROP,
             });
         }
     </script>
