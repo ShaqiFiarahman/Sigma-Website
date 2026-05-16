@@ -13,7 +13,7 @@ class VolunteerController extends Controller
     public function create()
     {
         $skills = Volunteer::getSkillOptions();
-        return view('volunteer.register', compact('skills'));
+        return view('user.volunteer.register', compact('skills'));
     }
 
     /**
@@ -58,7 +58,7 @@ class VolunteerController extends Controller
             ->latest()
             ->paginate(15);
 
-        return view('volunteer.index', compact('volunteers'));
+        return view('admin.volunteer.index', compact('volunteers'));
     }
 
     /**
@@ -67,7 +67,7 @@ class VolunteerController extends Controller
     public function show($id)
     {
         $volunteer = Volunteer::with('user')->findOrFail($id);
-        return view('volunteer.show', compact('volunteer'));
+        return view('admin.volunteer.show', compact('volunteer'));
     }
 
     /**

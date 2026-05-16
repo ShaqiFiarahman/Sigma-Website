@@ -72,7 +72,7 @@
             
             <div class="flex items-center gap-8">
                 {{-- Brand --}}
-                <a href="{{ route('dashboard') }}" class="flex items-center gap-2.5 shrink-0 group">
+                <a href="{{ in_array(strtolower(auth()->user()->role ?? ''), ['admin', 'bnpb']) ? route('admin.dashboard') : route('dashboard') }}" class="flex items-center gap-2.5 shrink-0 group">
                     <div class="brand-mark w-8 h-8 rounded-lg flex items-center justify-center text-white transition-all duration-300 group-hover:scale-105 group-hover:shadow-lg">
                         <i class="bi bi-shield-check text-sm"></i>
                     </div>
@@ -83,9 +83,9 @@
                 @if(in_array(auth()->user()->role ?? '', ['admin', 'BNPB']))
                 <ul class="hidden md:flex items-center gap-1">
                     <li>
-                        <a href="{{ route('dashboard') }}" 
+                        <a href="{{ route('admin.dashboard') }}" 
                            class="px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 
-                                  {{ Route::is('dashboard') ? 'nav-active' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100/70' }}">
+                                  {{ Route::is('admin.dashboard') ? 'nav-active' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100/70' }}">
                             <i class="bi bi-grid-1x2 mr-1.5 text-xs opacity-70"></i>Dashboard
                         </a>
                     </li>
@@ -132,7 +132,7 @@
 
         {{-- Mobile dropdown --}}
         <div id="mobileMenu" class="md:hidden hidden border-t border-slate-200/80 bg-white/95 backdrop-blur-md px-4 py-3 space-y-1">
-            <a href="{{ route('dashboard') }}" class="flex items-center gap-2 px-3 py-2.5 rounded-lg text-sm font-medium {{ Route::is('dashboard') ? 'bg-blue-50 text-blue-700' : 'text-slate-600' }}">
+            <a href="{{ in_array(strtolower(auth()->user()->role ?? ''), ['admin', 'bnpb']) ? route('admin.dashboard') : route('dashboard') }}" class="flex items-center gap-2 px-3 py-2.5 rounded-lg text-sm font-medium {{ Route::is('dashboard') || Route::is('admin.dashboard') ? 'bg-blue-50 text-blue-700' : 'text-slate-600' }}">
                 <i class="bi bi-grid-1x2"></i>Dashboard
             </a>
             <a href="{{ route('laporan.index') }}" class="flex items-center gap-2 px-3 py-2.5 rounded-lg text-sm font-medium {{ Route::is('laporan.index') || Route::is('laporan.show') ? 'bg-blue-50 text-blue-700' : 'text-slate-600' }}">
@@ -156,7 +156,7 @@
     <main class="flex-1 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 pb-16 animate-fade-up">
         
         {{-- Page Header --}}
-        @if(!Route::is('dashboard'))
+        @if(!Route::is('dashboard') && !Route::is('admin.dashboard'))
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
             <div>
                 <h1 class="text-2xl font-bold text-slate-900 tracking-tight">@yield('title')</h1>

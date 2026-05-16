@@ -19,6 +19,13 @@ class AuthController extends Controller
 
     public function showAuth()
     {
+        if (Auth::check()) {
+            $user = Auth::user();
+            if (in_array(strtolower($user->role), ['admin', 'bnpb'])) {
+                return redirect()->route('admin.dashboard');
+            }
+            return redirect()->route('dashboard');
+        }
         return view('auth.authenticate');
     }
 
@@ -64,7 +71,11 @@ class AuthController extends Controller
         $request->session()->regenerate();
         $request->session()->put('supabase_token', $response['access_token']);
 
-        return redirect()->intended('dashboard');
+        if (in_array(strtolower($user->role), ['admin', 'bnpb'])) {
+            return redirect()->route('admin.dashboard');
+        }
+
+        return redirect()->intended(route('dashboard'));
     }
 
     public function showRegister()

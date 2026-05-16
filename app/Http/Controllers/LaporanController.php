@@ -12,34 +12,33 @@ class LaporanController extends Controller
     //  DASHBOARD
     // ─────────────────────────────────────────────
 
-    public function dashboard()
+    public function adminDashboard()
+    {
+        $total   = Disaster::count();
+        $pending = Disaster::where('status', Disaster::STATUS_PENDING)->count();
+        $selesai = Disaster::where('status', Disaster::STATUS_RESOLVED)->count();
+
+        // Chart: 7 hari terakhir
+        $chartLabels = [];
+        $chartData   = [];
+        for ($i = 6; $i >= 0; $i--) {
+            $date          = now()->subDays($i);
+            $chartLabels[] = $date->format('d M');
+            $chartData[]   = Disaster::whereDate('created_at', $date->toDateString())->count();
+        }
+
+        return view('admin.dashboard', compact('total', 'pending', 'selesai', 'chartLabels', 'chartData'));
+    }
+
+    public function userDashboard()
     {
         $user = auth()->user();
         $role = $user?->role ?? 'MASYARAKAT';
 
-        // Admin / BNPB → dashboard dengan chart & map
-        if (in_array($role, ['admin', 'BNPB'])) {
-            $total   = Disaster::count();
-            $pending = Disaster::where('status', Disaster::STATUS_PENDING)->count();
-            $selesai = Disaster::where('status', Disaster::STATUS_RESOLVED)->count();
-
-            // Chart: 7 hari terakhir
-            $chartLabels = [];
-            $chartData   = [];
-            for ($i = 6; $i >= 0; $i--) {
-                $date          = now()->subDays($i);
-                $chartLabels[] = $date->format('d M');
-                $chartData[]   = Disaster::whereDate('created_at', $date->toDateString())->count();
-            }
-
-            return view('pages.dashboard', compact('total', 'pending', 'selesai', 'chartLabels', 'chartData'));
-        }
-
-        // Masyarakat / Relawan → dashboard user (sesuai Android)
         $news = $this->getDashboardNews();
         $menu = $this->getDashboardMenu($role);
 
-        return view('pages.dashboard-user', compact('user', 'news', 'menu'));
+        return view('user.dashboard', compact('user', 'news', 'menu'));
     }
 
     // ─────────────────────────────────────────────

@@ -12,7 +12,7 @@ class MapController extends Controller
      */
     public function index()
     {
-        return view('pages.map');
+        return view('user.map');
     }
 
     /**
@@ -24,7 +24,7 @@ class MapController extends Controller
             ->latest()
             ->get();
 
-        return view('pages.search', compact('disasters'));
+        return view('user.search', compact('disasters'));
     }
 
     /**
@@ -33,7 +33,7 @@ class MapController extends Controller
     public function shelterPage()
     {
         $shelters = $this->getShelterData();
-        return view('pages.shelter', compact('shelters'));
+        return view('user.shelter', compact('shelters'));
     }
 
     /**
