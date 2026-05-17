@@ -174,12 +174,22 @@ class LaporanController extends Controller
 
     private function getDashboardNews(): array
     {
-        return [
-            ['id' => 1, 'title' => 'Banjir bandang melanda wilayah Sukoharjo',             'time' => '10 menit lalu', 'category' => 'INFO',    'tone' => 'info'],
-            ['id' => 2, 'title' => 'Gempa bumi M 5,0 SR di Ternate, Maluku Utara',         'time' => '3 jam lalu',    'category' => 'DARURAT', 'tone' => 'danger'],
-            ['id' => 3, 'title' => 'Prakiraan cuaca: Hujan lebat esok hari di Soloraya',   'time' => '1 jam lalu',    'category' => 'WASPADA', 'tone' => 'warning'],
-            ['id' => 4, 'title' => 'Penyaluran bantuan logistik terkendala jembatan putus', 'time' => '2 jam lalu',   'category' => 'INFO',    'tone' => 'info'],
-        ];
+        return \App\Models\News::latest('published_at')
+            ->limit(6)
+            ->get()
+            ->map(function($item) {
+                return [
+                    'id' => $item->id,
+                    'title' => $item->title,
+                    'time' => $item->published_at->diffForHumans(),
+                    'category' => strtoupper($item->source),
+                    'tone' => 'info',
+                    'image_url' => $item->image_url,
+                    'url' => $item->url,
+                    'source' => $item->source,
+                ];
+            })
+            ->toArray();
     }
 
     private function getDashboardMenu(string $role): array

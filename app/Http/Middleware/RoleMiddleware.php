@@ -16,6 +16,10 @@ class RoleMiddleware
      */
     public function handle(Request $request, Closure $next, ...$roles): Response
     {
+        if (!Auth::check()) {
+            return redirect()->route('login');
+        }
+
         $user = Auth::user();
         $userRole = strtolower($user->role);
         $roles = array_map('strtolower', $roles);

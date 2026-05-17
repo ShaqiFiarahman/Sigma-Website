@@ -26,7 +26,7 @@
 
             {{-- Header --}}
             <div class="px-8 py-6 border-b border-slate-100"
-                 style="background: linear-gradient(135deg, #6650a4 0%, #533f8a 100%);">
+                 style="background: linear-gradient(135deg, #3B6FE8 0%, #1e3a8a 100%);">
                 <div class="flex items-start justify-between gap-4">
                     <div>
                         <h2 class="text-2xl font-bold text-white">{{ $volunteer->name }}</h2>
@@ -55,7 +55,7 @@
                 {{-- Data Diri --}}
                 <div>
                     <h3 class="text-sm font-semibold text-slate-900 mb-4 flex items-center gap-2">
-                        <i class="bi bi-person-vcard" style="color: #6650a4;"></i> Data Diri
+                        <i class="bi bi-person-vcard" style="color: #3B6FE8;"></i> Data Diri
                     </h3>
                     <div class="space-y-3">
                         <div class="flex justify-between py-2 border-b border-slate-100">
@@ -80,11 +80,11 @@
                 {{-- Keahlian --}}
                 <div>
                     <h3 class="text-sm font-semibold text-slate-900 mb-3 flex items-center gap-2">
-                        <i class="bi bi-star-fill" style="color: #6650a4;"></i> Keahlian / Spesialisasi
+                        <i class="bi bi-star-fill" style="color: #3B6FE8;"></i> Keahlian / Spesialisasi
                     </h3>
                     <div>
                         <span class="inline-flex items-center px-4 py-2 rounded-full text-sm font-bold"
-                              style="background: #EADDFF; color: #6650a4;">
+                              style="background: #E4F0F6; color: #3B6FE8;">
                             {{ $volunteer->skill }}
                         </span>
                     </div>
@@ -103,8 +103,8 @@
                  style="box-shadow: 0 1px 3px rgba(10,15,30,0.06), 0 4px 16px rgba(10,15,30,0.04);">
 
                 <div class="px-5 py-4 border-b border-slate-100 flex items-center gap-2">
-                    <div class="w-7 h-7 rounded-lg flex items-center justify-center" style="background: #EADDFF;">
-                        <i class="bi bi-shield-check text-xs" style="color: #6650a4;"></i>
+                    <div class="w-7 h-7 rounded-lg flex items-center justify-center" style="background: #E4F0F6;">
+                        <i class="bi bi-shield-check text-xs" style="color: #3B6FE8;"></i>
                     </div>
                     <h3 class="text-sm font-semibold text-slate-900">Tindakan</h3>
                 </div>
@@ -163,7 +163,7 @@
                                            class="flex-1 px-3 py-2 text-xs border border-slate-200 rounded-lg focus:outline-none focus:border-purple-400 focus:ring-2 focus:ring-purple-500/20 transition-all">
                                     <button type="submit"
                                             class="px-3 py-2 text-xs font-semibold text-white rounded-lg transition-all hover:opacity-90"
-                                            style="background: #6650a4;">
+                                            style="background: #3B6FE8;">
                                         <i class="bi bi-check"></i>
                                     </button>
                                 </div>

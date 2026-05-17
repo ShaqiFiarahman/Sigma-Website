@@ -6,7 +6,7 @@
 
     {{-- Back link --}}
     <div class="mb-5">
-        <a href="{{ route('dashboard') }}" class="inline-flex items-center gap-1.5 text-sm font-semibold transition-colors hover:opacity-70" style="color: #6650a4;">
+        <a href="{{ route('dashboard') }}" class="inline-flex items-center gap-1.5 text-sm font-semibold transition-colors hover:opacity-70" style="color: #3B6FE8;">
             <i class="bi bi-arrow-left"></i> Kembali
         </a>
     </div>
@@ -51,7 +51,7 @@
         {{-- Keahlian / Spesialisasi (single select dropdown) --}}
         <div class="relative">
             <label for="skill" class="absolute -top-2 left-3 px-1 text-xs font-medium bg-white"
-                   style="color: #6650a4; z-index: 1;">
+                   style="color: #3B6FE8; z-index: 1;">
                 Keahlian / Spesialisasi
             </label>
             <select name="skill" id="skill" required
@@ -100,8 +100,8 @@
         <div class="bg-white rounded-3xl max-w-sm w-full p-6 shadow-2xl">
             {{-- Icon --}}
             <div class="flex justify-center mb-4">
-                <div class="w-18 h-18 rounded-full flex items-center justify-center" style="background: #EADDFF;">
-                    <i class="bi bi-person-check-fill text-3xl" style="color: #6650a4;"></i>
+                <div class="w-18 h-18 rounded-full flex items-center justify-center" style="background: #E4F0F6;">
+                    <i class="bi bi-person-check-fill text-3xl" style="color: #3B6FE8;"></i>
                 </div>
             </div>
 

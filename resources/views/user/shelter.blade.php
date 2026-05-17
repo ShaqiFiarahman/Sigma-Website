@@ -5,7 +5,7 @@
 
 {{-- Back link --}}
 <div class="mb-4">
-    <a href="{{ route('dashboard') }}" class="inline-flex items-center gap-1.5 text-sm font-semibold transition-colors hover:opacity-70" style="color: #6650a4;">
+    <a href="{{ route('dashboard') }}" class="inline-flex items-center gap-1.5 text-sm font-semibold transition-colors hover:opacity-70" style="color: #3B6FE8;">
         <i class="bi bi-arrow-left"></i> Kembali
     </a>
 </div>
@@ -43,14 +43,14 @@
                 <a href="https://www.google.com/maps/dir/?api=1&destination={{ $shelter['lat'] }},{{ $shelter['lng'] }}"
                    target="_blank"
                    class="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 text-sm font-bold text-white rounded-xl transition-all hover:opacity-90"
-                   style="background: #6650a4;">
+                   style="background: #3B6FE8;">
                     <i class="bi bi-signpost-2-fill"></i> Petunjuk Arah
                 </a>
                 <button type="button"
                         class="w-11 h-11 flex items-center justify-center rounded-xl border border-slate-200 hover:bg-purple-50 transition-colors"
                         onclick="showLogistics('{{ $shelter['name'] }}', {{ json_encode($shelter['logistics']) }})"
                         title="Kebutuhan Logistik">
-                    <i class="bi bi-info-circle-fill text-lg" style="color: #6650a4;"></i>
+                    <i class="bi bi-info-circle-fill text-lg" style="color: #3B6FE8;"></i>
                 </button>
             </div>
         </div>
@@ -63,7 +63,7 @@
     <div class="bg-white rounded-3xl max-w-sm w-full p-6 shadow-2xl">
 
         <h3 class="text-xl font-extrabold mb-1" style="color: #1D1B20;">Kebutuhan Logistik</h3>
-        <p id="modalShelterName" class="text-base font-medium mb-3" style="color: #6650a4;"></p>
+        <p id="modalShelterName" class="text-base font-medium mb-3" style="color: #3B6FE8;"></p>
 
         <p class="text-sm text-slate-600 mb-4">
             Masyarakat dapat mengirimkan bantuan mendesak berikut:
@@ -100,7 +100,7 @@
 
         const container = document.getElementById('modalLogistics');
         container.innerHTML = logistics.map(item =>
-            `<span style="background:#EADDFF; color:#6650a4; font-size:13px; font-weight:600; padding:6px 12px; border-radius:10px;">${item}</span>`
+            `<span style="background:#E4F0F6; color:#3B6FE8; font-size:13px; font-weight:600; padding:6px 12px; border-radius:10px;">${item}</span>`
         ).join('');
 
         // WhatsApp link

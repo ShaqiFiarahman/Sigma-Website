@@ -27,6 +27,7 @@ Route::middleware('auth')->group(function () {
         
         // Volunteer Management
         Route::get('/relawan', [VolunteerController::class, 'index'])->name('volunteer.index');
+        Route::get('/relawan/{id}', [VolunteerController::class, 'show'])->name('volunteer.show');
         Route::post('/relawan/{id}/status', [VolunteerController::class, 'updateStatus'])->name('volunteer.update_status');
         Route::post('/relawan/{id}/assign', [VolunteerController::class, 'assign'])->name('volunteer.assign');
     });
@@ -51,7 +52,6 @@ Route::middleware('auth')->group(function () {
     Route::get('/laporan/create', [LaporanController::class, 'create'])->name('laporan.create');
     Route::post('/laporan/store', [LaporanController::class, 'store'])->name('laporan.store');
     Route::get('/laporan/detail/{id}', [LaporanController::class, 'show'])->name('laporan.show');
-    Route::get('/relawan/{id}', [VolunteerController::class, 'show'])->name('volunteer.show');
 
     // API ROUTES
     Route::get('/api/disasters', [MapController::class, 'disasters'])->name('api.disasters');

@@ -64,7 +64,7 @@
 
 {{-- Back link --}}
 <div class="mb-4">
-    <a href="{{ route('dashboard') }}" class="inline-flex items-center gap-1.5 text-sm font-semibold transition-colors hover:opacity-70" style="color: #6650a4;">
+    <a href="{{ route('dashboard') }}" class="inline-flex items-center gap-1.5 text-sm font-semibold transition-colors hover:opacity-70" style="color: #3B6FE8;">
         <i class="bi bi-arrow-left"></i> Kembali ke Dashboard
     </a>
 </div>
@@ -73,7 +73,7 @@
 
 {{-- Legend --}}
 <div class="legend-card mb-4">
-    <p class="text-xs font-bold uppercase tracking-wider mb-2" style="color: #6650a4;">Status Bencana</p>
+    <p class="text-xs font-bold uppercase tracking-wider mb-2" style="color: #3B6FE8;">Status Bencana</p>
     <div class="flex flex-wrap gap-x-5 gap-y-1">
         <div class="legend-item">
             <div class="legend-dot" style="background: #D32F2F;"></div>
@@ -96,7 +96,7 @@
             <span>Resolved (Selesai)</span>
         </div>
         <div class="legend-item">
-            <div class="legend-dot" style="background: #6650a4; border-radius: 50%;"></div>
+            <div class="legend-dot" style="background: #3B6FE8; border-radius: 50%;"></div>
             <span>Titik Pengungsian</span>
         </div>
     </div>
@@ -188,7 +188,7 @@
                             <i class="bi bi-person"></i> ${d.reporter} &middot;
                             <i class="bi bi-clock"></i> ${d.date}
                         </p>
-                        <a href="/laporan/detail/${d.id}" style="font-size:12px; color:#6650a4; font-weight:600; text-decoration:none;">
+                        <a href="/laporan/detail/${d.id}" style="font-size:12px; color:#3B6FE8; font-weight:600; text-decoration:none;">
                             Lihat Detail →
                         </a>
                     </div>
@@ -220,7 +220,7 @@
                     title: s.name,
                     icon: {
                         path: google.maps.SymbolPath.BACKWARD_CLOSED_ARROW,
-                        fillColor: '#6650a4',
+                        fillColor: '#3B6FE8',
                         fillOpacity: 0.9,
                         strokeColor: '#FFFFFF',
                         strokeWeight: 2,
@@ -231,7 +231,7 @@
                 const statusBg = s.status === 'Penuh' ? '#FCE4EC' : '#E8F5E9';
                 const statusColor = s.status === 'Penuh' ? '#C62828' : '#2E7D32';
                 const logisticsHtml = s.logistics.map(l =>
-                    `<span style="display:inline-block; background:#EADDFF; color:#6650a4; font-size:10px; font-weight:600; padding:2px 6px; border-radius:4px; margin:2px;">${l}</span>`
+                    `<span style="display:inline-block; background:#E4F0F6; color:#3B6FE8; font-size:10px; font-weight:600; padding:2px 6px; border-radius:4px; margin:2px;">${l}</span>`
                 ).join('');
 
                 const content = `
@@ -247,7 +247,7 @@
                         <div style="margin-bottom:6px;">${logisticsHtml}</div>
                         <a href="https://www.google.com/maps/dir/?api=1&destination=${s.lat},${s.lng}"
                            target="_blank"
-                           style="font-size:12px; color:#6650a4; font-weight:600; text-decoration:none;">
+                           style="font-size:12px; color:#3B6FE8; font-weight:600; text-decoration:none;">
                             Petunjuk Arah →
                         </a>
                     </div>

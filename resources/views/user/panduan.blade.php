@@ -7,13 +7,13 @@
         display: inline-flex;
         align-items: center;
         gap: 0.5rem;
-        color: #6650a4;
+        color: #3B6FE8;
         font-weight: 600;
         font-size: 0.875rem;
         transition: all 0.2s ease;
         text-decoration: none;
     }
-    .back-btn:hover { color: #533f8a; transform: translateX(-2px); }
+    .back-btn:hover { color: #1e3a8a; transform: translateX(-2px); }
 
     .pdf-card {
         background: #FFFFFF;
@@ -24,7 +24,7 @@
     }
 
     .pdf-header {
-        background: linear-gradient(135deg, #6650a4 0%, #533f8a 55%, #7D5260 100%);
+        background: linear-gradient(135deg, #3B6FE8 0%, #1e3a8a 55%, #0f1f4a 100%);
         padding: 1.25rem 1.5rem;
         display: flex;
         align-items: center;
@@ -48,7 +48,7 @@
         display: inline-flex;
         align-items: center;
         gap: 0.5rem;
-        background: #6650a4;
+        background: #3B6FE8;
         color: white;
         padding: 0.6rem 1.25rem;
         border-radius: 10px;
@@ -58,7 +58,7 @@
         text-decoration: none;
     }
     .download-btn:hover {
-        background: #533f8a;
+        background: #1e3a8a;
         transform: translateY(-1px);
         box-shadow: 0 4px 12px rgba(102, 80, 164, 0.3);
     }
@@ -101,7 +101,7 @@
 {{-- Fallback jika iframe tidak support --}}
 <div class="mt-4 text-center text-sm" style="color: #625b71;">
     PDF tidak tampil?
-    <a href="/panduan-bencana.pdf" target="_blank" class="font-semibold hover:underline" style="color: #6650a4;">
+    <a href="/panduan-bencana.pdf" target="_blank" class="font-semibold hover:underline" style="color: #3B6FE8;">
         Buka di tab baru <i class="bi bi-box-arrow-up-right"></i>
     </a>
 </div>

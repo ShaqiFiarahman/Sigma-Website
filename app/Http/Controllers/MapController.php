@@ -20,7 +20,12 @@ class MapController extends Controller
      */
     public function search()
     {
-        $disasters = Disaster::where('status', '!=', Disaster::STATUS_DECLINE)
+        $disasters = Disaster::whereIn('status', [
+                Disaster::STATUS_RESOLVED,
+                Disaster::STATUS_SIAGA_1,
+                Disaster::STATUS_SIAGA_2,
+                Disaster::STATUS_AWAS
+            ])
             ->latest()
             ->get();
 
@@ -43,7 +48,12 @@ class MapController extends Controller
     {
         $disasters = Disaster::whereNotNull('latitude')
             ->whereNotNull('longitude')
-            ->where('status', '!=', Disaster::STATUS_DECLINE)
+            ->whereIn('status', [
+                Disaster::STATUS_RESOLVED,
+                Disaster::STATUS_SIAGA_1,
+                Disaster::STATUS_SIAGA_2,
+                Disaster::STATUS_AWAS
+            ])
             ->latest()
             ->get()
             ->map(fn($d) => [

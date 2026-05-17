@@ -21,7 +21,7 @@
 
         {{-- Header --}}
         <div class="px-6 py-5 border-b border-slate-200/80"
-             style="background: linear-gradient(135deg, #6650a4 0%, #533f8a 100%);">
+             style="background: linear-gradient(135deg, #3B6FE8 0%, #1e3a8a 100%);">
             <h3 class="text-sm font-semibold text-white">Daftar Relawan</h3>
             <p class="text-xs mt-0.5" style="color: rgba(255,255,255,0.6);">Kelola pendaftaran dan persetujuan relawan</p>
         </div>
@@ -48,7 +48,7 @@
                             </td>
                             <td class="px-6 py-4">
                                 <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium"
-                                      style="background: #EADDFF; color: #6650a4;">
+                                      style="background: #E4F0F6; color: #3B6FE8;">
                                     {{ $volunteer->skill }}
                                 </span>
                             </td>
@@ -85,8 +85,8 @@
                     @empty
                         <tr>
                             <td colspan="6" class="px-6 py-20 text-center text-slate-400">
-                                <div class="w-14 h-14 rounded-2xl mx-auto mb-4 flex items-center justify-center" style="background: #EADDFF;">
-                                    <i class="bi bi-people text-2xl" style="color: #6650a4;"></i>
+                                <div class="w-14 h-14 rounded-2xl mx-auto mb-4 flex items-center justify-center" style="background: #E4F0F6;">
+                                    <i class="bi bi-people text-2xl" style="color: #3B6FE8;"></i>
                                 </div>
                                 <p class="text-sm font-semibold text-slate-800 mb-1">Tidak ada relawan</p>
                                 <p class="text-xs text-slate-400">Belum ada pendaftaran relawan.</p>

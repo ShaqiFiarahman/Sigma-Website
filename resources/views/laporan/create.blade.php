@@ -13,7 +13,7 @@
 
         {{-- Form header --}}
         <div class="px-8 py-6 border-b border-slate-100"
-             style="background: linear-gradient(135deg, #6650a4 0%, #533f8a 55%, #7D5260 100%);">
+             style="background: linear-gradient(135deg, #3B6FE8 0%, #1e3a8a 55%, #0f1f4a 100%);">
             <div class="flex items-center gap-3">
                 <div class="w-9 h-9 rounded-xl flex items-center justify-center"
                      style="background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.2);">
@@ -102,16 +102,16 @@
                         <input type="file" id="foto" name="foto" accept="image/*" class="hidden">
 
                         <div id="uploadPlaceholder" class="flex flex-col items-center space-y-1.5 text-center">
-                            <div class="w-10 h-10 rounded-xl flex items-center justify-center" style="background: #EADDFF;">
-                                <i class="bi bi-camera-fill text-lg" style="color: #6650a4;"></i>
+                            <div class="w-10 h-10 rounded-xl flex items-center justify-center" style="background: #E4F0F6;">
+                                <i class="bi bi-camera-fill text-lg" style="color: #3B6FE8;"></i>
                             </div>
                             <span class="text-sm text-slate-600 font-medium">Tambah Foto Kejadian</span>
                             <span class="text-xs text-slate-400">PNG, JPG, WEBP maks 5MB</span>
                         </div>
 
                         <div id="uploadPreview" class="hidden flex-col items-center justify-center w-full h-full">
-                            <i class="bi bi-file-earmark-image text-3xl mb-1" style="color: #6650a4;"></i>
-                            <p id="previewName" class="text-sm font-medium truncate max-w-xs" style="color: #6650a4;"></p>
+                            <i class="bi bi-file-earmark-image text-3xl mb-1" style="color: #3B6FE8;"></i>
+                            <p id="previewName" class="text-sm font-medium truncate max-w-xs" style="color: #3B6FE8;"></p>
                             <p class="text-xs text-slate-400 mt-0.5">Klik untuk mengganti</p>
                         </div>
                     </label>
@@ -128,7 +128,7 @@
                 </a>
                 <button type="submit" id="submitBtn"
                         class="px-6 py-2.5 text-sm font-semibold text-white rounded-xl transition-all duration-200 hover:-translate-y-0.5 flex items-center gap-2"
-                        style="background: linear-gradient(135deg, #6650a4 0%, #533f8a 100%); box-shadow: 0 2px 8px rgba(102,80,164,0.3);">
+                        style="background: linear-gradient(135deg, #3B6FE8 0%, #1e3a8a 100%); box-shadow: 0 2px 8px rgba(102,80,164,0.3);">
                     <i class="bi bi-send-fill"></i> Kirim Laporan
                 </button>
             </div>
@@ -139,8 +139,8 @@
          RIWAYAT LAPORAN (sesuai Android)
     ═══════════════════════════════════════════ --}}
     <div>
-        <h2 class="flex items-center gap-2 text-lg font-bold mb-4" style="color: #21005D;">
-            <i class="bi bi-clock-history" style="color: #6650a4;"></i>
+        <h2 class="flex items-center gap-2 text-lg font-bold mb-4" style="color: #0A0F1E;">
+            <i class="bi bi-clock-history" style="color: #3B6FE8;"></i>
             Riwayat Laporan Anda
         </h2>
 
@@ -160,7 +160,7 @@
                             'SIAGA_2'  => ['bg' => '#E3F2FD', 'text' => '#0D47A1', 'label' => 'Siaga 2'],
                             'RESOLVED' => ['bg' => '#E8F5E9', 'text' => '#1B5E20', 'label' => 'Resolved'],
                             'DECLINE'  => ['bg' => '#FCE4EC', 'text' => '#880E4F', 'label' => 'Decline'],
-                            default    => ['bg' => '#F3EDF7', 'text' => '#21005D', 'label' => 'Pending'],
+                            default    => ['bg' => '#F3EDF7', 'text' => '#0A0F1E', 'label' => 'Pending'],
                         };
                         $acceptColor = match($item->status) {
                             'RESOLVED' => ['bg' => '#E8F5E9', 'text' => '#2E7D32', 'label' => 'Accepted'],
@@ -192,7 +192,7 @@
                         <p class="text-xs text-slate-500 line-clamp-2 mb-2">{{ $item->description }}</p>
                         @if($item->latitude && $item->longitude)
                             <p class="text-xs text-slate-400 flex items-center gap-1">
-                                <i class="bi bi-geo-alt-fill" style="color: #6650a4;"></i>
+                                <i class="bi bi-geo-alt-fill" style="color: #3B6FE8;"></i>
                                 Lat: {{ number_format($item->latitude, 7) }}, Long: {{ number_format($item->longitude, 7) }}
                             </p>
                         @endif

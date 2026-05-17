@@ -98,6 +98,111 @@
 
     </div>
 
+    {{-- AKSES CEPAT (QUICK LINKS) --}}
+    <style>
+        .menu-card {
+            background: #FFFFFF;
+            border: 1px solid rgba(10, 15, 30, 0.06);
+            border-radius: 20px;
+            padding: 1.5rem 1rem;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            min-height: 160px;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(10, 15, 30, 0.04);
+        }
+        .menu-card::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(180deg, rgba(59, 111, 232, 0) 0%, rgba(59, 111, 232, 0.05) 100%);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        .menu-card:hover {
+            transform: translateY(-4px);
+            border-color: rgba(59, 111, 232, 0.4);
+            box-shadow: 0 12px 24px rgba(59, 111, 232, 0.12);
+        }
+        .menu-card:hover::before { opacity: 1; }
+        .menu-card > * { position: relative; z-index: 1; }
+
+        .menu-icon-wrap {
+            width: 60px;
+            height: 60px;
+            border-radius: 16px;
+            background: linear-gradient(135deg, #E4F0F6 0%, #C8DFF0 100%);
+            color: #0A0F1E;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.6rem;
+            margin-bottom: 1.25rem;
+            transition: all 0.3s ease;
+        }
+        .menu-card:hover .menu-icon-wrap {
+            background: linear-gradient(135deg, #1e3a8a 0%, #3B6FE8 100%);
+            color: #FFFFFF;
+            transform: scale(1.05);
+            box-shadow: 0 8px 16px rgba(59, 111, 232, 0.25);
+        }
+        .section-title {
+            font-size: 1.125rem;
+            font-weight: 700;
+            color: #0A0F1E;
+            letter-spacing: -0.01em;
+        }
+    </style>
+
+    <div class="mt-8 mb-4 px-1">
+        <h2 class="section-title">Akses Cepat Administrator</h2>
+        <p class="text-xs text-slate-500 mt-0.5">Menu kelola fitur dan layanan utama SIGMA</p>
+    </div>
+
+    <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+        {{-- Kelola Laporan --}}
+        <a href="{{ route('laporan.index') }}" class="menu-card group">
+            <div class="menu-icon-wrap">
+                <i class="bi bi-shield-check"></i>
+            </div>
+            <p class="font-bold text-sm mb-1 text-slate-900">Kelola Laporan</p>
+            <p class="text-xs text-slate-500 leading-relaxed">Verifikasi & validasi laporan kejadian</p>
+        </a>
+
+        {{-- Kelola Relawan --}}
+        <a href="{{ route('volunteer.index') }}" class="menu-card group">
+            <div class="menu-icon-wrap">
+                <i class="bi bi-people-fill"></i>
+            </div>
+            <p class="font-bold text-sm mb-1 text-slate-900">Data Relawan</p>
+            <p class="text-xs text-slate-500 leading-relaxed">Manajemen penugasan dan status relawan</p>
+        </a>
+
+        {{-- Peta Bencana --}}
+        <a href="{{ route('map') }}" class="menu-card group">
+            <div class="menu-icon-wrap">
+                <i class="bi bi-map-fill"></i>
+            </div>
+            <p class="font-bold text-sm mb-1 text-slate-900">Peta Bencana</p>
+            <p class="text-xs text-slate-500 leading-relaxed">Lihat sebaran bencana komprehensif</p>
+        </a>
+
+        {{-- Info Posko --}}
+        <a href="{{ route('shelter') }}" class="menu-card group">
+            <div class="menu-icon-wrap">
+                <i class="bi bi-house-heart-fill"></i>
+            </div>
+            <p class="font-bold text-sm mb-1 text-slate-900">Data Posko</p>
+            <p class="text-xs text-slate-500 leading-relaxed">Kelola titik pengungsian & shelter</p>
+        </a>
+    </div>
+
     {{-- MAP AREA --}}
     <div class="mt-6 bg-white border border-slate-200/80 rounded-2xl shadow-sm overflow-hidden"
         style="box-shadow: 0 1px 3px rgba(10,15,30,0.06), 0 4px 16px rgba(10,15,30,0.04);">
@@ -409,7 +514,7 @@
                         (item.tingkat_bencana === 'Bahaya' ? 'background:#1e3a8a' : 'background:#64748b');
 
                     const popupContent = `
-                            <div style="width:276px; font-family:system-ui,sans-serif; border-radius:16px; overflow:hidden; position:relative;">
+                            <div style="width:276px; font-family:'Plus Jakarta Sans', sans-serif; border-radius:16px; overflow:hidden; position:relative;">
                                 <button type="button"
                                     style="position:absolute;top:12px;right:12px;width:26px;height:26px;border-radius:50%;background:rgba(255,255,255,0.18);border:1px solid rgba(255,255,255,0.3);color:white;cursor:pointer;display:flex;align-items:center;justify-content:center;z-index:110;font-size:13px;"
                                     onclick="closeMapPopup()">✕</button>

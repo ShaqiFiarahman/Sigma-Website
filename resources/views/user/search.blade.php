@@ -5,7 +5,7 @@
 
 {{-- Back link --}}
 <div class="mb-4">
-    <a href="{{ route('dashboard') }}" class="inline-flex items-center gap-1.5 text-sm font-semibold transition-colors hover:opacity-70" style="color: #6650a4;">
+    <a href="{{ route('dashboard') }}" class="inline-flex items-center gap-1.5 text-sm font-semibold transition-colors hover:opacity-70" style="color: #3B6FE8;">
         <i class="bi bi-arrow-left"></i> Kembali
     </a>
 </div>
@@ -24,7 +24,7 @@
 {{-- Filter Chips --}}
 <div class="flex items-center gap-2 mb-5 flex-wrap">
     <div class="flex items-center gap-1.5 text-sm font-bold text-slate-700">
-        <i class="bi bi-funnel-fill" style="color: #6650a4;"></i> Filter Status:
+        <i class="bi bi-funnel-fill" style="color: #3B6FE8;"></i> Filter Status:
     </div>
     <button type="button" data-filter="all"
             class="filter-chip active px-3 py-1.5 text-xs font-bold rounded-full border transition-all">
@@ -80,7 +80,7 @@
             </div>
 
             <p class="text-sm text-slate-600 mb-1">
-                <i class="bi bi-geo-alt-fill" style="color: #6650a4;"></i>
+                <i class="bi bi-geo-alt-fill" style="color: #3B6FE8;"></i>
                 Lat: {{ number_format($d->latitude, 4) }}, Long: {{ number_format($d->longitude, 4) }}
             </p>
             <p class="text-xs text-slate-400">
@@ -111,13 +111,13 @@
         color: #625b71;
     }
     .filter-chip:hover {
-        border-color: #6650a4;
-        color: #6650a4;
+        border-color: #3B6FE8;
+        color: #3B6FE8;
     }
     .filter-chip.active {
-        background: #EADDFF;
-        border-color: #6650a4;
-        color: #6650a4;
+        background: #E4F0F6;
+        border-color: #3B6FE8;
+        color: #3B6FE8;
     }
 </style>
 

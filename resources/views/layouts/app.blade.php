@@ -68,15 +68,18 @@
 
     {{-- NAVBAR --}}
     <nav id="mainNavbar" class="sticky top-0 z-50">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
             
             <div class="flex items-center gap-8">
                 {{-- Brand --}}
                 <a href="{{ in_array(strtolower(auth()->user()->role ?? ''), ['admin', 'bnpb']) ? route('admin.dashboard') : route('dashboard') }}" class="flex items-center gap-2.5 shrink-0 group">
-                    <div class="brand-mark w-8 h-8 rounded-lg flex items-center justify-center text-white transition-all duration-300 group-hover:scale-105 group-hover:shadow-lg">
-                        <i class="bi bi-shield-check text-sm"></i>
+                    <div class="brand-mark w-10 h-10 rounded-lg flex items-center justify-center text-white transition-all duration-300 group-hover:scale-105 group-hover:shadow-lg">
+                        <i class="bi bi-shield-check text-base"></i>
                     </div>
-                    <span class="font-bold tracking-tight text-slate-900">SIGMA</span>
+                    <div class="flex flex-col">
+                        <span class="font-bold tracking-tight text-slate-900 text-lg leading-none">SIGMA</span>
+                        <span class="text-[10px] text-slate-500 font-medium leading-tight">Sistem Informasi Gawat Darurat dan Mitigasi Bencana</span>
+                    </div>
                 </a>
 
                 {{-- Desktop nav links — hanya untuk Admin/BNPB --}}
@@ -101,12 +104,10 @@
             </div>
 
             <div class="flex items-center gap-4">
-                {{-- Tombol Buat Laporan — hanya untuk Admin/BNPB --}}
-                @if(in_array(auth()->user()->role ?? '', ['admin', 'BNPB']))
+                {{-- Tombol Buat Laporan --}}
                 <a href="{{ route('laporan.create') }}" class="btn-primary hidden md:inline-flex items-center justify-center px-4 py-2 text-sm font-medium text-white rounded-lg transition-all duration-200">
                     <i class="bi bi-plus-lg mr-1.5 text-xs"></i> Buat Laporan
                 </a>
-                @endif
                 
                 {{-- User profile --}}
                 <div class="hidden md:flex items-center gap-3 pl-4 border-l border-slate-200">
@@ -118,7 +119,7 @@
                             <button type="submit" class="text-[10px] text-slate-400 hover:text-red-500 transition-colors mt-1 inline-block font-semibold">Logout</button>
                         </form>
                     </div>
-                    <div class="w-9 h-9 rounded-full flex items-center justify-center text-white text-sm font-bold" style="background: linear-gradient(135deg, #0A0F1E 0%, #1e3a8a 100%);">
+                    <div class="w-11 h-11 rounded-full flex items-center justify-center text-white text-base font-bold" style="background: linear-gradient(135deg, #0A0F1E 0%, #1e3a8a 100%);">
                         {{ substr(auth()->user()->full_name ?? 'U', 0, 1) }}
                     </div>
                 </div>
