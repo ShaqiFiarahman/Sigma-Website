@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -20,20 +21,20 @@
         body {
             background-color: #F0F4F8;
             background-image:
-                radial-gradient(ellipse 80% 50% at 50% -20%, rgba(59,111,232,0.08) 0%, transparent 70%);
+                radial-gradient(ellipse 80% 50% at 50% -20%, rgba(59, 111, 232, 0.08) 0%, transparent 70%);
         }
 
         /* Navbar glassy style */
         #mainNavbar {
-            background: rgba(255,255,255,0.85);
+            background: rgba(255, 255, 255, 0.85);
             backdrop-filter: blur(12px);
             -webkit-backdrop-filter: blur(12px);
-            border-bottom: 1px solid rgba(10,15,30,0.08);
+            border-bottom: 1px solid rgba(10, 15, 30, 0.08);
         }
 
         /* Active nav link with gradient underline */
         .nav-active {
-            background: linear-gradient(135deg, rgba(59,111,232,0.10) 0%, rgba(59,111,232,0.05) 100%);
+            background: linear-gradient(135deg, rgba(59, 111, 232, 0.10) 0%, rgba(59, 111, 232, 0.05) 100%);
             color: var(--accent) !important;
             font-weight: 600;
         }
@@ -41,111 +42,135 @@
         /* Animated gradient brand mark */
         .brand-mark {
             background: linear-gradient(135deg, var(--abyss) 0%, #1e3a8a 100%);
-            box-shadow: 0 2px 8px rgba(10,15,30,0.25);
+            box-shadow: 0 2px 8px rgba(10, 15, 30, 0.25);
         }
 
         /* CTA button */
         .btn-primary {
             background: linear-gradient(135deg, #1e3a8a 0%, var(--accent) 100%);
-            box-shadow: 0 2px 8px rgba(59,111,232,0.25);
+            box-shadow: 0 2px 8px rgba(59, 111, 232, 0.25);
         }
+
         .btn-primary:hover {
             background: linear-gradient(135deg, var(--accent) 0%, #5B8DF5 100%);
-            box-shadow: 0 4px 14px rgba(59,111,232,0.35);
+            box-shadow: 0 4px 14px rgba(59, 111, 232, 0.35);
             transform: translateY(-1px);
         }
 
         @keyframes fadeUp {
-            from { opacity: 0; transform: translateY(16px); }
-            to   { opacity: 1; transform: translateY(0);    }
+            from {
+                opacity: 0;
+                transform: translateY(16px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
+
         .animate-fade-up {
-            animation: fadeUp 0.45s cubic-bezier(.22,.68,0,1.2) both;
+            animation: fadeUp 0.45s cubic-bezier(.22, .68, 0, 1.2) both;
         }
     </style>
 </head>
+
 <body class="text-slate-900 min-h-screen flex flex-col font-sans selection:bg-blue-100 selection:text-blue-900">
 
     {{-- NAVBAR --}}
     <nav id="mainNavbar" class="sticky top-0 z-50">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
-            
+
             <div class="flex items-center gap-8">
                 {{-- Brand --}}
-                <a href="{{ in_array(strtolower(auth()->user()->role ?? ''), ['admin', 'bnpb']) ? route('admin.dashboard') : route('dashboard') }}" class="flex items-center gap-2.5 shrink-0 group">
-                    <div class="brand-mark w-10 h-10 rounded-lg flex items-center justify-center text-white transition-all duration-300 group-hover:scale-105 group-hover:shadow-lg">
+                <a href="{{ in_array(strtolower(auth()->user()->role ?? ''), ['admin', 'bnpb']) ? route('admin.dashboard') : route('dashboard') }}"
+                    class="flex items-center gap-2.5 shrink-0 group">
+                    <div
+                        class="brand-mark w-10 h-10 rounded-lg flex items-center justify-center text-white transition-all duration-300 group-hover:scale-105 group-hover:shadow-lg">
                         <i class="bi bi-shield-check text-base"></i>
                     </div>
                     <div class="flex flex-col">
                         <span class="font-bold tracking-tight text-slate-900 text-lg leading-none">SIGMA</span>
-                        <span class="text-[10px] text-slate-500 font-medium leading-tight">Sistem Informasi Gawat Darurat dan Mitigasi Bencana</span>
+                        <span class="text-[10px] text-slate-500 font-medium leading-tight">Sistem Informasi Gawat
+                            Darurat dan Mitigasi Bencana</span>
                     </div>
                 </a>
 
                 {{-- Desktop nav links — hanya untuk Admin/BNPB --}}
                 @if(in_array(auth()->user()->role ?? '', ['admin', 'BNPB']))
-                <ul class="hidden md:flex items-center gap-1">
-                    <li>
-                        <a href="{{ route('admin.dashboard') }}" 
-                           class="px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 
-                                  {{ Route::is('admin.dashboard') ? 'nav-active' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100/70' }}">
-                            <i class="bi bi-grid-1x2 mr-1.5 text-xs opacity-70"></i>Dashboard
-                        </a>
-                    </li>
-                    <li>
-                        <a href="{{ route('laporan.index') }}" 
-                           class="px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 
-                                  {{ Route::is('laporan.index') || Route::is('laporan.show') ? 'nav-active' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100/70' }}">
-                            <i class="bi bi-file-earmark-text mr-1.5 text-xs opacity-70"></i>Laporan
-                        </a>
-                    </li>
-                </ul>
+                    <ul class="hidden md:flex items-center gap-1">
+                        <li>
+                            <a href="{{ route('admin.dashboard') }}"
+                                class="px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 
+                                                  {{ Route::is('admin.dashboard') ? 'nav-active' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100/70' }}">
+                                <i class="bi bi-grid-1x2 mr-1.5 text-xs opacity-70"></i>Dashboard
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{{ route('laporan.index') }}"
+                                class="px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 
+                                                  {{ Route::is('laporan.index') || Route::is('laporan.show') ? 'nav-active' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100/70' }}">
+                                <i class="bi bi-file-earmark-text mr-1.5 text-xs opacity-70"></i>Laporan
+                            </a>
+                        </li>
+                    </ul>
                 @endif
             </div>
 
             <div class="flex items-center gap-4">
                 {{-- Tombol Buat Laporan --}}
-                <a href="{{ route('laporan.create') }}" class="btn-primary hidden md:inline-flex items-center justify-center px-4 py-2 text-sm font-medium text-white rounded-lg transition-all duration-200">
+                <a href="{{ route('laporan.create') }}"
+                    class="btn-primary hidden md:inline-flex items-center justify-center px-4 py-2 text-sm font-medium text-white rounded-lg transition-all duration-200">
                     <i class="bi bi-plus-lg mr-1.5 text-xs"></i> Buat Laporan
                 </a>
-                
+
                 {{-- User profile --}}
                 <div class="hidden md:flex items-center gap-3 pl-4 border-l border-slate-200">
                     <div class="text-right">
                         <p class="text-sm font-semibold text-slate-900 leading-none">{{ auth()->user()->full_name }}</p>
-                        <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1">{{ auth()->user()->role }}</p>
+                        <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1">
+                            {{ auth()->user()->role }}
+                        </p>
                         <form action="{{ route('logout') }}" method="POST" class="inline">
                             @csrf
-                            <button type="submit" class="text-[10px] text-slate-400 hover:text-red-500 transition-colors mt-1 inline-block font-semibold">Logout</button>
+                            <button type="submit"
+                                class="text-[10px] text-slate-400 hover:text-red-500 transition-colors mt-1 inline-block font-semibold">Logout</button>
                         </form>
                     </div>
-                    <div class="w-11 h-11 rounded-full flex items-center justify-center text-white text-base font-bold" style="background: linear-gradient(135deg, #0A0F1E 0%, #1e3a8a 100%);">
+                    <div class="w-11 h-11 rounded-full flex items-center justify-center text-white text-base font-bold"
+                        style="background: linear-gradient(135deg, #0A0F1E 0%, #1e3a8a 100%);">
                         {{ substr(auth()->user()->full_name ?? 'U', 0, 1) }}
                     </div>
                 </div>
 
                 {{-- Mobile toggle --}}
-                <button id="mobileToggle" type="button" class="md:hidden p-2 text-slate-600 hover:bg-slate-100 rounded-lg transition-colors">
+                <button id="mobileToggle" type="button"
+                    class="md:hidden p-2 text-slate-600 hover:bg-slate-100 rounded-lg transition-colors">
                     <i class="bi bi-list text-xl" id="mobileIcon"></i>
                 </button>
             </div>
         </div>
 
         {{-- Mobile dropdown --}}
-        <div id="mobileMenu" class="md:hidden hidden border-t border-slate-200/80 bg-white/95 backdrop-blur-md px-4 py-3 space-y-1">
-            <a href="{{ in_array(strtolower(auth()->user()->role ?? ''), ['admin', 'bnpb']) ? route('admin.dashboard') : route('dashboard') }}" class="flex items-center gap-2 px-3 py-2.5 rounded-lg text-sm font-medium {{ Route::is('dashboard') || Route::is('admin.dashboard') ? 'bg-blue-50 text-blue-700' : 'text-slate-600' }}">
+        <div id="mobileMenu"
+            class="md:hidden hidden border-t border-slate-200/80 bg-white/95 backdrop-blur-md px-4 py-3 space-y-1">
+            <a href="{{ in_array(strtolower(auth()->user()->role ?? ''), ['admin', 'bnpb']) ? route('admin.dashboard') : route('dashboard') }}"
+                class="flex items-center gap-2 px-3 py-2.5 rounded-lg text-sm font-medium {{ Route::is('dashboard') || Route::is('admin.dashboard') ? 'bg-blue-50 text-blue-700' : 'text-slate-600' }}">
                 <i class="bi bi-grid-1x2"></i>Dashboard
             </a>
-            <a href="{{ route('laporan.index') }}" class="flex items-center gap-2 px-3 py-2.5 rounded-lg text-sm font-medium {{ Route::is('laporan.index') || Route::is('laporan.show') ? 'bg-blue-50 text-blue-700' : 'text-slate-600' }}">
+            <a href="{{ route('laporan.index') }}"
+                class="flex items-center gap-2 px-3 py-2.5 rounded-lg text-sm font-medium {{ Route::is('laporan.index') || Route::is('laporan.show') ? 'bg-blue-50 text-blue-700' : 'text-slate-600' }}">
                 <i class="bi bi-file-earmark-text"></i>Laporan
             </a>
-            <a href="{{ route('laporan.create') }}" class="flex items-center gap-2 px-3 py-2.5 rounded-lg text-sm font-medium {{ Route::is('laporan.create') ? 'bg-blue-50 text-blue-700' : 'text-slate-600' }}">
+            <a href="{{ route('laporan.create') }}"
+                class="flex items-center gap-2 px-3 py-2.5 rounded-lg text-sm font-medium {{ Route::is('laporan.create') ? 'bg-blue-50 text-blue-700' : 'text-slate-600' }}">
                 <i class="bi bi-plus-circle"></i>Buat Laporan
             </a>
             <div class="border-t border-slate-100 mt-2 pt-2">
                 <form action="{{ route('logout') }}" method="POST">
                     @csrf
-                    <button type="submit" class="w-full text-left flex items-center gap-2 px-3 py-2.5 text-sm font-medium text-red-600 hover:bg-red-50 rounded-lg">
+                    <button type="submit"
+                        class="w-full text-left flex items-center gap-2 px-3 py-2.5 text-sm font-medium text-red-600 hover:bg-red-50 rounded-lg">
                         <i class="bi bi-box-arrow-right"></i>Logout
                     </button>
                 </form>
@@ -155,32 +180,63 @@
 
     {{-- MAIN CONTENT --}}
     <main class="flex-1 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 pb-16 animate-fade-up">
-        
+
         {{-- Page Header --}}
         @if(!Route::is('dashboard') && !Route::is('admin.dashboard'))
-        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
-            <div>
-                <h1 class="text-2xl font-bold text-slate-900 tracking-tight">@yield('title')</h1>
-                @if(View::hasSection('subtitle'))
-                    <p class="text-sm text-slate-500 mt-1">@yield('subtitle')</p>
-                @endif
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
+                <div>
+                    <h1 class="text-2xl font-bold text-slate-900 tracking-tight">@yield('title')</h1>
+                    @if(View::hasSection('subtitle'))
+                        <p class="text-sm text-slate-500 mt-1">@yield('subtitle')</p>
+                    @endif
+                </div>
+                @yield('page-actions')
             </div>
-            @yield('page-actions')
-        </div>
         @endif
 
         @yield('content')
     </main>
 
+    @yield('footer')
+
     <script>
         const toggle = document.getElementById('mobileToggle');
-        const menu   = document.getElementById('mobileMenu');
-        const icon   = document.getElementById('mobileIcon');
+        const menu = document.getElementById('mobileMenu');
+        const icon = document.getElementById('mobileIcon');
         toggle?.addEventListener('click', () => {
             menu.classList.toggle('hidden');
             icon.className = menu.classList.contains('hidden') ? 'bi bi-list text-xl' : 'bi bi-x-lg text-xl';
         });
+
+        // Global trick untuk menyembunyikan preview URL saat hover
+        document.addEventListener('DOMContentLoaded', () => {
+            document.querySelectorAll('a').forEach(a => {
+                const href = a.getAttribute('href');
+                // Lewati link kosong, hash link, atau javascript void
+                if (href && href !== '#' && !href.startsWith('#') && !href.startsWith('javascript:')) {
+                    const div = document.createElement('div');
+                    div.innerHTML = a.innerHTML;
+                    div.className = a.className + ' cursor-pointer';
+                    
+                    // Salin atribut style jika ada
+                    const style = a.getAttribute('style');
+                    if (style) div.setAttribute('style', style);
+                    
+                    div.onclick = (e) => {
+                        e.preventDefault();
+                        const target = a.getAttribute('target');
+                        if (target === '_blank') {
+                            window.open(href, '_blank');
+                        } else {
+                            window.location.href = href;
+                        }
+                    };
+                    a.parentNode.replaceChild(div, a);
+                }
+            });
+        });
     </script>
     @yield('scripts')
 </body>
+
 </html>

@@ -69,6 +69,7 @@ class LaporanController extends Controller
     {
         $riwayat = Disaster::where('user_id', auth()->id())
             ->latest()
+            ->limit(5)
             ->get();
 
         return view('laporan.create', compact('riwayat'));

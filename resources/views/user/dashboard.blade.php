@@ -6,6 +6,66 @@
     <style>
         /* Styles removed to match admin dashboard */
 
+        .map-container {
+            width: 100%;
+            height: 550px;
+            border-radius: 20px;
+            overflow: hidden;
+            border: 1px solid rgba(202, 196, 208, 0.55);
+            box-shadow: 0 4px 24px rgba(102, 80, 164, 0.08);
+        }
+
+        .legend-card {
+            /* background: #FFFFFF; */
+            border: 1px solid rgba(202, 196, 208, 0.55);
+            border-radius: 16px;
+            padding: 1rem 1.25rem;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.8rem;
+            color: #1D1B20;
+            padding: 0.25rem 0;
+        }
+
+        .legend-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 3px;
+            flex-shrink: 0;
+        }
+
+        .info-window-title {
+            font-weight: 700;
+            font-size: 14px;
+            color: #1D1B20;
+            margin-bottom: 4px;
+        }
+
+        .info-window-status {
+            display: inline-block;
+            font-size: 11px;
+            font-weight: 700;
+            padding: 2px 8px;
+            border-radius: 6px;
+            margin-bottom: 6px;
+        }
+
+        .info-window-desc {
+            font-size: 12px;
+            color: #625b71;
+            margin-bottom: 6px;
+        }
+
+        .info-window-meta {
+            font-size: 11px;
+            color: #9e9e9e;
+        }
+
         .role-badge {
             display: inline-flex;
             align-items: center;
@@ -322,36 +382,40 @@
 
             <div class="news-scroll flex gap-4 overflow-x-auto pb-4">
                 @forelse($news ?? [] as $item)
-                    <a href="{{ $item['url'] ?? '#' }}" target="_blank"
-                        class="group bg-white border border-slate-100 rounded-2xl overflow-hidden flex flex-col justify-between shadow-sm hover:shadow-[0_15px_30px_rgba(0,0,0,0.15)] hover:-translate-y-[6px] transition-all duration-300 block"
+                    <div onclick="window.open('{{ $item['url'] ?? '#' }}', '_blank')"
+                        class="group bg-white border border-slate-100 rounded-2xl overflow-hidden flex flex-col justify-between shadow-sm hover:shadow-[0_15px_30px_rgba(0,0,0,0.15)] hover:-translate-y-[6px] transition-all duration-300 cursor-pointer"
                         style="min-width: 280px; max-width: 280px;">
-                        @if(isset($item['image_url']) && $item['image_url'])
-                            <div class="h-36 overflow-hidden">
+                        <div class="relative h-32 overflow-hidden">
+                            @if(isset($item['image_url']) && $item['image_url'])
                                 <img src="{{ $item['image_url'] }}"
                                     class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                                     alt="{{ $item['title'] }}">
-                            </div>
-                        @else
-                            <div class="h-36 bg-slate-100 flex items-center justify-center">
-                                <i class="bi bi-newspaper text-3xl text-slate-300"></i>
-                            </div>
-                        @endif
-
-                        <div class="py-5 px-4 flex-1 flex flex-col justify-between">
-                            <div>
-                                <div class="flex items-center justify-between mb-3">
-                                    <span
-                                        class="text-xs font-bold text-blue-600 uppercase">{{ $item['source'] ?? 'BERITA' }}</span>
-                                    <span class="text-xs text-slate-500 flex items-center gap-1">
-                                        <i class="bi bi-clock"></i> {{ $item['time'] ?? '' }}
-                                    </span>
+                            @else
+                                <div class="w-full h-full bg-slate-100 flex items-center justify-center">
+                                    <i class="bi bi-newspaper text-3xl text-slate-300"></i>
                                 </div>
-                                <p class="font-bold text-sm leading-relaxed line-clamp-3 text-slate-900">
-                                    {{ $item['title'] ?? '-' }}
-                                </p>
+                            @endif
+
+                            <!-- Tag -->
+                            <div
+                                class="absolute top-3 left-3 bg-white/90 text-blue-800 text-[10px] font-bold px-2.5 py-1.5 rounded-lg uppercase backdrop-blur-sm">
+                                {{ $item['source'] ?? 'BERITA' }}
                             </div>
                         </div>
-                    </a>
+
+                        <div class="p-5 flex-1 flex flex-col justify-between">
+                            <div>
+                                <p class="font-bold text-sm leading-relaxed line-clamp-2 text-slate-900 mb-3">
+                                    {{ $item['title'] ?? '-' }}
+                                </p>
+
+                                <div class="flex items-center gap-1.5 text-xs text-slate-500">
+                                    <i class="bi bi-clock"></i>
+                                    <span>{{ $item['time'] ?? '' }}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 @empty
                     <div class="w-full py-8 text-center text-slate-500">
                         <i class="bi bi-newspaper text-4xl mb-2 block"></i>
@@ -367,7 +431,7 @@
         </section>
 
         {{-- Menu Layanan --}}
-        <section class="animate-fade-up" style="animation-delay: 0.2s;">
+        <section class="animate-fade-up mb-8" style="animation-delay: 0.15s;">
             <div class="mb-4 px-1">
                 <h2 class="section-title">Menu Layanan</h2>
                 <p class="text-xs text-slate-500 mt-0.5">Akses cepat layanan SIGMA</p>
@@ -375,6 +439,7 @@
 
             <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
                 @foreach($menu ?? [] as $item)
+                    @if(in_array($item['id'] ?? null, [1, 2])) @continue @endif
                     @php
                         $href = match ($item['id'] ?? null) {
                             1 => route('map'),               // Peta Bencana
@@ -387,24 +452,111 @@
                             default => '#',
                         };
                     @endphp
-                    <a href="{{ $href }}" class="menu-card group">
+                    <div onclick="window.location.href='{{ $href }}'" class="menu-card group cursor-pointer">
                         <div class="menu-icon-wrap">
                             <i class="bi {{ $item['icon'] ?? 'bi-box' }}"></i>
                         </div>
                         <p class="font-bold text-sm mb-1 text-slate-900">{{ $item['title'] ?? 'Menu' }}</p>
                         <p class="text-xs text-slate-500 leading-relaxed">{{ $item['description'] ?? '' }}</p>
-                    </a>
+                    </div>
                 @endforeach
+            </div>
+        </section>
+
+        {{-- Peta Bencana Section --}}
+        <section class="animate-fade-up min-h-[85vh]" style="animation-delay: 0.2s;">
+            <div class="mb-4 px-1">
+                <h2 class="section-title">Peta Bencana</h2>
+                <p class="text-xs text-slate-500 mt-0.5">Pantau kondisi terkini di sekitar Anda</p>
+            </div>
+
+            <div class="relative">
+                {{-- Legend --}}
+                <div class="legend-card absolute bottom-6 right-4 z-10 shadow-lg bg-white/75 backdrop-blur-sm">
+                    <p class="text-xs font-bold uppercase tracking-wider mb-2 text-slate-500">Legenda</p>
+                    <div class="flex flex-col gap-y-1">
+                        <div class="legend-item">
+                            <div class="legend-dot" style="background: #D32F2F; border-radius: 50%;"></div>
+                            <span>Darurat</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-dot" style="background: #1565C0; border-radius: 50%;"></div>
+                            <span>Bahaya</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-dot" style="background: #616161; border-radius: 50%;"></div>
+                            <span>Waspada</span>
+                        </div>
+                        <div class="legend-item">
+                            <i class="bi bi-house-door-fill text-[#10B981] text-sm"
+                                style="width: 12px; text-align: center;"></i>
+                            <span>Posko</span>
+                        </div>
+                    </div>
+                </div>
+
+                {{-- Map --}}
+                <div class="map-container" id="map"></div>
             </div>
         </section>
     </div>
 
-    {{-- FAB Darurat --}}
-    <button type="button" class="fab-emergency"
-        onclick="alert('Tombol darurat ditekan. Nanti akan menghubungkan ke kontak darurat.')">
-        <i class="bi bi-telephone-fill"></i>
-        PANGGIL DARURAT
-    </button>
+@section('footer')
+    {{-- Footer --}}
+    <style>
+        .u-footer {
+            position: relative;
+            background-color: white;
+            overflow: hidden;
+            margin-top: 2rem;
+        }
+
+        .u-footer::before {
+            content: '';
+            position: absolute;
+            top: -85px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 140%;
+            height: 100px;
+            background-color: #F0F4F8;
+            /* Senada dengan background body */
+            border-radius: 50%;
+            pointer-events: none;
+        }
+    </style>
+    <footer class="py-10 u-footer">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 md:grid-cols-3 gap-8 text-xs text-slate-500 relative z-10">
+            <!-- Column 1: Brand & Info (Left) -->
+            <div>
+                <span class="font-bold text-slate-900 text-sm block mb-1">SIGMA</span>
+                <p class="text-slate-600 mb-1">Sistem Informasi Gawat Darurat dan Mitigasi Bencana</p>
+                <span>&copy;2026 All rights reserved</span>
+            </div>
+
+            <!-- Column 2: Menu (Center) -->
+            <div class="md:text-center">
+                <span class="font-bold text-slate-900 text-sm block mb-2">Menu</span>
+                <div class="flex flex-col gap-1.5 text-slate-600 md:items-center">
+                    <a href="{{ route('dashboard') }}" class="hover:text-[#2B52C3] transition-colors">Dashboard</a>
+                    <a href="{{ route('laporan.index') }}" class="hover:text-[#2B52C3] transition-colors">Laporan</a>
+                    <a href="{{ route('panduan') }}" class="hover:text-[#2B52C3] transition-colors">Panduan</a>
+                </div>
+            </div>
+
+            <!-- Column 3: Tim (Right) -->
+            <div class="md:text-right">
+                <span class="font-bold text-slate-900 text-sm block mb-2">Tim</span>
+                <div class="flex flex-col gap-1.5 text-slate-600 md:items-end">
+                    <span>Fadel</span>
+                    <span>Fandhi</span>
+                    <span>Fathoni</span>
+                    <span>Huda</span>
+                </div>
+            </div>
+        </div>
+    </footer>
+@endsection
 
     <script>
         document.getElementById('dismissWarning')?.addEventListener('click', () => {
@@ -501,12 +653,12 @@
                 }
 
                 text.innerHTML = `${message}.
-                            <div class="mt-2.5">
-                                <a href="{{ route('search') }}" class="inline-flex items-center gap-1.5 text-xs font-bold bg-red-600 text-white px-3 py-1.25 rounded-full hover:bg-red-700 transition-colors shadow-sm hover:shadow-md">
-                                    Lihat Detail 
-                                    <i class="bi bi-arrow-right"></i>
-                                </a>
-                            </div>`;
+                    <div class="mt-2.5">
+                        <a href="{{ route('search') }}" class="inline-flex items-center gap-1.5 text-xs font-bold bg-red-600 text-white px-3 py-1.25 rounded-full hover:bg-red-700 transition-colors shadow-sm hover:shadow-md">
+                            Lihat Detail 
+                            <i class="bi bi-arrow-right"></i>
+                        </a>
+                    </div>`;
                 if (dismissBtn) {
                     dismissBtn.className = 'shrink-0 p-2.5 rounded-full hover:bg-red-200/80 transition-colors text-red-700';
                 }
@@ -582,7 +734,7 @@
             // Generate exactly 3 dots
             for (let i = 0; i < 3; i++) {
                 const dot = document.createElement('div');
-                dot.className = `w-2 h-2 rounded-full transition-all duration-300 cursor-pointer ${i === 0 ? 'bg-blue-600 w-8' : 'bg-slate-300'}`;
+                dot.className = `w-2 h-2 rounded-full transition-all duration-300 cursor-pointer ${i === 0 ? 'bg-[#2B52C3] w-8' : 'bg-slate-300'}`;
 
                 // Click to scroll
                 dot.addEventListener('click', () => {
@@ -627,7 +779,7 @@
 
                 dots.forEach((dot, index) => {
                     if (index === activeIndex) {
-                        dot.className = 'w-8 h-2 rounded-full bg-blue-600 transition-all duration-300';
+                        dot.className = 'w-8 h-2 rounded-full bg-[#2B52C3] transition-all duration-300';
                     } else {
                         dot.className = 'w-2 h-2 rounded-full bg-slate-300 transition-all duration-300';
                     }
@@ -635,5 +787,190 @@
             });
         }
     </script>
+
+    {{-- Map Scripts --}}
+    <script>
+        let map;
+        let markers = [];
+        let infoWindow;
+
+        // Color mapping sesuai Android
+        const statusColors = {
+            'AWAS': '#D32F2F',
+            'SIAGA_1': '#1565C0',
+            'SIAGA_2': '#616161',
+            'PENDING': '#FFA000',
+            'RESOLVED': '#2E7D32',
+        };
+
+        function initMap() {
+            // Center: Surakarta
+            const center = { lat: -7.5505, lng: 110.8063 };
+
+            map = new google.maps.Map(document.getElementById('map'), {
+                zoom: 12,
+                center: center,
+                disableDefaultUI: true,
+                gestureHandling: 'greedy',
+                styles: [
+                    { featureType: "poi", stylers: [{ visibility: "off" }] },
+                    { featureType: "transit", stylers: [{ visibility: "off" }] },
+                ]
+            });
+
+            infoWindow = new google.maps.InfoWindow();
+
+            // Load both disasters and shelters
+            loadDisasters();
+            loadShelters();
+        }
+
+        async function loadDisasters() {
+            try {
+                const response = await fetch('{{ route("api.disasters") }}');
+                const disasters = await response.json();
+
+                disasters.forEach(d => {
+                    const color = statusColors[d.status] || '#FFA000';
+
+                    const marker = new google.maps.Marker({
+                        position: { lat: d.lat, lng: d.lng },
+                        map: map,
+                        title: d.title,
+                        icon: {
+                            url: 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(`
+                                                            <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 40 40">
+                                                              <style>
+                                                                @keyframes pulse {
+                                                                  0% { transform: scale(1); opacity: 1; }
+                                                                  100% { transform: scale(3); opacity: 0; }
+                                                                }
+                                                                .pulse {
+                                                                  animation: pulse 1.5s ease-out infinite;
+                                                                  transform-origin: 20px 20px;
+                                                                }
+                                                              </style>
+                                                              <circle cx="20" cy="20" r="6" fill="${color}" />
+                                                              <circle cx="20" cy="20" r="6" fill="none" stroke="${color}" stroke-width="2" class="pulse" />
+                                                              <circle cx="20" cy="20" r="6" fill="none" stroke="#FFFFFF" stroke-width="1" />
+                                                            </svg>
+                                                        `),
+                            scaledSize: new google.maps.Size(40, 40),
+                            anchor: new google.maps.Point(20, 20),
+                        },
+                        optimized: false
+                    });
+
+                    // Status badge color for info window
+                    let badgeBg, badgeColor;
+                    switch (d.status) {
+                        case 'AWAS': badgeBg = '#FFEBEE'; badgeColor = '#B71C1C'; break;
+                        case 'SIAGA_1': badgeBg = '#E3F2FD'; badgeColor = '#0D47A1'; break;
+                        case 'SIAGA_2': badgeBg = '#F5F5F5'; badgeColor = '#424242'; break;
+                        case 'RESOLVED': badgeBg = '#E8F5E9'; badgeColor = '#1B5E20'; break;
+                        default: badgeBg = '#FFF3E0'; badgeColor = '#E65100'; break;
+                    }
+
+                    const content = `
+                        <div style="max-width: 250px; padding: 4px;">
+                            <p class="info-window-title">${d.title}</p>
+                            <span class="info-window-status" style="background:${badgeBg}; color:${badgeColor};">
+                                ${d.statusLabel}
+                            </span>
+                            <p class="info-window-desc">${d.description}</p>
+                            <p class="info-window-meta">
+                                <i class="bi bi-person"></i> ${d.reporter} &middot;
+                                <i class="bi bi-clock"></i> ${d.date}
+                            </p>
+                            <a href="/laporan/detail/${d.id}" style="font-size:12px; color:#3B6FE8; font-weight:600; text-decoration:none;">
+                                Lihat Detail →
+                            </a>
+                        </div>
+                    `;
+
+                    marker.addListener('click', () => {
+                        infoWindow.setContent(content);
+                        infoWindow.open(map, marker);
+                    });
+
+                    markers.push(marker);
+                });
+
+                fitBounds();
+            } catch (error) {
+                console.error('Failed to load disasters:', error);
+            }
+        }
+
+        async function loadShelters() {
+            try {
+                const response = await fetch('{{ route("api.shelters") }}');
+                const shelters = await response.json();
+
+                shelters.forEach(s => {
+                    const marker = new google.maps.Marker({
+                        position: { lat: s.lat, lng: s.lng },
+                        map: map,
+                        title: s.name,
+                        icon: {
+                            url: 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="#10B981" class="bi bi-house-door-fill" viewBox="0 0 16 16"><path d="M6.5 14.5v-3.505c0-.245.25-.495.5-.495h2c.25 0 .5.25.5.5v3.5a.5.5 0 0 0 .5.5h4a.5.5 0 0 0 .5-.5v-7a.5.5 0 0 0-.146-.354L13 5.793V2.5a.5.5 0 0 0-.5-.5h-1a.5.5 0 0 0-.5.5v1.293L8.354 1.146a.5.5 0 0 0-.708 0l-6 6A.5.5 0 0 0 1.5 7.5v7a.5.5 0 0 0 .5.5h4a.5.5 0 0 0 .5-.5z"/></svg>'),
+                            scaledSize: new google.maps.Size(24, 24),
+                        },
+                    });
+
+                    const statusBg = s.status === 'Penuh' ? '#FCE4EC' : '#E8F5E9';
+                    const statusColor = s.status === 'Penuh' ? '#C62828' : '#2E7D32';
+                    const logisticsHtml = s.logistics.map(l =>
+                        `<span style="display:inline-block; background:#E4F0F6; color:#3B6FE8; font-size:10px; font-weight:600; padding:2px 6px; border-radius:4px; margin:2px;">${l}</span>`
+                    ).join('');
+
+                    const content = `
+                        <div style="max-width: 260px; padding: 4px;">
+                            <p class="info-window-title">${s.name}</p>
+                            <span class="info-window-status" style="background:${statusBg}; color:${statusColor};">
+                                ${s.status}
+                            </span>
+                            <p style="font-size:12px; color:#1D1B20; margin:4px 0;">
+                                Kapasitas: <b>${s.capacity}</b> orang
+                            </p>
+                            <p style="font-size:11px; color:#625b71; margin-bottom:4px;">Kebutuhan Logistik:</p>
+                            <div style="margin-bottom:6px;">${logisticsHtml}</div>
+                            <a href="https://www.google.com/maps/dir/?api=1&destination=${s.lat},${s.lng}"
+                               target="_blank"
+                               style="font-size:12px; color:#3B6FE8; font-weight:600; text-decoration:none;">
+                                Petunjuk Arah →
+                            </a>
+                        </div>
+                    `;
+
+                    marker.addListener('click', () => {
+                        infoWindow.setContent(content);
+                        infoWindow.open(map, marker);
+                    });
+
+                    markers.push(marker);
+                });
+
+                fitBounds();
+            } catch (error) {
+                console.error('Failed to load shelters:', error);
+            }
+        }
+
+        function fitBounds() {
+            if (markers.length > 0) {
+                const bounds = new google.maps.LatLngBounds();
+                markers.forEach(m => bounds.extend(m.getPosition()));
+                map.fitBounds(bounds);
+
+                const listener = google.maps.event.addListener(map, 'idle', () => {
+                    if (map.getZoom() > 15) map.setZoom(15);
+                    google.maps.event.removeListener(listener);
+                });
+            }
+        }
+    </script>
+    <script src="https://maps.googleapis.com/maps/api/js?key={{ config('services.google_maps.key') }}&callback=initMap"
+        async defer></script>
 
 @endsection

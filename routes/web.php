@@ -38,7 +38,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/panduan-bencana', function () { return view('user.panduan'); })->name('panduan');
         
         // Map & Information
-        Route::get('/peta-bencana', [MapController::class, 'index'])->name('map');
+        Route::get('/peta-bencana', function () { return redirect()->route('dashboard'); })->name('map');
         Route::get('/info-posko', [MapController::class, 'shelterPage'])->name('shelter');
         Route::get('/cari-bencana', [MapController::class, 'search'])->name('search');
 
