@@ -326,7 +326,7 @@
         {{-- Indonesia Map Illustration --}}
         <div class="absolute inset-0 opacity-15 pointer-events-none">
             <img src="{{ asset('images/indonesia_map.png') }}" class="w-full h-full object-cover object-center"
-                alt="Peta Indonesia">
+                alt="" loading="lazy" decoding="async">
         </div>
 
         <div class="relative z-10 px-12 sm:px-16 py-14 flex flex-col sm:flex-row sm:items-center justify-between gap-12">
@@ -389,7 +389,7 @@
                             @if(isset($item['image_url']) && $item['image_url'])
                                 <img src="{{ $item['image_url'] }}"
                                     class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                                    alt="{{ $item['title'] }}">
+                                    alt="{{ $item['title'] }}" loading="lazy" decoding="async">
                             @else
                                 <div class="w-full h-full bg-slate-100 flex items-center justify-center">
                                     <i class="bi bi-newspaper text-3xl text-slate-300"></i>
@@ -472,7 +472,7 @@
 
             <div class="relative">
                 {{-- Legend --}}
-                <div class="legend-card absolute bottom-6 right-4 z-10 shadow-lg bg-white/75 backdrop-blur-sm">
+                <div class="legend-card absolute bottom-6 right-4 z-10 shadow-lg bg-white/90">
                     <p class="text-xs font-bold uppercase tracking-wider mb-2 text-slate-500">Legenda</p>
                     <div class="flex flex-col gap-y-1">
                         <div class="legend-item">

@@ -6,7 +6,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SIGMA — @yield('title')</title>
     <meta name="description" content="SIGMA — Sistem Informasi Tanggap Bencana.">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+    <link rel="preload" href="/fonts/PlusJakartaSans-Regular.ttf" as="font" type="font/ttf" crossorigin>
+    <link rel="preload" href="/fonts/PlusJakartaSans-Bold.ttf" as="font" type="font/ttf" crossorigin>
+    <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+    <link rel="preconnect" href="https://maps.googleapis.com" crossorigin>
+    <link rel="preconnect" href="https://maps.gstatic.com" crossorigin>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet" media="print" onload="this.media='all'">
+    <noscript><link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet"></noscript>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     <style>
         :root {
@@ -26,9 +32,7 @@
 
         /* Navbar glassy style */
         #mainNavbar {
-            background: rgba(255, 255, 255, 0.85);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
+            background: rgba(255, 255, 255, 0.97);
             border-bottom: 1px solid rgba(10, 15, 30, 0.08);
         }
 
@@ -206,34 +210,6 @@
         toggle?.addEventListener('click', () => {
             menu.classList.toggle('hidden');
             icon.className = menu.classList.contains('hidden') ? 'bi bi-list text-xl' : 'bi bi-x-lg text-xl';
-        });
-
-        // Global trick untuk menyembunyikan preview URL saat hover
-        document.addEventListener('DOMContentLoaded', () => {
-            document.querySelectorAll('a').forEach(a => {
-                const href = a.getAttribute('href');
-                // Lewati link kosong, hash link, atau javascript void
-                if (href && href !== '#' && !href.startsWith('#') && !href.startsWith('javascript:')) {
-                    const div = document.createElement('div');
-                    div.innerHTML = a.innerHTML;
-                    div.className = a.className + ' cursor-pointer';
-                    
-                    // Salin atribut style jika ada
-                    const style = a.getAttribute('style');
-                    if (style) div.setAttribute('style', style);
-                    
-                    div.onclick = (e) => {
-                        e.preventDefault();
-                        const target = a.getAttribute('target');
-                        if (target === '_blank') {
-                            window.open(href, '_blank');
-                        } else {
-                            window.location.href = href;
-                        }
-                    };
-                    a.parentNode.replaceChild(div, a);
-                }
-            });
         });
     </script>
     @yield('scripts')

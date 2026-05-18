@@ -99,6 +99,7 @@
                                 <div class="overflow-hidden rounded-xl border border-slate-100 shadow-sm">
                                     <img src="{{ $photo }}"
                                          alt="Dokumentasi Bencana" class="w-full h-auto object-cover max-h-80 hover:scale-105 transition-transform duration-300 cursor-pointer"
+                                         loading="lazy"
                                          onclick="window.open(this.src, '_blank')">
                                 </div>
                             @endforeach
