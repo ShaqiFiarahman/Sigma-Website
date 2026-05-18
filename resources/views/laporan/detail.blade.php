@@ -81,9 +81,28 @@
                 {{-- Foto --}}
                 <div class="mb-8 rounded-xl overflow-hidden border border-slate-100"
                      style="box-shadow: 0 2px 10px rgba(10,15,30,0.06);">
-                    @if(!empty($laporan['photo_url']))
-                        <img src="{{ $laporan['photo_url'] }}"
-                             alt="Dokumentasi Bencana" class="w-full h-auto object-cover max-h-80">
+                    @php
+                        $photos = [];
+                        if (!empty($laporan['photo_url'])) {
+                            $decoded = json_decode($laporan['photo_url'], true);
+                            if (json_last_error() === JSON_ERROR_NONE && is_array($decoded)) {
+                                $photos = $decoded;
+                            } else {
+                                $photos = [$laporan['photo_url']]; // Fallback untuk data lama
+                            }
+                        }
+                    @endphp
+
+                    @if(count($photos) > 0)
+                        <div class="grid grid-cols-1 {{ count($photos) > 1 ? 'sm:grid-cols-2' : '' }} gap-4 p-2">
+                            @foreach($photos as $photo)
+                                <div class="overflow-hidden rounded-xl border border-slate-100 shadow-sm">
+                                    <img src="{{ $photo }}"
+                                         alt="Dokumentasi Bencana" class="w-full h-auto object-cover max-h-80 hover:scale-105 transition-transform duration-300 cursor-pointer"
+                                         onclick="window.open(this.src, '_blank')">
+                                </div>
+                            @endforeach
+                        </div>
                     @else
                         <div class="w-full h-48 flex flex-col items-center justify-center bg-slate-50 text-slate-400">
                             <i class="bi bi-image text-4xl mb-2"></i>
@@ -100,7 +119,10 @@
                         </div>
                         <div>
                             <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Lokasi Kejadian</p>
-                            <p class="text-sm font-semibold text-slate-800">{{ $laporan['lokasi'] }}</p>
+                            <p class="text-sm font-semibold text-slate-800">{{ $laporan['location'] ?? $laporan['lokasi'] ?? "Lat: {$laporan['latitude']}, Long: {$laporan['longitude']}" }}</p>
+                            @if($laporan['location'] && $laporan['latitude'] && $laporan['longitude'])
+                                <p class="text-[11px] text-slate-400 mt-1">{{ round($laporan['latitude'], 5) }}, {{ round($laporan['longitude'], 5) }}</p>
+                            @endif
                         </div>
                     </div>
 

@@ -78,6 +78,25 @@ class NewsService
             return (string) $item->enclosure['url'];
         }
 
+        // Try media:content or media:thumbnail
+        $namespaces = $item->getNamespaces(true);
+        if (isset($namespaces['media'])) {
+            $media = $item->children($namespaces['media']);
+            if (isset($media->content)) {
+                $attrs = $media->content->attributes();
+                if (isset($attrs['url'])) {
+                    return (string) $attrs['url'];
+                }
+            }
+            if (isset($media->thumbnail)) {
+                $attrs = $media->thumbnail->attributes();
+                if (isset($attrs['url'])) {
+                    return (string) $attrs['url'];
+                }
+            }
+        }
+
+        // Try matching in description
         preg_match('/<img.+src=[\'"]([^\'"]+)[\'"].*>/i', (string) $item->description, $matches);
         if (isset($matches[1])) {
             return $matches[1];

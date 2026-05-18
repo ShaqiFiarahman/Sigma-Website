@@ -41,7 +41,8 @@ return [
 
     'supabase' => [
         'url' => env('SUPABASE_URL'),
-        'key' => env('SUPABASE_ANON_KEY'),
+        'key' => env('SUPABASE_ANON_KEY', env('SUPABASE_KEY')),
+        'bucket' => env('SUPABASE_STORAGE_BUCKET', 'laporan'),
     ],
 
 ];

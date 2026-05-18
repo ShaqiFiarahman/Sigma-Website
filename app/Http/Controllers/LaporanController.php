@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Disaster;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Http;
 
 class LaporanController extends Controller
 {
@@ -47,7 +48,7 @@ class LaporanController extends Controller
             $query->where('user_id', $user->id);
         }
 
-        $laporans = $query->get()->map(fn($d) => $this->toArray($d));
+        $laporans = $query->get()->map(fn(Disaster $d) => $this->toArray($d));
 
         return view('laporan.index', compact('laporans'));
     }
@@ -66,28 +67,89 @@ class LaporanController extends Controller
     {
         $request->validate([
             'judul'     => 'required|string|max:255',
-            'lokasi'    => 'required|string|max:255',
             'deskripsi' => 'required|string',
             'latitude'  => 'required|numeric',
             'longitude' => 'required|numeric',
-            'foto'      => 'nullable|image|max:5120', // maks 5 MB
+            'foto'      => 'required|array|max:3',
+            'foto.*'    => 'image|max:25600', // max 25MB per file
         ]);
 
         $user     = auth()->user();
-        $photoUrl = null;
+        $photoUrls = [];
+
+        // Reverse Geocoding via Nominatim (OpenStreetMap) secara gratis
+        $locationName = 'Lokasi tidak diketahui';
+        try {
+            $response = Http::withHeaders([
+                'User-Agent' => 'SigmaApp/1.0'
+            ])->timeout(5)->get('https://nominatim.openstreetmap.org/reverse', [
+                'format' => 'json',
+                'lat' => $request->latitude,
+                'lon' => $request->longitude,
+                'zoom' => 18,
+            ]);
+
+            if ($response->successful()) {
+                $data = $response->json();
+                $locationName = $data['display_name'] ?? 'Lokasi tidak diketahui';
+            }
+        } catch (\Exception $e) {
+            // Jika gagal, biarkan default
+        }
 
         if ($request->hasFile('foto')) {
-            $path     = $request->file('foto')->store('laporan', 'public');
-            $photoUrl = Storage::url($path);
+            foreach ($request->file('foto') as $file) {
+                $path = $file->store('laporan', 'public');
+                
+                // Kompres gambar setelah disimpan
+                $absolutePath = storage_path('app/public/' . $path);
+                $this->compressImage($absolutePath, $absolutePath, 60);
+                
+                // Upload ke Supabase Storage
+                $fileContent = file_get_contents($absolutePath);
+                $filename = basename($absolutePath);
+                
+                $supabaseUrl = rtrim(config('services.supabase.url'), '/');
+                $supabaseKey = config('services.supabase.key');
+                $bucketName = config('services.supabase.bucket', 'laporan');
+                
+                if ($supabaseUrl && $supabaseKey) {
+                    try {
+                        $response = Http::withHeaders([
+                            'Authorization' => 'Bearer ' . $supabaseKey,
+                            'Content-Type' => mime_content_type($absolutePath),
+                        ])->withBody($fileContent, mime_content_type($absolutePath))
+                          ->post($supabaseUrl . "/storage/v1/object/" . $bucketName . "/" . $filename);
+                        
+                        if ($response->successful()) {
+                            // Simpan URL publik Supabase
+                            $photoUrls[] = $supabaseUrl . "/storage/v1/object/public/" . $bucketName . "/" . $filename;
+                            
+                            // Hapus file lokal setelah diupload ke Supabase
+                            @unlink($absolutePath);
+                        } else {
+                            // Jika gagal upload ke Supabase, fallback ke URL lokal
+                            $photoUrls[] = Storage::url($path);
+                        }
+                    } catch (\Exception $e) {
+                        // Jika error request, fallback ke URL lokal
+                        $photoUrls[] = Storage::url($path);
+                    }
+                } else {
+                    // Jika config Supabase belum ada di .env, gunakan URL lokal
+                    $photoUrls[] = Storage::url($path);
+                }
+            }
         }
 
         Disaster::create([
             'user_id'       => $user->id,
             'title'         => $request->judul,
             'description'   => $request->deskripsi,
-            'photo_url'     => $photoUrl,
+            'photo_url'     => json_encode($photoUrls),
             'latitude'      => $request->latitude,
             'longitude'     => $request->longitude,
+            'location'      => $locationName,
             'status'        => Disaster::STATUS_PENDING,
             'reporter_name' => $user->full_name ?? $user->email,
         ]);
@@ -121,14 +183,17 @@ class LaporanController extends Controller
     private function toArray(Disaster $d): array
     {
         // Lokasi: gunakan nama lokasi jika ada, fallback ke koordinat
-        $lokasi = ($d->latitude && $d->longitude)
-            ? 'Lat: ' . round($d->latitude, 4) . ', Long: ' . round($d->longitude, 4)
-            : 'Lokasi tidak diketahui';
+        $lokasi = $d->location
+            ? $d->location
+            : (($d->latitude && $d->longitude)
+                ? 'Lat: ' . round($d->latitude, 4) . ', Long: ' . round($d->longitude, 4)
+                : 'Lokasi tidak diketahui');
 
         return [
             'id'              => $d->id,
             'judul'           => $d->title,
             'lokasi'          => $lokasi,
+            'location'        => $d->location,
             'tanggal'         => $d->created_at?->format('d M Y') ?? '-',
             'status'          => $d->status_label,
             'tingkat_bencana' => $d->tingkat,
@@ -172,5 +237,26 @@ class LaporanController extends Controller
         ];
 
         return $baseMenu;
+    }
+
+    private function compressImage($sourceFile, $destinationPath, $quality = 60)
+    {
+        $info = getimagesize($sourceFile);
+        
+        if ($info['mime'] == 'image/jpeg') {
+            $image = imagecreatefromjpeg($sourceFile);
+            imagejpeg($image, $destinationPath, $quality);
+        } elseif ($info['mime'] == 'image/png') {
+            $image = imagecreatefrompng($sourceFile);
+            imagepng($image, $destinationPath, 6); // 0-9 scale
+        } elseif ($info['mime'] == 'image/webp') {
+            $image = imagecreatefromwebp($sourceFile);
+            imagewebp($image, $destinationPath, $quality);
+        } else {
+            return false;
+        }
+        
+        imagedestroy($image);
+        return true;
     }
 }

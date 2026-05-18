@@ -348,7 +348,7 @@
         </div>
     </div>
 
-    <div class="space-y-8 pb-28">
+    <div class="space-y-8 pb-6">
 
         {{-- Warning Banner --}}
         <div id="warningBanner" class="warning-banner animate-fade-up banner-danger">
@@ -508,7 +508,7 @@
             position: relative;
             background-color: white;
             overflow: hidden;
-            margin-top: 2rem;
+            margin-top: 0.5rem;
         }
 
         .u-footer::before {
@@ -523,6 +523,7 @@
             /* Senada dengan background body */
             border-radius: 50%;
             pointer-events: none;
+            box-shadow: 0 10px 20px rgba(59, 111, 232, 0.08);
         }
     </style>
     <footer class="py-10 u-footer">

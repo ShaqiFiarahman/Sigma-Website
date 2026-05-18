@@ -14,6 +14,7 @@ class Disaster extends Model
         'photo_url',
         'latitude',
         'longitude',
+        'location',
         'status',
         'reporter_name',
     ];
