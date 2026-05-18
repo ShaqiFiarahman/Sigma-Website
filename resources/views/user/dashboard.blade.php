@@ -448,7 +448,7 @@
                             5 => route('volunteer.create'),   // Registrasi Relawan
                             7 => route('search'),             // Cari Bencana
                             10 => route('panduan'),            // Panduan Bencana
-                            6 => route('laporan.index'),      // Verifikasi Laporan (BNPB)
+                            6 => route('laporan.index'),      // Verifikasi Laporan (Admin)
                             default => '#',
                         };
                     @endphp

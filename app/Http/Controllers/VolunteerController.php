@@ -46,11 +46,11 @@ class VolunteerController extends Controller
         ]);
 
         return redirect()->route('dashboard')
-            ->with('msg', 'Pendaftaran relawan berhasil. Menunggu verifikasi BNPB.');
+            ->with('msg', 'Pendaftaran relawan berhasil. Menunggu verifikasi Admin.');
     }
 
     /**
-     * Show volunteer list (admin/BNPB only)
+     * Show volunteer list (admin only)
      */
     public function index()
     {
@@ -71,7 +71,7 @@ class VolunteerController extends Controller
     }
 
     /**
-     * Update volunteer status (admin/BNPB only)
+     * Update volunteer status (admin only)
      */
     public function updateStatus(Request $request, $id)
     {
@@ -87,7 +87,7 @@ class VolunteerController extends Controller
     }
 
     /**
-     * Assign volunteer to location (admin/BNPB only)
+     * Assign volunteer to location (admin only)
      */
     public function assign(Request $request, $id)
     {

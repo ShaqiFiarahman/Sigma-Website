@@ -20,8 +20,8 @@ Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 // ─────────────────────────────────────────────
 Route::middleware('auth')->group(function () {
 
-    // ADMIN & BNPB ROUTES
-    Route::middleware('role:admin,BNPB')->prefix('admin')->group(function () {
+    // ADMIN ROUTES
+    Route::middleware('role:admin')->prefix('admin')->group(function () {
         Route::get('/dashboard', [LaporanController::class, 'adminDashboard'])->name('admin.dashboard');
         Route::post('/laporan/update-status/{id}', [LaporanController::class, 'updateStatus'])->name('laporan.update_status');
         

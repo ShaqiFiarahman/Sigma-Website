@@ -78,7 +78,6 @@ class NewsService
             return (string) $item->enclosure['url'];
         }
 
-        // Try to find image in description
         preg_match('/<img.+src=[\'"]([^\'"]+)[\'"].*>/i', (string) $item->description, $matches);
         if (isset($matches[1])) {
             return $matches[1];

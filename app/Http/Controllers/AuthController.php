@@ -21,7 +21,7 @@ class AuthController extends Controller
     {
         if (Auth::check()) {
             $user = Auth::user();
-            if (in_array(strtolower($user->role), ['admin', 'bnpb'])) {
+            if (strtolower($user->role) === 'admin') {
                 return redirect()->route('admin.dashboard');
             }
             return redirect()->route('dashboard');
@@ -71,7 +71,7 @@ class AuthController extends Controller
         $request->session()->regenerate();
         $request->session()->put('supabase_token', $response['access_token']);
 
-        if (in_array(strtolower($user->role), ['admin', 'bnpb'])) {
+        if (strtolower($user->role) === 'admin') {
             return redirect()->route('admin.dashboard');
         }
 

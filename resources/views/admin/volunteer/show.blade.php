@@ -96,7 +96,7 @@
     </div>
 
     {{-- Kanan: Panel Aksi --}}
-    @if(in_array(auth()->user()->role, ['admin', 'BNPB']))
+    @if(strtolower(auth()->user()->role) === 'admin')
         <div class="lg:col-span-1 space-y-6">
 
             <div class="bg-white border border-slate-200/80 rounded-2xl shadow-sm overflow-hidden"

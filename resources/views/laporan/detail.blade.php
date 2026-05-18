@@ -162,13 +162,13 @@
 
                 <div class="border-t border-slate-100 my-5"></div>
 
-                @if(in_array(auth()->user()->role, ['admin', 'BNPB']))
+                @if(strtolower(auth()->user()->role) === 'admin')
 
                     @php
                         $currentStatus = $laporan['status']; // "Pending", "Awas", "Siaga 1", etc.
                     @endphp
 
-                    {{-- Selalu tampilkan form update status untuk admin/BNPB --}}
+                    {{-- Selalu tampilkan form update status untuk admin --}}
                     <p class="text-xs text-slate-500 mb-3 leading-relaxed">
                         @if($currentStatus === 'Pending')
                             Tinjau laporan ini dan tentukan tingkat keparahan.
@@ -215,7 +215,7 @@
                 @else
                     <div class="p-4 rounded-xl bg-slate-50 border border-slate-100 text-center">
                         <i class="bi bi-info-circle text-slate-400 mb-2 block text-xl"></i>
-                        <p class="text-xs text-slate-500 leading-relaxed">Anda masuk sebagai <b>{{ auth()->user()->role }}</b>. Hanya Admin dan Relawan yang dapat memverifikasi laporan ini.</p>
+                        <p class="text-xs text-slate-500 leading-relaxed">Anda masuk sebagai <b>{{ auth()->user()->role }}</b>. Hanya Admin yang dapat memverifikasi laporan ini.</p>
                     </div>
                 @endif
 

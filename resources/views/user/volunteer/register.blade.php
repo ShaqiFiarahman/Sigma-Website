@@ -90,7 +90,7 @@
 
         {{-- Disclaimer text --}}
         <p class="text-xs text-center mt-4" style="color: #625b71;">
-            Relawan yang terdaftar akan diverifikasi oleh BNPB sebelum mendapatkan penugasan resmi di lapangan.
+            Relawan yang terdaftar akan diverifikasi oleh Admin sebelum mendapatkan penugasan resmi di lapangan.
         </p>
     </form>
 

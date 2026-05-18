@@ -8,10 +8,6 @@ use Illuminate\Support\Facades\Storage;
 
 class LaporanController extends Controller
 {
-    // ─────────────────────────────────────────────
-    //  DASHBOARD
-    // ─────────────────────────────────────────────
-
     public function adminDashboard()
     {
         $total   = Disaster::count();
@@ -41,18 +37,13 @@ class LaporanController extends Controller
         return view('user.dashboard', compact('user', 'news', 'menu'));
     }
 
-    // ─────────────────────────────────────────────
-    //  INDEX
-    // ─────────────────────────────────────────────
-
     public function index()
     {
         $user  = auth()->user();
         $role  = $user?->role ?? 'MASYARAKAT';
 
-        // Admin & BNPB lihat semua laporan, user biasa lihat laporan sendiri
         $query = Disaster::with('user')->latest();
-        if (!in_array($role, ['admin', 'BNPB'])) {
+        if (!in_array($role, ['admin'])) {
             $query->where('user_id', $user->id);
         }
 
@@ -60,10 +51,6 @@ class LaporanController extends Controller
 
         return view('laporan.index', compact('laporans'));
     }
-
-    // ─────────────────────────────────────────────
-    //  CREATE
-    // ─────────────────────────────────────────────
 
     public function create()
     {
@@ -74,10 +61,6 @@ class LaporanController extends Controller
 
         return view('laporan.create', compact('riwayat'));
     }
-
-    // ─────────────────────────────────────────────
-    //  STORE
-    // ─────────────────────────────────────────────
 
     public function store(Request $request)
     {
@@ -93,7 +76,6 @@ class LaporanController extends Controller
         $user     = auth()->user();
         $photoUrl = null;
 
-        // Simpan foto ke storage/public/laporan
         if ($request->hasFile('foto')) {
             $path     = $request->file('foto')->store('laporan', 'public');
             $photoUrl = Storage::url($path);
@@ -113,10 +95,6 @@ class LaporanController extends Controller
         return redirect()->route('laporan.index')->with('msg', 'created');
     }
 
-    // ─────────────────────────────────────────────
-    //  SHOW
-    // ─────────────────────────────────────────────
-
     public function show($id)
     {
         $disaster = Disaster::with('user')->findOrFail($id);
@@ -124,10 +102,6 @@ class LaporanController extends Controller
 
         return view('laporan.detail', compact('laporan'));
     }
-
-    // ─────────────────────────────────────────────
-    //  UPDATE STATUS (Admin / BNPB)
-    // ─────────────────────────────────────────────
 
     public function updateStatus(Request $request, $id)
     {
@@ -144,13 +118,6 @@ class LaporanController extends Controller
         return redirect()->route('laporan.show', $id)->with('msg', $msg);
     }
 
-    // ─────────────────────────────────────────────
-    //  HELPERS
-    // ─────────────────────────────────────────────
-
-    /**
-     * Convert Disaster model to array format used by views
-     */
     private function toArray(Disaster $d): array
     {
         // Lokasi: gunakan nama lokasi jika ada, fallback ke koordinat
@@ -203,10 +170,6 @@ class LaporanController extends Controller
             ['id' => 5,  'title' => 'Registrasi Relawan', 'description' => 'Daftar relawan',     'icon' => 'bi-person-plus-fill'],
             ['id' => 7,  'title' => 'Cari Bencana',       'description' => 'Pencarian & filter', 'icon' => 'bi-search'],
         ];
-
-        if ($role === 'BNPB') {
-            $baseMenu[] = ['id' => 6, 'title' => 'Verifikasi Laporan', 'description' => 'Validasi data', 'icon' => 'bi-shield-check'];
-        }
 
         return $baseMenu;
     }

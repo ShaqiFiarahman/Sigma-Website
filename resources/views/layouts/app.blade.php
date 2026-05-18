@@ -83,7 +83,7 @@
 
             <div class="flex items-center gap-8">
                 {{-- Brand --}}
-                <a href="{{ in_array(strtolower(auth()->user()->role ?? ''), ['admin', 'bnpb']) ? route('admin.dashboard') : route('dashboard') }}"
+                <a href="{{ strtolower(auth()->user()->role ?? '') === 'admin' ? route('admin.dashboard') : route('dashboard') }}"
                     class="flex items-center gap-2.5 shrink-0 group">
                     <div
                         class="brand-mark w-10 h-10 rounded-lg flex items-center justify-center text-white transition-all duration-300 group-hover:scale-105 group-hover:shadow-lg">
@@ -97,7 +97,7 @@
                 </a>
 
                 {{-- Desktop nav links — hanya untuk Admin/BNPB --}}
-                @if(in_array(auth()->user()->role ?? '', ['admin', 'BNPB']))
+                @if(strtolower(auth()->user()->role ?? '') === 'admin')
                     <ul class="hidden md:flex items-center gap-1">
                         <li>
                             <a href="{{ route('admin.dashboard') }}"
@@ -154,7 +154,7 @@
         {{-- Mobile dropdown --}}
         <div id="mobileMenu"
             class="md:hidden hidden border-t border-slate-200/80 bg-white/95 backdrop-blur-md px-4 py-3 space-y-1">
-            <a href="{{ in_array(strtolower(auth()->user()->role ?? ''), ['admin', 'bnpb']) ? route('admin.dashboard') : route('dashboard') }}"
+            <a href="{{ strtolower(auth()->user()->role ?? '') === 'admin' ? route('admin.dashboard') : route('dashboard') }}"
                 class="flex items-center gap-2 px-3 py-2.5 rounded-lg text-sm font-medium {{ Route::is('dashboard') || Route::is('admin.dashboard') ? 'bg-blue-50 text-blue-700' : 'text-slate-600' }}">
                 <i class="bi bi-grid-1x2"></i>Dashboard
             </a>
