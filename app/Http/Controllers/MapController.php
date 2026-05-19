@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Disaster;
+use App\Models\Shelter;
 use Illuminate\Http\Request;
 
 class MapController extends Controller
@@ -37,7 +38,7 @@ class MapController extends Controller
      */
     public function shelterPage()
     {
-        $shelters = $this->getShelterData();
+        $shelters = Shelter::all()->map(fn($s) => $this->shelterToArray($s))->toArray();
         return view('user.shelter', compact('shelters'));
     }
 
@@ -74,27 +75,29 @@ class MapController extends Controller
 
     /**
      * API: Get shelters as JSON for map markers
-     * Data sesuai Android ShelterInfoScreen (mock data)
      */
     public function shelters()
     {
-        return response()->json($this->getShelterData());
+        $shelters = Shelter::all()->map(fn($s) => $this->shelterToArray($s))->toArray();
+        return response()->json($shelters);
     }
 
     /**
-     * Shelter data (sesuai Android ShelterInfoScreen mock)
+     * Convert Shelter model to array format for views/API
      */
-    private function getShelterData(): array
+    private function shelterToArray(Shelter $s): array
     {
         return [
-            ['name' => 'Stadion UNS',            'distance' => '1.2 km', 'capacity' => '80/100',  'status' => 'Tersedia', 'lat' => -7.556303,  'lng' => 110.8580877, 'logistics' => ['Sembako', 'Air Mineral', 'Selimut']],
-            ['name' => 'Taman Cerdas Jebres',    'distance' => '1.5 km', 'capacity' => '50/50',   'status' => 'Penuh',    'lat' => -7.5541321, 'lng' => 110.8536159, 'logistics' => ['Popok Bayi', 'Susu Formula', 'Obat-obatan']],
-            ['name' => 'Solo Techno Park',       'distance' => '2.2 km', 'capacity' => '30/200',  'status' => 'Tersedia', 'lat' => -7.5560692, 'lng' => 110.8538666, 'logistics' => ['Pakaian Layak Pakai', 'Alat Mandi']],
-            ['name' => 'SAR UNS',                'distance' => '0.8 km', 'capacity' => '10/40',   'status' => 'Tersedia', 'lat' => -7.5615699, 'lng' => 110.8594894, 'logistics' => ['Makanan Instan', 'Tikar']],
-            ['name' => 'Javanologi UNS',         'distance' => '0.7 km', 'capacity' => '127/250', 'status' => 'Tersedia', 'lat' => -7.556998,  'lng' => 110.8598277, 'logistics' => ['Makanan Instan', 'Alat Mandi', 'Pakaian Layak Pakai']],
-            ['name' => 'UNS Tower',              'distance' => '0.45 km','capacity' => '45/125',  'status' => 'Tersedia', 'lat' => -7.5638533, 'lng' => 110.8555975, 'logistics' => ['Susu Formula', 'Obat-obatan', 'Selimut']],
-            ['name' => 'Asrama Mahasiswa UNS',   'distance' => '2.4 km', 'capacity' => '300/300', 'status' => 'Penuh',    'lat' => -7.554193,  'lng' => 110.865799,  'logistics' => ['Alat Mandi', 'Sembako', 'Sleeping Bag']],
-            ['name' => 'Sekolah Vokasi UNS',     'distance' => '2.6 km', 'capacity' => '145/340', 'status' => 'Tersedia', 'lat' => -7.559502,  'lng' => 110.8383739, 'logistics' => ['Makanan Instan', 'Obat-obatan', 'Air Mineral']],
+            'id'        => $s->id,
+            'name'      => $s->name,
+            'address'   => $s->address,
+            'distance'  => '—', // Will be calculated client-side
+            'capacity'  => $s->capacity_label,
+            'status'    => $s->status,
+            'lat'       => $s->latitude,
+            'lng'       => $s->longitude,
+            'logistics' => $s->logistics ?? [],
+            'contact_phone' => $s->contact_phone,
         ];
     }
 }
