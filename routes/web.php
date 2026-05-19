@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\LaporanController;
 use App\Http\Controllers\MapController;
+use App\Http\Controllers\NewsController;
 use App\Http\Controllers\VolunteerController;
 
 // ─────────────────────────────────────────────
@@ -48,6 +49,7 @@ Route::middleware('auth')->group(function () {
     });
 
     // SHARED ROUTES
+    Route::get('/berita', [NewsController::class, 'index'])->name('news.index');
     Route::get('/laporan', [LaporanController::class, 'index'])->name('laporan.index');
     Route::get('/laporan/create', [LaporanController::class, 'create'])->name('laporan.create');
     Route::post('/laporan/store', [LaporanController::class, 'store'])->name('laporan.store');

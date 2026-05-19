@@ -15,13 +15,12 @@ class NewsService
     ];
 
     protected $keywords = [
-        'banjir', 'gempa', 'longsor', 'kebakaran', 'tsunami', 'gunung meletus', 'cuaca ekstrem'
+        'banjir', 'gempa', 'tanah longsor', 'kebakaran', 'tsunami', 'gunung meletus', 'cuaca ekstrem', 'bencana', 'bmkg', 'hujan lebat', 'angin kencang', 'pohon tumbang'
     ];
 
     public function fetchNews()
     {
-        // Hapus berita yang lebih dari 7 hari
-        News::where('published_at', '<', now()->subDays(7))->delete();
+        News::where('published_at', '<', now()->subDays(30))->delete();
 
         foreach ($this->feeds as $source => $url) {
             try {
@@ -37,12 +36,9 @@ class NewsService
                     $link = (string) $item->link;
                     $pubDate = (string) $item->pubDate;
                     
-                    // Filter by keywords (title only)
                     if ($this->containsKeywords($title)) {
-                        // Extract image if available
                         $imageUrl = $this->extractImage($item);
 
-                        // Save or update
                         News::updateOrCreate(
                             ['url' => $link],
                             [
@@ -63,8 +59,15 @@ class NewsService
 
     protected function containsKeywords($text)
     {
+        $text = strtolower($text);
+
+        // Abaikan berita jika mengandung kata yang sering false-positive
+        if (str_contains($text, 'gempar') || str_contains($text, 'olahraga') || str_contains($text, 'sepakbola')) {
+            return false;
+        }
+
         foreach ($this->keywords as $keyword) {
-            if (stripos($text, $keyword) !== false) {
+            if (str_contains($text, strtolower($keyword))) {
                 return true;
             }
         }

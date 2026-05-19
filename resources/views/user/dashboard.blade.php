@@ -344,6 +344,9 @@
                 <p class="text-xs font-medium text-white/70 mt-1 flex items-center gap-1">
                     <i class="bi bi-geo-alt-fill text-[10px]"></i> <span id="userCity">Mencari lokasi...</span>
                 </p>
+                <p class="text-xs font-medium text-white/70 flex items-center gap-1">
+                    <i id="weatherIcon" class="bi bi-cloud text-[10px]"></i> <span id="userWeather">Memuat cuaca...</span>
+                </p>
             </div>
         </div>
     </div>
@@ -374,7 +377,7 @@
                     <h2 class="section-title">Berita Terkini</h2>
                     <p class="text-xs text-slate-500 mt-0.5">Informasi dan peringatan terbaru</p>
                 </div>
-                <a href="#"
+                <a href="{{ route('news.index') }}"
                     class="text-sm font-semibold hover:underline text-blue-600 flex items-center gap-1 transition-colors">
                     Lihat Semua
                 </a>
@@ -523,37 +526,50 @@
             /* Senada dengan background body */
             border-radius: 50%;
             pointer-events: none;
-            box-shadow: 0 10px 20px rgba(59, 111, 232, 0.08);
+            box-shadow: 0 12px 28px rgba(59, 111, 232, 0.12);
+            filter: blur(3px);
         }
     </style>
     <footer class="py-10 u-footer">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 md:grid-cols-3 gap-8 text-xs text-slate-500 relative z-10">
-            <!-- Column 1: Brand & Info (Left) -->
-            <div>
-                <span class="font-bold text-slate-900 text-sm block mb-1">SIGMA</span>
-                <p class="text-slate-600 mb-1">Sistem Informasi Gawat Darurat dan Mitigasi Bencana</p>
-                <span>&copy;2026 All rights reserved</span>
-            </div>
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 text-xs text-slate-500 mb-8">
+                <!-- Column 1: Brand & Info (Left) -->
+                <div>
+                    <span class="font-extrabold text-[#2B52C3] text-sm block mb-2 tracking-wide">SIGMA</span>
+                    <p class="text-slate-600 mb-4 leading-relaxed max-w-xs">Sistem Informasi Gawat Darurat dan Mitigasi Bencana</p>
+                    <p class="font-semibold text-slate-800 mb-1">Data didukung:</p>
+                    <p class="text-slate-500">BMKG &bull; BNPB &bull; Laporan Masyarakat</p>
+                </div>
 
-            <!-- Column 2: Menu (Center) -->
-            <div class="md:text-center">
-                <span class="font-bold text-slate-900 text-sm block mb-2">Menu</span>
-                <div class="flex flex-col gap-1.5 text-slate-600 md:items-center">
-                    <a href="{{ route('dashboard') }}" class="hover:text-[#2B52C3] transition-colors">Dashboard</a>
-                    <a href="{{ route('laporan.index') }}" class="hover:text-[#2B52C3] transition-colors">Laporan</a>
-                    <a href="{{ route('panduan') }}" class="hover:text-[#2B52C3] transition-colors">Panduan</a>
+                <!-- Column 2: Menu (Center) -->
+                <div class="md:text-center">
+                    <span class="font-bold text-slate-900 text-sm block mb-3">Menu</span>
+                    <div class="flex flex-col gap-2 text-slate-600 md:items-center">
+                        <a href="{{ route('dashboard') }}" class="hover:text-[#2B52C3] font-medium transition-colors">Dashboard</a>
+                        <a href="{{ route('laporan.index') }}" class="hover:text-[#2B52C3] font-medium transition-colors">Laporan</a>
+                        <a href="{{ route('panduan') }}" class="hover:text-[#2B52C3] font-medium transition-colors">Panduan</a>
+                    </div>
+                </div>
+
+                <!-- Column 3: Tim (Right) -->
+                <div class="md:text-right">
+                    <span class="font-bold text-slate-900 text-sm block mb-3">Tim</span>
+                    <div class="inline-flex gap-x-4 text-slate-600">
+                        <div class="flex flex-col gap-y-2 text-left">
+                            <span class="font-medium">Fadel</span>
+                            <span class="font-medium">Fathoni</span>
+                        </div>
+                        <div class="flex flex-col gap-y-2 text-right">
+                            <span class="font-medium">Fandhi</span>
+                            <span class="font-medium">Huda</span>
+                        </div>
+                    </div>
                 </div>
             </div>
 
-            <!-- Column 3: Tim (Right) -->
-            <div class="md:text-right">
-                <span class="font-bold text-slate-900 text-sm block mb-2">Tim</span>
-                <div class="flex flex-col gap-1.5 text-slate-600 md:items-end">
-                    <span>Fadel</span>
-                    <span>Fandhi</span>
-                    <span>Fathoni</span>
-                    <span>Huda</span>
-                </div>
+            <!-- Footer Bottom -->
+            <div class="border-t border-slate-100 pt-6 flex flex-col md:flex-row justify-between items-center gap-4">
+                <p class="text-slate-400 text-[11px] font-medium">&copy;2026 SIGMA &bull; Data: BMKG & BNPB</p>
             </div>
         </div>
     </footer>
@@ -588,6 +604,9 @@
         } else {
             const cityEl = document.getElementById('userCity');
             if (cityEl) cityEl.textContent = 'Geolocation tidak didukung';
+            
+            const weatherEl = document.getElementById('userWeather');
+            if (weatherEl) weatherEl.textContent = 'Cuaca tidak tersedia';
         }
 
         function successCallback(position) {
@@ -612,12 +631,78 @@
 
             // Check nearby disasters
             checkNearbyDisasters(lat, lng);
+
+            // Fetch weather
+            fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lng}&current_weather=true`)
+                .then(response => response.json())
+                .then(data => {
+                    const weather = data.current_weather;
+                    const temp = Math.round(weather.temperature);
+                    const code = weather.weathercode;
+                    
+                    const weatherEl = document.getElementById('userWeather');
+                    const iconEl = document.getElementById('weatherIcon');
+                    
+                    if (weatherEl) {
+                        weatherEl.textContent = `${temp}°C · ${getWeatherDesc(code)}`;
+                    }
+                    if (iconEl) {
+                        iconEl.className = `bi ${getWeatherIcon(code)} text-[10px]`;
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching weather:', error);
+                    const weatherEl = document.getElementById('userWeather');
+                    if (weatherEl) weatherEl.textContent = 'Gagal memuat cuaca';
+                });
+        }
+
+        function getWeatherDesc(code) {
+            const descriptions = {
+                0: 'Cerah',
+                1: 'Cerah Berawan',
+                2: 'Berawan',
+                3: 'Mendung',
+                45: 'Berkabut',
+                48: 'Berkabut',
+                51: 'Gerimis Ringan',
+                53: 'Gerimis',
+                55: 'Gerimis Lebat',
+                61: 'Hujan Ringan',
+                63: 'Hujan',
+                65: 'Hujan Lebat',
+                71: 'Salju Ringan',
+                73: 'Salju',
+                75: 'Salju Lebat',
+                80: 'Hujan Deras Ringan',
+                81: 'Hujan Deras',
+                82: 'Hujan Deras Sangat Lebat',
+                95: 'Badai Petir',
+                96: 'Badai Petir dengan Hujan Es',
+                99: 'Badai Petir dengan Hujan Es Lebat'
+            };
+            return descriptions[code] || 'Unknown';
+        }
+
+        function getWeatherIcon(code) {
+            if (code === 0) return 'bi-brightness-high';
+            if (code >= 1 && code <= 3) return 'bi-cloud-sun';
+            if (code === 45 || code === 48) return 'bi-cloud-fog';
+            if (code >= 51 && code <= 55) return 'bi-cloud-drizzle';
+            if (code >= 61 && code <= 65) return 'bi-cloud-rain';
+            if (code >= 71 && code <= 75) return 'bi-cloud-snow';
+            if (code >= 80 && code <= 82) return 'bi-cloud-rain-heavy';
+            if (code >= 95) return 'bi-cloud-lightning';
+            return 'bi-cloud';
         }
 
         function errorCallback(error) {
             console.error('Geolocation error:', error);
             const cityEl = document.getElementById('userCity');
             if (cityEl) cityEl.textContent = 'Akses lokasi ditolak';
+            
+            const weatherEl = document.getElementById('userWeather');
+            if (weatherEl) weatherEl.textContent = 'Cuaca tidak tersedia';
 
             // Fallback for banner if location denied
             updateWarningBanner(0);
