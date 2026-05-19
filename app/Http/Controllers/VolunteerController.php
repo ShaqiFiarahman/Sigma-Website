@@ -13,7 +13,8 @@ class VolunteerController extends Controller
     public function create()
     {
         $skills = Volunteer::getSkillOptions();
-        return view('user.volunteer.register', compact('skills'));
+        $existing = Volunteer::where('user_id', auth()->id())->first();
+        return view('user.volunteer.register', compact('skills', 'existing'));
     }
 
     /**

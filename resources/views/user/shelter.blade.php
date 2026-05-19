@@ -3,9 +3,9 @@
 @section('subtitle', 'Temukan lokasi posko evakuasi terdekat dan informasi kapasitas terkini.')
 
 @section('page-actions')
-    <a href="{{ route('dashboard') }}" class="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-slate-600 bg-white border border-slate-200 rounded-lg hover:bg-slate-50 hover:border-slate-300 transition-all duration-200 shadow-sm">
+    <button type="button" onclick="window.location.href='{{ route('dashboard') }}'" class="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-slate-600 bg-white border border-slate-200 rounded-lg hover:bg-slate-50 hover:border-slate-300 transition-all duration-200 shadow-sm cursor-pointer">
         <i class="bi bi-arrow-left text-xs"></i> Kembali
-    </a>
+    </button>
 @endsection
 
 @section('content')
@@ -78,7 +78,7 @@
                 }
             @endphp
 
-            <div class="shelter-card bg-white border border-slate-200/80 rounded-2xl p-5 sm:p-6 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg cursor-default"
+            <div class="shelter-card bg-white border border-slate-200/80 rounded-2xl p-5 sm:p-6"
                  style="box-shadow: 0 1px 3px rgba(10,15,30,0.06), 0 4px 16px rgba(10,15,30,0.04);"
                  data-name="{{ strtolower($shelter['name']) }}"
                  data-status="{{ strtolower($shelter['status']) }}"
@@ -139,18 +139,18 @@
 
                     {{-- Actions --}}
                     <div class="flex sm:flex-col items-center justify-center gap-2 sm:shrink-0 sm:self-center sm:pl-2">
-                        <a href="https://www.google.com/maps/dir/?api=1&destination={{ $shelter['lat'] }},{{ $shelter['lng'] }}"
-                           target="_blank"
-                           class="inline-flex items-center justify-center gap-1.5 w-full sm:w-40 px-4 py-2.5 text-xs font-semibold text-white rounded-xl transition-all duration-200 hover:-translate-y-0.5 shadow-sm hover:shadow-md"
+                        <button type="button"
+                           onclick="window.open('https://www.google.com/maps/dir/?api=1&destination={{ $shelter['lat'] }},{{ $shelter['lng'] }}', '_blank')"
+                           class="inline-flex items-center justify-center gap-1.5 w-full sm:w-40 px-4 py-2.5 text-xs font-semibold text-white rounded-xl transition-all duration-200 hover:-translate-y-0.5 shadow-sm hover:shadow-md cursor-pointer"
                            style="background: linear-gradient(135deg, #3B6FE8 0%, #1e3a8a 100%); box-shadow: 0 2px 8px rgba(30,58,138,0.2);">
                             <i class="bi bi-signpost-2-fill text-[11px]"></i> Petunjuk Arah
-                        </a>
-                        <a href="https://api.whatsapp.com/send?phone={{ $shelter['contact_phone'] ?? '6285934415914' }}&text={{ urlencode('Halo, saya ingin mengirimkan bantuan logistik ke ' . $shelter['name'] . ' berupa: ' . implode(', ', $shelter['logistics'] ?? [])) }}"
-                           target="_blank"
-                           class="inline-flex items-center justify-center gap-1.5 w-full sm:w-40 px-4 py-2.5 text-xs font-semibold text-white rounded-xl transition-all duration-200 hover:-translate-y-0.5 shadow-sm hover:shadow-md"
+                        </button>
+                        <button type="button"
+                           onclick="window.open('https://api.whatsapp.com/send?phone={{ $shelter['contact_phone'] ?? '6285934415914' }}&text={{ urlencode('Halo, saya ingin mengirimkan bantuan logistik ke ' . $shelter['name'] . ' berupa: ' . implode(', ', $shelter['logistics'] ?? [])) }}', '_blank')"
+                           class="inline-flex items-center justify-center gap-1.5 w-full sm:w-40 px-4 py-2.5 text-xs font-semibold text-white rounded-xl transition-all duration-200 hover:-translate-y-0.5 shadow-sm hover:shadow-md cursor-pointer"
                            style="background: #25D366; box-shadow: 0 2px 8px rgba(37,211,102,0.2);">
                             <i class="bi bi-whatsapp text-[11px]"></i> Hubungi WA
-                        </a>
+                        </button>
                     </div>
                 </div>
             </div>
