@@ -1,138 +1,175 @@
 @extends('layouts.app')
 @section('title', 'Cari & Filter Bencana')
+@section('subtitle', 'Temukan laporan berdasarkan lokasi atau jenis bencana.')
+
+@section('page-actions')
+    <button type="button" onclick="window.location.href='{{ route('dashboard') }}'" class="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-slate-600 bg-white border border-slate-200 rounded-lg hover:bg-slate-50 hover:border-slate-300 transition-all duration-200 shadow-sm cursor-pointer">
+        <i class="bi bi-arrow-left text-xs"></i> Kembali
+    </button>
+@endsection
 
 @section('content')
+<div class="max-w-5xl mx-auto">
 
-{{-- Back link --}}
-<div class="mb-4">
-    <a href="{{ route('dashboard') }}" class="inline-flex items-center gap-1.5 text-sm font-semibold transition-colors hover:opacity-70" style="color: #3B6FE8;">
-        <i class="bi bi-arrow-left"></i> Kembali
-    </a>
-</div>
+    {{-- Search & Filter --}}
+    <div class="bg-white border border-slate-200/80 rounded-2xl shadow-sm overflow-hidden mb-5"
+         style="box-shadow: 0 1px 3px rgba(10,15,30,0.06), 0 4px 16px rgba(10,15,30,0.04);">
+        <div class="p-4 sm:p-5 space-y-4">
 
-<h1 class="text-2xl font-bold mb-5" style="color: #1D1B20;">Cari & Filter Bencana</h1>
-
-{{-- Search Bar --}}
-<div class="relative mb-4">
-    <i class="bi bi-search absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"></i>
-    <input type="text" id="searchInput"
-           placeholder="Cari lokasi atau jenis bencana..."
-           value="{{ request('q') }}"
-           class="w-full pl-11 pr-4 py-3.5 text-sm border border-slate-300 rounded-xl focus:outline-none focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 transition-all placeholder:text-slate-400 text-slate-900 bg-white">
-</div>
-
-{{-- Filter Chips --}}
-<div class="flex items-center gap-2 mb-5 flex-wrap">
-    <div class="flex items-center gap-1.5 text-sm font-bold text-slate-700">
-        <i class="bi bi-funnel-fill" style="color: #3B6FE8;"></i> Filter Status:
-    </div>
-    <button type="button" data-filter="all"
-            class="filter-chip active px-3 py-1.5 text-xs font-bold rounded-full border transition-all">
-        Semua
-    </button>
-    <button type="button" data-filter="AWAS"
-            class="filter-chip px-3 py-1.5 text-xs font-bold rounded-full border transition-all">
-        🔴 Awas
-    </button>
-    <button type="button" data-filter="SIAGA_1"
-            class="filter-chip px-3 py-1.5 text-xs font-bold rounded-full border transition-all">
-        🔵 Siaga 1
-    </button>
-    <button type="button" data-filter="SIAGA_2"
-            class="filter-chip px-3 py-1.5 text-xs font-bold rounded-full border transition-all">
-        ⚫ Siaga 2
-    </button>
-    <button type="button" data-filter="RESOLVED"
-            class="filter-chip px-3 py-1.5 text-xs font-bold rounded-full border transition-all">
-        ✅ Resolved
-    </button>
-    <button type="button" data-filter="PENDING"
-            class="filter-chip px-3 py-1.5 text-xs font-bold rounded-full border transition-all">
-        🟡 Pending
-    </button>
-</div>
-
-{{-- Results --}}
-<div id="results" class="space-y-3">
-    @forelse($disasters as $d)
-        <a href="{{ route('laporan.show', $d->id) }}"
-           class="disaster-card block bg-white border border-slate-200/60 rounded-2xl p-4 transition-all hover:shadow-md hover:border-purple-300"
-           data-status="{{ $d->status }}"
-           data-title="{{ strtolower($d->title) }}"
-           data-reporter="{{ strtolower($d->reporter_name) }}"
-           style="background: rgba(231, 224, 236, 0.2);">
-
-            <div class="flex items-start justify-between gap-3 mb-2">
-                <h3 class="text-base font-extrabold" style="color: #1D1B20;">{{ $d->title }}</h3>
-                @php
-                    $badgeStyle = match($d->status) {
-                        'AWAS'     => 'background:#FFEBEE; color:#B71C1C;',
-                        'SIAGA_1'  => 'background:#E3F2FD; color:#0D47A1;',
-                        'SIAGA_2'  => 'background:#F5F5F5; color:#424242;',
-                        'RESOLVED' => 'background:#E8F5E9; color:#1B5E20;',
-                        'PENDING'  => 'background:#FFF3E0; color:#E65100;',
-                        default    => 'background:#F5F5F5; color:#424242;',
-                    };
-                @endphp
-                <span class="text-xs font-bold px-2.5 py-1 rounded-full shrink-0" style="{{ $badgeStyle }}">
-                    {{ $d->status_label }}
-                </span>
+            {{-- Search Bar --}}
+            <div class="relative">
+                <i class="bi bi-search absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
+                <input type="text" id="searchInput"
+                       placeholder="Cari lokasi atau jenis bencana..."
+                       value="{{ request('q') }}"
+                       class="w-full pl-10 pr-4 py-2.5 text-sm border border-slate-200 rounded-xl focus:outline-none focus:border-blue-400 focus:ring-2 focus:ring-blue-500/20 transition-all placeholder:text-slate-400 text-slate-800 bg-slate-50 focus:bg-white">
             </div>
 
-            <p class="text-sm text-slate-600 mb-1">
-                <i class="bi bi-geo-alt-fill" style="color: #3B6FE8;"></i>
-                Lat: {{ number_format($d->latitude, 4) }}, Long: {{ number_format($d->longitude, 4) }}
-            </p>
-            <p class="text-xs text-slate-400">
-                <i class="bi bi-clock"></i> {{ $d->created_at->format('d M Y, H:i') }}
-                &middot; <i class="bi bi-person"></i> {{ $d->reporter_name }}
-            </p>
-        </a>
-    @empty
-        <div id="emptyState" class="text-center py-16 text-slate-400">
-            <i class="bi bi-search text-4xl mb-3 block" style="color: #CAC4D0;"></i>
-            <p class="text-sm font-medium text-slate-500">Tidak ada data bencana</p>
-            <p class="text-xs mt-1">Belum ada laporan bencana yang tersedia.</p>
+            {{-- Filter Chips --}}
+            <div class="flex items-center gap-2 flex-wrap">
+                <button type="button" data-filter="all" class="filter-chip active px-3.5 py-1.5 text-xs font-semibold rounded-full border transition-all duration-200">
+                    Semua
+                </button>
+                <button type="button" data-filter="AWAS" class="filter-chip px-3.5 py-1.5 text-xs font-semibold rounded-full border transition-all duration-200">
+                    <span class="inline-block w-2 h-2 rounded-full bg-red-500 mr-1"></span>Awas
+                </button>
+                <button type="button" data-filter="SIAGA_1" class="filter-chip px-3.5 py-1.5 text-xs font-semibold rounded-full border transition-all duration-200">
+                    <span class="inline-block w-2 h-2 rounded-full bg-blue-500 mr-1"></span>Siaga 1
+                </button>
+                <button type="button" data-filter="SIAGA_2" class="filter-chip px-3.5 py-1.5 text-xs font-semibold rounded-full border transition-all duration-200">
+                    <span class="inline-block w-2 h-2 rounded-full bg-slate-500 mr-1"></span>Siaga 2
+                </button>
+                <button type="button" data-filter="RESOLVED" class="filter-chip px-3.5 py-1.5 text-xs font-semibold rounded-full border transition-all duration-200">
+                    <span class="inline-block w-2 h-2 rounded-full bg-emerald-500 mr-1"></span>Resolved
+                </button>
+            </div>
         </div>
-    @endforelse
-</div>
+    </div>
 
-{{-- No results message (hidden by default) --}}
-<div id="noResults" class="hidden text-center py-16 text-slate-400">
-    <i class="bi bi-emoji-frown text-4xl mb-3 block" style="color: #CAC4D0;"></i>
-    <p class="text-sm font-medium text-slate-500">Tidak ditemukan</p>
-    <p class="text-xs mt-1">Coba ubah kata kunci atau filter.</p>
+    {{-- Result Count --}}
+    <div class="flex items-center justify-between mb-4 px-1">
+        <p class="text-sm text-slate-500" id="resultCount">
+            <span class="font-semibold text-slate-700">{{ $disasters->count() }}</span> laporan ditemukan
+        </p>
+    </div>
+
+    {{-- List View --}}
+    <div id="listView" class="space-y-3">
+        @forelse($disasters as $d)
+            @php
+                $borderColor = match($d->status) {
+                    'AWAS'     => 'border-l-red-500',
+                    'SIAGA_1'  => 'border-l-blue-500',
+                    'SIAGA_2'  => 'border-l-slate-400',
+                    'RESOLVED' => 'border-l-emerald-500',
+                    'PENDING'  => 'border-l-amber-400',
+                    default    => 'border-l-slate-300',
+                };
+                $badgeBg = match($d->status) {
+                    'AWAS'     => 'bg-red-50 text-red-700 border-red-100',
+                    'SIAGA_1'  => 'bg-blue-50 text-blue-700 border-blue-100',
+                    'SIAGA_2'  => 'bg-slate-100 text-slate-700 border-slate-200',
+                    'RESOLVED' => 'bg-emerald-50 text-emerald-700 border-emerald-100',
+                    'PENDING'  => 'bg-amber-50 text-amber-700 border-amber-100',
+                    default    => 'bg-slate-50 text-slate-600 border-slate-200',
+                };
+                // Detect disaster type from title
+                $titleLower = strtolower($d->title);
+                if (str_contains($titleLower, 'banjir')) { $typeIcon = 'bi-water'; $typeColor = 'text-blue-500'; }
+                elseif (str_contains($titleLower, 'kebakaran') || str_contains($titleLower, 'api')) { $typeIcon = 'bi-fire'; $typeColor = 'text-red-500'; }
+                elseif (str_contains($titleLower, 'gempa')) { $typeIcon = 'bi-globe-americas'; $typeColor = 'text-emerald-500'; }
+                elseif (str_contains($titleLower, 'longsor')) { $typeIcon = 'bi-layers'; $typeColor = 'text-amber-600'; }
+                elseif (str_contains($titleLower, 'tsunami')) { $typeIcon = 'bi-tsunami'; $typeColor = 'text-cyan-500'; }
+                else { $typeIcon = 'bi-exclamation-triangle'; $typeColor = 'text-slate-500'; }
+            @endphp
+
+            <div class="disaster-card bg-white border border-slate-200/80 border-l-4 {{ $borderColor }} rounded-xl p-4 sm:p-5"
+                 style="box-shadow: 0 1px 3px rgba(10,15,30,0.04);"
+                 data-status="{{ $d->status }}"
+                 data-title="{{ strtolower($d->title) }}"
+                 data-reporter="{{ strtolower($d->reporter_name) }}"
+                 data-lat="{{ $d->latitude }}"
+                 data-lng="{{ $d->longitude }}">
+
+                <div class="flex items-start justify-between gap-3 mb-2">
+                    <div class="flex items-center gap-2 min-w-0">
+                        <i class="bi {{ $typeIcon }} {{ $typeColor }} text-base shrink-0"></i>
+                        <h3 class="text-sm font-bold text-slate-900 truncate">{{ $d->title }}</h3>
+                    </div>
+                </div>
+
+                <p class="text-xs text-slate-500 line-clamp-2 mb-2.5">{{ \Illuminate\Support\Str::limit($d->description, 100) }}</p>
+
+                <div class="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 text-xs text-slate-500 mb-3">
+                    @if($d->location)
+                        <span class="flex items-center gap-1">
+                            <i class="bi bi-geo-alt text-slate-400"></i> {{ \Illuminate\Support\Str::limit($d->location, 40) }}
+                        </span>
+                    @else
+                        <span class="flex items-center gap-1">
+                            <i class="bi bi-geo-alt text-slate-400"></i> {{ number_format($d->latitude, 4) }}, {{ number_format($d->longitude, 4) }}
+                        </span>
+                    @endif
+                    <span class="flex items-center gap-1">
+                        <i class="bi bi-clock text-slate-400"></i> {{ $d->created_at->format('d M Y, H:i') }}
+                    </span>
+                    <span class="flex items-center gap-1">
+                        <i class="bi bi-person text-slate-400"></i> {{ $d->reporter_name }}
+                    </span>
+                </div>
+
+                <div class="flex items-center gap-2">
+                    <button type="button"
+                            onclick="window.open('https://www.google.com/maps?q={{ $d->latitude }},{{ $d->longitude }}', '_blank')"
+                            class="inline-flex items-center gap-1.5 px-3 py-1.5 text-[11px] font-semibold text-slate-600 bg-slate-50 border border-slate-200 rounded-lg hover:bg-blue-50 hover:text-blue-700 hover:border-blue-200 transition-all cursor-pointer">
+                        <i class="bi bi-map text-[10px]"></i> Lihat di Maps
+                    </button>
+                    <button type="button"
+                            onclick="window.location.href='{{ route('laporan.show', $d->id) }}'"
+                            class="inline-flex items-center gap-1.5 px-3 py-1.5 text-[11px] font-semibold text-white rounded-lg transition-all cursor-pointer"
+                            style="background: linear-gradient(135deg, #3B6FE8 0%, #1e3a8a 100%); box-shadow: 0 2px 6px rgba(30,58,138,0.2);">
+                        <i class="bi bi-file-text text-[10px]"></i> Detail
+                    </button>
+                </div>
+            </div>
+        @empty
+            <div class="bg-white border border-slate-200/80 rounded-2xl p-14 text-center" style="box-shadow: 0 1px 3px rgba(10,15,30,0.06);">
+                <div class="w-14 h-14 rounded-2xl mx-auto mb-4 flex items-center justify-center" style="background: #E4F0F6;">
+                    <i class="bi bi-search text-2xl" style="color: #1e3a8a;"></i>
+                </div>
+                <p class="text-sm font-semibold text-slate-800 mb-1">Tidak ada data bencana</p>
+                <p class="text-xs text-slate-400">Belum ada laporan bencana yang tersedia.</p>
+            </div>
+        @endforelse
+    </div>
+
+    {{-- No results (JS filtered) --}}
+    <div id="noResults" class="hidden bg-white border border-slate-200/80 rounded-2xl p-14 text-center" style="box-shadow: 0 1px 3px rgba(10,15,30,0.06);">
+        <div class="w-14 h-14 rounded-2xl mx-auto mb-4 flex items-center justify-center" style="background: #E4F0F6;">
+            <i class="bi bi-emoji-frown text-2xl" style="color: #1e3a8a;"></i>
+        </div>
+        <p class="text-sm font-semibold text-slate-800 mb-1">Tidak ditemukan</p>
+        <p class="text-xs text-slate-400">Coba ubah kata kunci atau filter pencarian.</p>
+    </div>
 </div>
 
 <style>
-    .filter-chip {
-        background: #FFFFFF;
-        border-color: #CAC4D0;
-        color: #625b71;
-    }
-    .filter-chip:hover {
-        border-color: #3B6FE8;
-        color: #3B6FE8;
-    }
-    .filter-chip.active {
-        background: #E4F0F6;
-        border-color: #3B6FE8;
-        color: #3B6FE8;
-    }
+    .filter-chip { background: white; border-color: #e2e8f0; color: #64748b; }
+    .filter-chip:hover { border-color: #93c5fd; color: #1e40af; background: #eff6ff; }
+    .filter-chip.active { background: linear-gradient(135deg, #3B6FE8 0%, #1e3a8a 100%); border-color: transparent; color: white; box-shadow: 0 2px 8px rgba(30,58,138,0.25); }
 </style>
-
 @endsection
 
 @section('scripts')
 <script>
     const searchInput = document.getElementById('searchInput');
-    const cards       = document.querySelectorAll('.disaster-card');
-    const noResults   = document.getElementById('noResults');
-    const chips       = document.querySelectorAll('.filter-chip');
+    const cards = document.querySelectorAll('.disaster-card');
+    const noResults = document.getElementById('noResults');
+    const chips = document.querySelectorAll('.filter-chip');
+    const resultCount = document.getElementById('resultCount');
 
     let activeFilter = 'all';
 
-    // Filter chips
     chips.forEach(chip => {
         chip.addEventListener('click', () => {
             chips.forEach(c => c.classList.remove('active'));
@@ -142,7 +179,6 @@
         });
     });
 
-    // Search input
     searchInput.addEventListener('input', filterCards);
 
     function filterCards() {
@@ -150,9 +186,9 @@
         let visibleCount = 0;
 
         cards.forEach(card => {
-            const title    = card.dataset.title || '';
+            const title = card.dataset.title || '';
             const reporter = card.dataset.reporter || '';
-            const status   = card.dataset.status || '';
+            const status = card.dataset.status || '';
 
             const matchSearch = !query || title.includes(query) || reporter.includes(query);
             const matchFilter = activeFilter === 'all' || status === activeFilter;
@@ -166,6 +202,7 @@
         });
 
         noResults.classList.toggle('hidden', visibleCount > 0 || cards.length === 0);
+        resultCount.innerHTML = `<span class="font-semibold text-slate-700">${visibleCount}</span> laporan ditemukan`;
     }
 </script>
 @endsection

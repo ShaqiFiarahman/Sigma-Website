@@ -3,9 +3,11 @@
 @section('subtitle', 'Bergabung sebagai relawan tanggap bencana SIGMA.')
 
 @section('page-actions')
-    <button type="button" onclick="window.location.href='{{ route('dashboard') }}'" class="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-slate-600 bg-white border border-slate-200 rounded-lg hover:bg-slate-50 hover:border-slate-300 transition-all duration-200 shadow-sm cursor-pointer">
-        <i class="bi bi-arrow-left text-xs"></i> Kembali
-    </button>
+    @if(!$existing)
+        <button type="button" onclick="window.location.href='{{ route('dashboard') }}'" class="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-slate-600 bg-white border border-slate-200 rounded-lg hover:bg-slate-50 hover:border-slate-300 transition-all duration-200 shadow-sm cursor-pointer">
+            <i class="bi bi-arrow-left text-xs"></i> Kembali
+        </button>
+    @endif
 @endsection
 
 @section('content')
@@ -16,108 +18,182 @@
     <div class="grid grid-cols-1 lg:grid-cols-5 gap-6">
         <div class="lg:col-span-3">
             <div class="bg-white border border-slate-200/80 rounded-2xl overflow-hidden"
-             style="box-shadow: 0 1px 3px rgba(10,15,30,0.06), 0 4px 16px rgba(10,15,30,0.04);">
+                 style="box-shadow: 0 1px 3px rgba(10,15,30,0.06), 0 4px 16px rgba(10,15,30,0.04);">
 
-            <div class="p-6 sm:p-8">
+                <div class="p-6 sm:p-8">
 
-                {{-- Status Icon & Title --}}
-                <div class="mb-6">
-                    @if($existing->status === 'APPROVED')
-                        <div class="w-12 h-12 rounded-full bg-emerald-100 flex items-center justify-center mb-3">
-                            <i class="bi bi-check-lg text-xl text-emerald-600"></i>
+                    @if($existing->status === 'PENDING')
+                        {{-- PENDING: Tampilan simpel --}}
+                        <div class="mb-6">
+                            <div class="w-12 h-12 rounded-full bg-amber-100 flex items-center justify-center mb-4">
+                                <i class="bi bi-clock-history text-xl text-amber-600"></i>
+                            </div>
+                            <h2 class="text-lg font-bold text-slate-900">Menunggu Verifikasi</h2>
+                            <p class="text-sm text-slate-500 mt-1">Pendaftaran Anda sedang ditinjau oleh tim Admin.</p>
                         </div>
-                        <h2 class="text-lg font-bold text-slate-900">Pendaftaran Disetujui</h2>
-                        <p class="text-sm text-slate-500 mt-1">Anda resmi terdaftar sebagai relawan SIGMA.</p>
-                    @elseif($existing->status === 'REJECTED')
-                        <div class="w-12 h-12 rounded-full bg-red-100 flex items-center justify-center mb-3">
-                            <i class="bi bi-x-lg text-xl text-red-600"></i>
+
+                        {{-- Progress Bar --}}
+                        <div class="flex items-center gap-1.5 mb-2">
+                            <div class="flex-1 h-2 rounded-full bg-blue-500"></div>
+                            <div class="flex-1 h-2 rounded-full bg-amber-400"></div>
+                            <div class="flex-1 h-2 rounded-full bg-slate-200"></div>
                         </div>
-                        <h2 class="text-lg font-bold text-slate-900">Pendaftaran Ditolak</h2>
-                        <p class="text-sm text-slate-500 mt-1">Hubungi Admin jika ada pertanyaan.</p>
+                        <div class="flex justify-between text-[11px] text-slate-500 mb-6">
+                            <span>Terdaftar</span>
+                            <span>Verifikasi</span>
+                            <span>Penugasan</span>
+                        </div>
+
+                        {{-- Estimasi --}}
+                        <div class="flex items-center gap-3 p-3 rounded-lg bg-slate-50 border border-slate-100 mb-5">
+                            <i class="bi bi-clock text-slate-400"></i>
+                            <div>
+                                <p class="text-xs font-medium text-slate-700">Estimasi waktu verifikasi</p>
+                                <p class="text-[11px] text-slate-500">1 – 3 hari kerja sejak pendaftaran</p>
+                            </div>
+                        </div>
+
+                        {{-- Data --}}
+                        <div class="border border-slate-100 rounded-xl divide-y divide-slate-100 mb-5">
+                            <div class="flex justify-between px-4 py-3 text-xs">
+                                <span class="text-slate-500">No. Pendaftaran</span>
+                                <span class="font-mono font-medium text-slate-800">REL-{{ str_pad($existing->id, 5, '0', STR_PAD_LEFT) }}</span>
+                            </div>
+                            <div class="flex justify-between px-4 py-3 text-xs">
+                                <span class="text-slate-500">Nama</span>
+                                <span class="font-medium text-slate-800">{{ $existing->name }}</span>
+                            </div>
+                            <div class="flex justify-between px-4 py-3 text-xs">
+                                <span class="text-slate-500">Keahlian</span>
+                                <span class="font-medium text-slate-800">{{ $existing->skill }}</span>
+                            </div>
+                            <div class="flex justify-between px-4 py-3 text-xs">
+                                <span class="text-slate-500">Telepon</span>
+                                <span class="font-medium text-slate-800">{{ $existing->phone_number }}</span>
+                            </div>
+                            <div class="flex justify-between px-4 py-3 text-xs">
+                                <span class="text-slate-500">Alamat</span>
+                                <span class="font-medium text-slate-800 text-right max-w-[55%]">{{ $existing->address }}</span>
+                            </div>
+                            <div class="flex justify-between px-4 py-3 text-xs">
+                                <span class="text-slate-500">Tanggal Daftar</span>
+                                <span class="font-medium text-slate-800">{{ $existing->created_at->format('d M Y, H:i') }}</span>
+                            </div>
+                        </div>
+
                     @else
-                        <div class="w-12 h-12 rounded-full bg-amber-100 flex items-center justify-center mb-3">
-                            <i class="bi bi-clock-history text-xl text-amber-600"></i>
-                        </div>
-                        <h2 class="text-lg font-bold text-slate-900">Menunggu Verifikasi</h2>
-                        <p class="text-sm text-slate-500 mt-1">Pendaftaran Anda sedang ditinjau oleh tim Admin.</p>
+                        {{-- APPROVED / REJECTED: Tampilan SNBP --}}
+
+                        @if($existing->status === 'APPROVED')
+                            {{-- LULUS --}}
+                            <div class="rounded-2xl overflow-hidden border border-slate-200" style="background: linear-gradient(180deg, #0A0F1E 0%, #1e3a8a 40%, #ffffff 40%);">
+                                {{-- Header gelap --}}
+                                <div class="px-6 pt-6 pb-8 text-center">
+                                    <div class="flex items-center justify-center gap-2 mb-4">
+                                        <div class="w-8 h-8 rounded-lg flex items-center justify-center" style="background: rgba(255,255,255,0.15);">
+                                            <i class="bi bi-shield-check text-white text-sm"></i>
+                                        </div>
+                                        <span class="text-xs font-bold text-white/70 uppercase tracking-widest">SIGMA</span>
+                                    </div>
+                                    <p class="text-sm font-bold text-emerald-400 uppercase tracking-wide">Selamat! Anda Dinyatakan</p>
+                                    <p class="text-2xl font-extrabold text-white mt-1">LULUS SELEKSI RELAWAN</p>
+                                </div>
+
+                                {{-- Body putih --}}
+                                <div class="bg-white px-6 pb-6 pt-4">
+                                    <div class="text-center mb-5 pb-4 border-b border-slate-100">
+                                        <p class="text-[10px] text-slate-400 uppercase tracking-wider">REL-{{ str_pad($existing->id, 5, '0', STR_PAD_LEFT) }}</p>
+                                        <p class="text-xl font-extrabold text-slate-900 mt-1">{{ $existing->name }}</p>
+                                        <p class="text-xs text-slate-500 mt-0.5">{{ $existing->skill }}</p>
+                                    </div>
+
+                                    <div class="space-y-2.5 text-xs mb-5">
+                                        <div>
+                                            <p class="text-[10px] text-slate-400 uppercase tracking-wider">Telepon</p>
+                                            <p class="font-semibold text-slate-800">{{ $existing->phone_number }}</p>
+                                        </div>
+                                        <div>
+                                            <p class="text-[10px] text-slate-400 uppercase tracking-wider">Alamat</p>
+                                            <p class="font-semibold text-slate-800">{{ $existing->address }}</p>
+                                        </div>
+                                    </div>
+
+                                    @if($existing->assignment)
+                                        <div class="p-3 rounded-xl bg-blue-50 border border-blue-100 mb-4">
+                                            <p class="text-[10px] text-blue-500 uppercase tracking-wider font-bold">Penugasan</p>
+                                            <p class="text-sm font-bold text-blue-800 mt-0.5">{{ $existing->assignment }}</p>
+                                        </div>
+                                    @else
+                                        <div class="p-3 rounded-xl bg-slate-50 border border-slate-100 mb-4">
+                                            <p class="text-xs text-slate-600">Silakan menunggu informasi penugasan dari Admin.</p>
+                                        </div>
+                                    @endif
+                                </div>
+                            </div>
+
+                        @else
+                            {{-- TIDAK LULUS --}}
+                            <div class="rounded-2xl overflow-hidden border border-slate-200" style="background: linear-gradient(180deg, #7f1d1d 0%, #dc2626 40%, #ffffff 40%);">
+                                {{-- Header merah --}}
+                                <div class="px-6 pt-6 pb-8 text-center">
+                                    <div class="flex items-center justify-center gap-2 mb-4">
+                                        <div class="w-8 h-8 rounded-lg flex items-center justify-center" style="background: rgba(255,255,255,0.15);">
+                                            <i class="bi bi-shield-check text-white text-sm"></i>
+                                        </div>
+                                        <span class="text-xs font-bold text-white/70 uppercase tracking-widest">SIGMA</span>
+                                    </div>
+                                    <p class="text-sm font-bold text-white/90 uppercase tracking-wide">Anda Dinyatakan Tidak Lulus</p>
+                                    <p class="text-2xl font-extrabold text-white mt-1">SELEKSI RELAWAN</p>
+                                    <p class="text-xs text-white/60 mt-2">Masih ada kesempatan di periode selanjutnya.</p>
+                                </div>
+
+                                {{-- Body putih --}}
+                                <div class="bg-white px-6 pb-6 pt-4">
+                                    <div class="text-center mb-5 pb-4 border-b border-slate-100">
+                                        <p class="text-[10px] text-slate-400 uppercase tracking-wider">REL-{{ str_pad($existing->id, 5, '0', STR_PAD_LEFT) }}</p>
+                                        <p class="text-xl font-extrabold text-slate-900 mt-1">{{ $existing->name }}</p>
+                                        <p class="text-xs text-slate-500 mt-0.5">{{ $existing->skill }}</p>
+                                    </div>
+
+                                    <div class="space-y-2.5 text-xs mb-5">
+                                        <div>
+                                            <p class="text-[10px] text-slate-400 uppercase tracking-wider">Telepon</p>
+                                            <p class="font-semibold text-slate-800">{{ $existing->phone_number }}</p>
+                                        </div>
+                                        <div>
+                                            <p class="text-[10px] text-slate-400 uppercase tracking-wider">Alamat</p>
+                                            <p class="font-semibold text-slate-800">{{ $existing->address }}</p>
+                                        </div>
+                                    </div>
+
+                                    <div class="p-3 rounded-xl bg-slate-50 border border-slate-100 mb-4">
+                                        <p class="text-xs text-slate-600">Hubungi Admin untuk informasi lebih lanjut atau coba daftar kembali di periode berikutnya.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        @endif
+
                     @endif
-                </div>
 
-                {{-- Progress --}}
-                <div class="flex items-center gap-1 mb-6">
-                    {{-- Step 1 --}}
-                    <div class="flex-1 h-1.5 rounded-full bg-blue-500"></div>
-                    {{-- Step 2 --}}
-                    <div class="flex-1 h-1.5 rounded-full {{ in_array($existing->status, ['APPROVED', 'REJECTED']) ? ($existing->status === 'APPROVED' ? 'bg-emerald-500' : 'bg-red-400') : 'bg-amber-400' }}"></div>
-                    {{-- Step 3 --}}
-                    <div class="flex-1 h-1.5 rounded-full {{ $existing->status === 'APPROVED' && $existing->assignment ? 'bg-blue-500' : 'bg-slate-200' }}"></div>
-                </div>
-                <div class="flex justify-between text-[10px] text-slate-500 mb-6">
-                    <span>Terdaftar</span>
-                    <span>{{ $existing->status === 'APPROVED' ? 'Disetujui' : ($existing->status === 'REJECTED' ? 'Ditolak' : 'Verifikasi') }}</span>
-                    <span>Penugasan</span>
-                </div>
-
-                {{-- Estimasi --}}
-                @if($existing->status === 'PENDING')
-                    <div class="flex items-center gap-3 p-3 rounded-lg bg-slate-50 border border-slate-100 mb-5">
-                        <i class="bi bi-clock text-slate-400"></i>
-                        <div>
-                            <p class="text-xs font-medium text-slate-700">Estimasi waktu verifikasi</p>
-                            <p class="text-[11px] text-slate-500">1 – 3 hari kerja sejak pendaftaran</p>
-                        </div>
+                    {{-- Actions --}}
+                    <div class="flex flex-col sm:flex-row gap-2 mt-6 pt-5 border-t border-slate-100">
+                        <button type="button" onclick="window.location.href='{{ route('dashboard') }}'"
+                                class="flex-1 px-4 py-2.5 text-sm font-medium text-slate-700 bg-white border border-slate-200 rounded-xl hover:bg-slate-100 hover:border-slate-300 hover:-translate-y-0.5 hover:shadow-sm transition-all duration-200 cursor-pointer text-center">
+                            Kembali
+                        </button>
+                        <button type="button"
+                                onclick="window.open('https://api.whatsapp.com/send?phone=6285934415914&text={{ urlencode('Halo Admin SIGMA, saya ingin menanyakan status pendaftaran relawan atas nama ' . $existing->name . ' (REL-' . str_pad($existing->id, 5, '0', STR_PAD_LEFT) . ').') }}', '_blank')"
+                                class="flex-1 px-4 py-2.5 text-sm font-medium text-white rounded-xl hover:-translate-y-0.5 hover:shadow-md transition-all duration-200 cursor-pointer text-center flex items-center justify-center gap-2"
+                                style="background: #25D366; box-shadow: 0 2px 8px rgba(37,211,102,0.2);">
+                            <i class="bi bi-whatsapp text-xs"></i> Hubungi Admin
+                        </button>
                     </div>
-                @endif
-
-                {{-- Data --}}
-                <div class="border border-slate-100 rounded-xl divide-y divide-slate-100 mb-5">
-                    <div class="flex justify-between px-4 py-3 text-xs">
-                        <span class="text-slate-500">Nama</span>
-                        <span class="font-medium text-slate-800">{{ $existing->name }}</span>
-                    </div>
-                    <div class="flex justify-between px-4 py-3 text-xs">
-                        <span class="text-slate-500">Keahlian</span>
-                        <span class="font-medium text-slate-800">{{ $existing->skill }}</span>
-                    </div>
-                    <div class="flex justify-between px-4 py-3 text-xs">
-                        <span class="text-slate-500">Telepon</span>
-                        <span class="font-medium text-slate-800">{{ $existing->phone_number }}</span>
-                    </div>
-                    <div class="flex justify-between px-4 py-3 text-xs">
-                        <span class="text-slate-500">Alamat</span>
-                        <span class="font-medium text-slate-800 text-right max-w-[55%]">{{ $existing->address }}</span>
-                    </div>
-                    <div class="flex justify-between px-4 py-3 text-xs">
-                        <span class="text-slate-500">Tanggal daftar</span>
-                        <span class="font-medium text-slate-800">{{ $existing->created_at->format('d M Y') }}</span>
-                    </div>
-                    @if($existing->assignment)
-                        <div class="flex justify-between px-4 py-3 text-xs bg-blue-50">
-                            <span class="text-blue-600 font-medium">Penugasan</span>
-                            <span class="font-bold text-blue-800">{{ $existing->assignment }}</span>
-                        </div>
-                    @endif
-                </div>
-
-                {{-- Actions --}}
-                <div class="flex flex-col sm:flex-row gap-2">
-                    <button type="button" onclick="window.location.href='{{ route('dashboard') }}'"
-                            class="flex-1 px-4 py-2.5 text-sm font-medium text-slate-700 bg-white border border-slate-200 rounded-xl hover:bg-slate-50 transition-all cursor-pointer text-center">
-                        Kembali
-                    </button>
-                    <button type="button"
-                            onclick="window.open('https://api.whatsapp.com/send?phone=6285934415914&text={{ urlencode('Halo Admin SIGMA, saya ingin menanyakan status pendaftaran relawan atas nama ' . $existing->name . '.') }}', '_blank')"
-                            class="flex-1 px-4 py-2.5 text-sm font-medium text-white rounded-xl transition-all cursor-pointer text-center flex items-center justify-center gap-2"
-                            style="background: #25D366;">
-                        <i class="bi bi-whatsapp text-xs"></i> Hubungi Admin
-                    </button>
                 </div>
             </div>
         </div>
-        </div>
 
         {{-- KOLOM KANAN: Info Tambahan --}}
-        <div class="lg:col-span-2 space-y-5 lg:sticky lg:top-24 self-start">
+        <div class="lg:col-span-2 space-y-5">
 
             {{-- Apa itu Relawan SIGMA --}}
             <div class="bg-white border border-slate-200/80 rounded-2xl overflow-hidden"
