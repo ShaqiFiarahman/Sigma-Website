@@ -40,20 +40,20 @@ Route::middleware('auth')->group(function () {
         
         // Map & Information
         Route::get('/peta-bencana', function () { return redirect()->route('dashboard'); })->name('map');
-        Route::get('/info-posko', [MapController::class, 'shelterPage'])->name('shelter');
-        Route::get('/cari-bencana', [MapController::class, 'search'])->name('search');
 
         // Volunteer Registration
         Route::get('/relawan/daftar', [VolunteerController::class, 'create'])->name('volunteer.create');
         Route::post('/relawan/daftar', [VolunteerController::class, 'store'])->name('volunteer.store');
     });
 
-    // SHARED ROUTES
+    // SHARED ROUTES (accessible by all authenticated users)
     Route::get('/berita', [NewsController::class, 'index'])->name('news.index');
     Route::get('/laporan', [LaporanController::class, 'index'])->name('laporan.index');
     Route::get('/laporan/create', [LaporanController::class, 'create'])->name('laporan.create');
     Route::post('/laporan/store', [LaporanController::class, 'store'])->name('laporan.store');
     Route::get('/laporan/detail/{id}', [LaporanController::class, 'show'])->name('laporan.show');
+    Route::get('/info-posko', [MapController::class, 'shelterPage'])->name('shelter');
+    Route::get('/cari-bencana', [MapController::class, 'search'])->name('search');
 
     // API ROUTES
     Route::get('/api/disasters', [MapController::class, 'disasters'])->name('api.disasters');

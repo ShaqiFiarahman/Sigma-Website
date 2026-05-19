@@ -11,20 +11,69 @@ class LaporanController extends Controller
 {
     public function adminDashboard()
     {
+        // ─── Statistics ───────────────────────────────────
         $total   = Disaster::count();
         $pending = Disaster::where('status', Disaster::STATUS_PENDING)->count();
         $selesai = Disaster::where('status', Disaster::STATUS_RESOLVED)->count();
+        $decline = Disaster::where('status', Disaster::STATUS_DECLINE)->count();
+        $awas    = Disaster::where('status', Disaster::STATUS_AWAS)->count();
+        $siaga1  = Disaster::where('status', Disaster::STATUS_SIAGA_1)->count();
+        $siaga2  = Disaster::where('status', Disaster::STATUS_SIAGA_2)->count();
 
-        // Chart: 7 hari terakhir
+        // ─── Volunteer Stats ─────────────────────────────
+        $totalVolunteers    = \App\Models\Volunteer::count();
+        $approvedVolunteers = \App\Models\Volunteer::where('status', \App\Models\Volunteer::STATUS_APPROVED)->count();
+        $pendingVolunteers  = \App\Models\Volunteer::where('status', \App\Models\Volunteer::STATUS_PENDING)->count();
+
+        // ─── Chart: 7 hari terakhir ─────────────────────
         $chartLabels = [];
         $chartData   = [];
+        $chartVerified = [];
+        $chartPending  = [];
         for ($i = 6; $i >= 0; $i--) {
-            $date          = now()->subDays($i);
-            $chartLabels[] = $date->format('d M');
-            $chartData[]   = Disaster::whereDate('created_at', $date->toDateString())->count();
+            $date            = now()->subDays($i);
+            $chartLabels[]   = $date->format('d M');
+            $chartData[]     = Disaster::whereDate('created_at', $date->toDateString())->count();
+            $chartVerified[] = Disaster::whereDate('created_at', $date->toDateString())
+                                ->whereNotIn('status', [Disaster::STATUS_PENDING, Disaster::STATUS_DECLINE])
+                                ->count();
+            $chartPending[]  = Disaster::whereDate('created_at', $date->toDateString())
+                                ->where('status', Disaster::STATUS_PENDING)
+                                ->count();
         }
 
-        return view('admin.dashboard', compact('total', 'pending', 'selesai', 'chartLabels', 'chartData'));
+        // ─── Recent Pending Reports (5 terbaru) ─────────
+        $recentPending = Disaster::with('user')
+            ->where('status', Disaster::STATUS_PENDING)
+            ->latest()
+            ->limit(5)
+            ->get()
+            ->map(fn(Disaster $d) => $this->toArray($d));
+
+        // ─── Map Data: Semua disasters dengan koordinat ──
+        $mapDisasters = Disaster::whereNotNull('latitude')
+            ->whereNotNull('longitude')
+            ->latest()
+            ->get()
+            ->map(fn(Disaster $d) => [
+                'id'        => $d->id,
+                'judul'     => $d->title,
+                'lokasi'    => $d->location ?? 'Lokasi tidak diketahui',
+                'latitude'  => $d->latitude,
+                'longitude' => $d->longitude,
+                'status'    => $d->status,
+                'status_label' => $d->status_label,
+                'tingkat'   => $d->tingkat,
+                'tanggal'   => $d->created_at?->format('d M Y') ?? '-',
+                'deskripsi' => \Illuminate\Support\Str::limit($d->description, 120),
+            ]);
+
+        return view('admin.dashboard', compact(
+            'total', 'pending', 'selesai', 'decline', 'awas', 'siaga1', 'siaga2',
+            'totalVolunteers', 'approvedVolunteers', 'pendingVolunteers',
+            'chartLabels', 'chartData', 'chartVerified', 'chartPending',
+            'recentPending', 'mapDisasters'
+        ));
     }
 
     public function userDashboard()
@@ -44,7 +93,7 @@ class LaporanController extends Controller
         $role  = $user?->role ?? 'MASYARAKAT';
 
         $query = Disaster::with('user')->latest();
-        if (!in_array($role, ['admin'])) {
+        if (!in_array(strtolower($role), ['admin'])) {
             $query->where('user_id', $user->id);
         }
 
