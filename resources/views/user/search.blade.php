@@ -11,6 +11,33 @@
 @section('content')
 <div class="max-w-5xl mx-auto">
 
+    {{-- Flash Messages --}}
+    @if(session('msg'))
+        <div class="mb-6 p-4 rounded-2xl flex items-center gap-3 text-sm font-medium backdrop-blur-sm animate-fade-up
+            {{ session('msg') == 'approved' ? 'bg-emerald-50/80 text-emerald-800 border border-emerald-200/60' : '' }}
+            {{ session('msg') == 'rejected' ? 'bg-red-50/80 text-red-800 border border-red-200/60' : '' }}
+            {{ session('msg') == 'created' ? 'bg-blue-50/80 text-blue-800 border border-blue-200/60' : '' }}
+        ">
+            @if(session('msg') == 'approved')
+                <div class="w-8 h-8 rounded-lg bg-emerald-100 flex items-center justify-center shrink-0">
+                    <i class="bi bi-check-circle-fill text-emerald-500"></i>
+                </div>
+                <span>Laporan berhasil diverifikasi.</span>
+            @elseif(session('msg') == 'rejected')
+                <div class="w-8 h-8 rounded-lg bg-red-100 flex items-center justify-center shrink-0">
+                    <i class="bi bi-x-circle-fill text-red-500"></i>
+                </div>
+                <span>Laporan berhasil ditolak.</span>
+            @elseif(session('msg') == 'created')
+                <div class="w-8 h-8 rounded-lg bg-blue-100 flex items-center justify-center shrink-0">
+                    <i class="bi bi-info-circle-fill text-blue-500"></i>
+                </div>
+                <span>Laporan baru berhasil dibuat.</span>
+            @endif
+            <button onclick="this.parentElement.remove()" class="ml-auto opacity-60 hover:opacity-100 transition-opacity p-1 rounded-lg hover:bg-black/5"><i class="bi bi-x-lg text-xs"></i></button>
+        </div>
+    @endif
+
     {{-- Search & Filter --}}
     <div class="bg-white border border-slate-200/80 rounded-2xl shadow-sm overflow-hidden mb-5"
          style="box-shadow: 0 1px 3px rgba(10,15,30,0.06), 0 4px 16px rgba(10,15,30,0.04);">
@@ -42,6 +69,16 @@
                 <button type="button" data-filter="RESOLVED" class="filter-chip px-3.5 py-1.5 text-xs font-semibold rounded-full border transition-all duration-200">
                     <span class="inline-block w-2 h-2 rounded-full bg-emerald-500 mr-1"></span>Resolved
                 </button>
+                @if(strtolower(auth()->user()->role ?? '') === 'admin' || $disasters->contains('status', 'PENDING'))
+                    <button type="button" data-filter="PENDING" class="filter-chip px-3.5 py-1.5 text-xs font-semibold rounded-full border transition-all duration-200">
+                        <span class="inline-block w-2 h-2 rounded-full bg-amber-500 mr-1"></span>Pending
+                    </button>
+                @endif
+                @if(strtolower(auth()->user()->role ?? '') === 'admin' || $disasters->contains('status', 'DECLINE'))
+                    <button type="button" data-filter="DECLINE" class="filter-chip px-3.5 py-1.5 text-xs font-semibold rounded-full border transition-all duration-200">
+                        <span class="inline-block w-2 h-2 rounded-full bg-slate-400 mr-1"></span>Ditolak
+                    </button>
+                @endif
             </div>
         </div>
     </div>
@@ -63,14 +100,25 @@
                     'SIAGA_2'  => 'border-l-slate-400',
                     'RESOLVED' => 'border-l-emerald-500',
                     'PENDING'  => 'border-l-amber-400',
+                    'DECLINE'  => 'border-l-slate-300',
                     default    => 'border-l-slate-300',
+                };
+                $statusLabel = match($d->status) {
+                    'AWAS'     => 'Awas',
+                    'SIAGA_1'  => 'Siaga 1',
+                    'SIAGA_2'  => 'Siaga 2',
+                    'RESOLVED' => 'Resolved',
+                    'PENDING'  => 'Pending',
+                    'DECLINE'  => 'Ditolak',
+                    default    => $d->status,
                 };
                 $badgeBg = match($d->status) {
                     'AWAS'     => 'bg-red-50 text-red-700 border-red-100',
                     'SIAGA_1'  => 'bg-blue-50 text-blue-700 border-blue-100',
                     'SIAGA_2'  => 'bg-slate-100 text-slate-700 border-slate-200',
                     'RESOLVED' => 'bg-emerald-50 text-emerald-700 border-emerald-100',
-                    'PENDING'  => 'bg-amber-50 text-amber-700 border-amber-100',
+                    'PENDING'  => 'bg-amber-50 text-amber-700 border-amber-200',
+                    'DECLINE'  => 'bg-slate-50 text-slate-500 border-slate-200',
                     default    => 'bg-slate-50 text-slate-600 border-slate-200',
                 };
                 // Detect disaster type from title
@@ -96,6 +144,9 @@
                         <i class="bi {{ $typeIcon }} {{ $typeColor }} text-base shrink-0"></i>
                         <h3 class="text-sm font-bold text-slate-900 truncate">{{ $d->title }}</h3>
                     </div>
+                    <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold border {{ $badgeBg }} shrink-0">
+                        {{ $statusLabel }}
+                    </span>
                 </div>
 
                 <p class="text-xs text-slate-500 line-clamp-2 mb-2.5">{{ \Illuminate\Support\Str::limit($d->description, 100) }}</p>

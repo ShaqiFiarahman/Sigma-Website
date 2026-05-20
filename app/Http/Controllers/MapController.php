@@ -21,14 +21,28 @@ class MapController extends Controller
      */
     public function search()
     {
-        $disasters = Disaster::whereIn('status', [
-                Disaster::STATUS_RESOLVED,
-                Disaster::STATUS_SIAGA_1,
-                Disaster::STATUS_SIAGA_2,
-                Disaster::STATUS_AWAS
-            ])
-            ->latest()
-            ->get();
+        $user = auth()->user();
+        $role = $user?->role ?? 'MASYARAKAT';
+
+        $query = Disaster::latest();
+
+        if (strtolower($role) !== 'admin') {
+            // Citizens/Volunteers can see public disasters (Resolved, Siaga, Awas)
+            // AND their own reports (including Pending or Decline)
+            $query->where(function($q) use ($user) {
+                $q->whereIn('status', [
+                    Disaster::STATUS_RESOLVED,
+                    Disaster::STATUS_SIAGA_1,
+                    Disaster::STATUS_SIAGA_2,
+                    Disaster::STATUS_AWAS
+                ]);
+                if ($user) {
+                    $q->orWhere('user_id', $user->id);
+                }
+            });
+        }
+
+        $disasters = $query->get();
 
         return view('user.search', compact('disasters'));
     }

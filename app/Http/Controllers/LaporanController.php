@@ -89,17 +89,7 @@ class LaporanController extends Controller
 
     public function index()
     {
-        $user  = auth()->user();
-        $role  = $user?->role ?? 'MASYARAKAT';
-
-        $query = Disaster::with('user')->latest();
-        if (!in_array(strtolower($role), ['admin'])) {
-            $query->where('user_id', $user->id);
-        }
-
-        $laporans = $query->get()->map(fn(Disaster $d) => $this->toArray($d));
-
-        return view('laporan.index', compact('laporans'));
+        return redirect()->route('search');
     }
 
     public function create()

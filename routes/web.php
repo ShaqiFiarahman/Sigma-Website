@@ -48,7 +48,7 @@ Route::middleware('auth')->group(function () {
 
     // SHARED ROUTES (accessible by all authenticated users)
     Route::get('/berita', [NewsController::class, 'index'])->name('news.index');
-    Route::get('/laporan', [LaporanController::class, 'index'])->name('laporan.index');
+    Route::get('/laporan', [MapController::class, 'search'])->name('laporan.index');
     Route::get('/laporan/create', [LaporanController::class, 'create'])->name('laporan.create');
     Route::post('/laporan/store', [LaporanController::class, 'store'])->name('laporan.store');
     Route::get('/laporan/detail/{id}', [LaporanController::class, 'show'])->name('laporan.show');
