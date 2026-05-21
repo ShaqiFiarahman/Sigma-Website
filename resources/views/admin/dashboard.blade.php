@@ -89,43 +89,7 @@
             box-shadow: 0 4px 12px rgba(59, 111, 232, 0.08);
         }
     </style>
-
-    {{-- WELCOME BANNER (sama persis dengan user dashboard) --}}
-    <div class="relative rounded-2xl overflow-hidden mb-8"
-        style="background: linear-gradient(135deg, #0A0F1E 0%, #0f1f4a 50%, #1a3068 100%);">
-
-        <div class="absolute -top-16 -right-16 w-64 h-64 rounded-full opacity-20 pointer-events-none"
-            style="background: radial-gradient(circle, #E4F0F6 0%, transparent 70%);"></div>
-        <div class="absolute bottom-0 left-1/3 w-96 h-48 opacity-10 pointer-events-none"
-            style="background: radial-gradient(ellipse, #3B6FE8 0%, transparent 70%);"></div>
-
-        <div class="absolute inset-0 opacity-15 pointer-events-none">
-            <img src="{{ asset('images/indonesia_map.png') }}" class="w-full h-full object-cover object-center"
-                alt="" loading="lazy" decoding="async">
-        </div>
-
-        <div class="relative z-10 px-12 sm:px-16 py-14 flex flex-col sm:flex-row sm:items-center justify-between gap-12">
-            <div class="max-w-3xl">
-                <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full mb-4"
-                    style="background: rgba(228,240,246,0.15); border: 1px solid rgba(228,240,246,0.2); backdrop-filter: blur(8px);">
-                    <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-                    <span class="text-[11px] font-bold text-white/70 tracking-wide">Panel Administrator</span>
-                </div>
-                <h2 class="text-xl sm:text-2xl font-extrabold text-white tracking-tight mb-3">Selamat datang, Admin.</h2>
-                <p class="text-sm sm:text-base leading-relaxed" style="color: rgba(228,240,246,0.7);">
-                    Pantau laporan bencana, verifikasi kejadian, dan koordinasi tim dari panel kendali terpusat.
-                </p>
-            </div>
-            <div class="shrink-0 hidden sm:flex flex-col items-end gap-1">
-                <p class="text-2xl font-bold text-white" id="liveClock">--:--</p>
-                <p class="text-xs" style="color: rgba(228,240,246,0.45);" id="liveDate">—</p>
-            </div>
-        </div>
-    </div>
-
-    {{-- ═══════════════════════════════════════════════════
-         STATISTICS
-    ═══════════════════════════════════════════════════ --}}
+    <x-welcome-banner />
     <div class="mb-4 px-1">
         <h2 class="section-title">Ringkasan Laporan</h2>
         <p class="text-xs text-slate-500 mt-0.5">Statistik laporan bencana saat ini</p>
@@ -384,16 +348,7 @@
     </style>
 
     <script>
-        // Live Clock
-        function updateClock() {
-            const now = new Date();
-            const clock = document.getElementById('liveClock');
-            const dateEl = document.getElementById('liveDate');
-            if (clock) clock.textContent = now.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
-            if (dateEl) dateEl.textContent = now.toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'long' });
-        }
-        updateClock();
-        setInterval(updateClock, 1000);
+
 
         let map, infoWindow;
         window.closeMapPopup = function() { if (infoWindow) infoWindow.close(); };

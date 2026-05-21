@@ -58,6 +58,24 @@ Route::middleware('auth')->group(function () {
     // API ROUTES
     Route::get('/api/disasters', [MapController::class, 'disasters'])->name('api.disasters');
     Route::get('/api/shelters', [MapController::class, 'shelters'])->name('api.shelters');
+    Route::get('/api/pending-reports', function () {
+        if (strtolower(auth()->user()->role ?? '') !== 'admin') {
+            return response()->json([]);
+        }
+        return response()->json(
+            \App\Models\Disaster::where('status', 'PENDING')
+                ->latest()
+                ->limit(10)
+                ->get()
+                ->map(fn($d) => [
+                    'id' => $d->id,
+                    'title' => $d->title,
+                    'reporter' => $d->reporter_name,
+                    'date' => $d->created_at?->diffForHumans(),
+                    'created_at' => $d->created_at?->toISOString(),
+                ])
+        );
+    })->name('api.pending_reports');
 });
 
 

@@ -102,31 +102,25 @@
 
                 {{-- Desktop nav links — hanya untuk Admin/BNPB --}}
                 @if(strtolower(auth()->user()->role ?? '') === 'admin')
-                    <ul class="hidden md:flex items-center gap-1">
-                        <li>
-                            <a href="{{ route('admin.dashboard') }}"
-                                class="px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 
-                                                  {{ Route::is('admin.dashboard') ? 'nav-active' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100/70' }}">
-                                <i class="bi bi-grid-1x2 mr-1.5 text-xs opacity-70"></i>Dashboard
-                            </a>
-                        </li>
-                        <li>
-                            <a href="{{ route('laporan.index') }}"
-                                class="px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 
-                                                  {{ Route::is('laporan.index') || Route::is('laporan.show') ? 'nav-active' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100/70' }}">
-                                <i class="bi bi-file-earmark-text mr-1.5 text-xs opacity-70"></i>Laporan
-                            </a>
-                        </li>
-                    </ul>
+                    {{-- Removed: Dashboard and Laporan links --}}
                 @endif
             </div>
 
             <div class="flex items-center gap-4">
-                {{-- Tombol Buat Laporan --}}
-                <a href="{{ route('laporan.create') }}"
-                    class="btn-primary hidden md:inline-flex items-center justify-center px-4 py-2 text-sm font-medium text-white rounded-lg transition-all duration-200">
-                    <i class="bi bi-plus-lg mr-1.5 text-xs"></i> Buat Laporan
-                </a>
+                {{-- Tombol CTA berdasarkan role --}}
+                @if(strtolower(auth()->user()->role ?? '') === 'admin')
+                    {{-- Notifikasi --}}
+                    <x-admin-notification />
+                    <button type="button" onclick="window.location.href='{{ route('laporan.index') }}'"
+                        class="btn-primary hidden md:inline-flex items-center justify-center px-4 py-2 text-sm font-medium text-white rounded-lg transition-all duration-200 cursor-pointer">
+                        <i class="bi bi-file-earmark-text mr-1.5 text-xs"></i> Kelola Laporan
+                    </button>
+                @else
+                    <button type="button" onclick="window.location.href='{{ route('laporan.create') }}'"
+                        class="btn-primary hidden md:inline-flex items-center justify-center px-4 py-2 text-sm font-medium text-white rounded-lg transition-all duration-200 cursor-pointer">
+                        <i class="bi bi-plus-lg mr-1.5 text-xs"></i> Buat Laporan
+                    </button>
+                @endif
 
                 {{-- User profile --}}
                 <div class="hidden md:flex items-center gap-3 pl-4 border-l border-slate-200">
@@ -168,7 +162,7 @@
             </a>
             <a href="{{ route('laporan.create') }}"
                 class="flex items-center gap-2 px-3 py-2.5 rounded-lg text-sm font-medium {{ Route::is('laporan.create') ? 'bg-blue-50 text-blue-700' : 'text-slate-600' }}">
-                <i class="bi bi-plus-circle"></i>Buat Laporan
+                <i class="bi bi-plus-circle"></i>{{ strtolower(auth()->user()->role ?? '') === 'admin' ? 'Kelola Laporan' : 'Buat Laporan' }}
             </a>
             <div class="border-t border-slate-100 mt-2 pt-2">
                 <form action="{{ route('logout') }}" method="POST">
