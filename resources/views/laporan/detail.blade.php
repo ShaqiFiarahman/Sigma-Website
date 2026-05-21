@@ -14,7 +14,7 @@
     $s = $laporan['status'];
     $borderColor = match($s) {
         'Awas' => 'border-l-red-500',
-        'Siaga 1' => 'border-l-blue-500',
+        'Siaga 1' => 'border-l-orange-500',
         'Siaga 2' => 'border-l-violet-500',
         'Resolved' => 'border-l-emerald-500',
         'Decline' => 'border-l-slate-400',
@@ -80,8 +80,8 @@
                             <span class="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse"></span> Awas
                         </span>
                     @elseif($s === 'Siaga 1')
-                        <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[11px] font-bold bg-blue-50 text-blue-700 border border-blue-200 shrink-0">
-                            <span class="w-1.5 h-1.5 rounded-full bg-blue-500"></span> Siaga 1
+                        <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[11px] font-bold bg-orange-50 text-orange-700 border border-orange-200 shrink-0">
+                            <span class="w-1.5 h-1.5 rounded-full bg-orange-500"></span> Siaga 1
                         </span>
                     @elseif($s === 'Siaga 2')
                         <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[11px] font-bold bg-violet-50 text-violet-700 border border-violet-200 shrink-0">

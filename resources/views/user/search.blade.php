@@ -61,10 +61,10 @@
                     <span class="inline-block w-2 h-2 rounded-full bg-red-500 mr-1"></span>Awas
                 </button>
                 <button type="button" data-filter="SIAGA_1" class="filter-chip px-3.5 py-1.5 text-xs font-semibold rounded-full border transition-all duration-200">
-                    <span class="inline-block w-2 h-2 rounded-full bg-blue-500 mr-1"></span>Siaga 1
+                    <span class="inline-block w-2 h-2 rounded-full bg-orange-500 mr-1"></span>Siaga 1
                 </button>
                 <button type="button" data-filter="SIAGA_2" class="filter-chip px-3.5 py-1.5 text-xs font-semibold rounded-full border transition-all duration-200">
-                    <span class="inline-block w-2 h-2 rounded-full bg-slate-500 mr-1"></span>Siaga 2
+                    <span class="inline-block w-2 h-2 rounded-full bg-violet-500 mr-1"></span>Siaga 2
                 </button>
                 <button type="button" data-filter="RESOLVED" class="filter-chip px-3.5 py-1.5 text-xs font-semibold rounded-full border transition-all duration-200">
                     <span class="inline-block w-2 h-2 rounded-full bg-emerald-500 mr-1"></span>Resolved

@@ -68,11 +68,20 @@ class LaporanController extends Controller
                 'deskripsi' => \Illuminate\Support\Str::limit($d->description, 120),
             ]);
 
+        // ─── All disasters for client-side period filtering ──
+        $allDisasters = Disaster::select('id', 'status', 'created_at')
+            ->latest()
+            ->get()
+            ->map(fn($d) => [
+                'status' => $d->status,
+                'date' => $d->created_at->toISOString(),
+            ]);
+
         return view('admin.dashboard', compact(
             'total', 'pending', 'selesai', 'decline', 'awas', 'siaga1', 'siaga2',
             'totalVolunteers', 'approvedVolunteers', 'pendingVolunteers',
             'chartLabels', 'chartData', 'chartVerified', 'chartPending',
-            'recentPending', 'mapDisasters'
+            'recentPending', 'mapDisasters', 'allDisasters'
         ));
     }
 

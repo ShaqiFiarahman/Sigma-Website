@@ -76,6 +76,71 @@ Route::middleware('auth')->group(function () {
                 ])
         );
     })->name('api.pending_reports');
+
+    Route::get('/api/admin-stats', function () {
+        if (strtolower(auth()->user()->role ?? '') !== 'admin') {
+            return response()->json([]);
+        }
+
+        $period = request('period', '7d'); // 1d, 7d, 30d, all
+        $query = \App\Models\Disaster::query();
+
+        if ($period === '1d') {
+            $query->where('created_at', '>=', now()->subDay());
+            $days = 1;
+        } elseif ($period === '7d') {
+            $query->where('created_at', '>=', now()->subDays(7));
+            $days = 7;
+        } elseif ($period === '30d') {
+            $query->where('created_at', '>=', now()->subDays(30));
+            $days = 30;
+        } else {
+            $days = max(7, (int) ceil(now()->diffInDays(\App\Models\Disaster::min('created_at') ?? now())));
+        }
+
+        // Stats
+        $total = $query->count();
+        $pending = (clone $query)->where('status', 'PENDING')->count();
+        $selesai = (clone $query)->whereNotIn('status', ['PENDING', 'DECLINE'])->count();
+        $decline = (clone $query)->where('status', 'DECLINE')->count();
+        $awas = (clone $query)->where('status', 'AWAS')->count();
+        $siaga1 = (clone $query)->where('status', 'SIAGA_1')->count();
+        $siaga2 = (clone $query)->where('status', 'SIAGA_2')->count();
+
+        // Chart data
+        $chartDays = min($days, 7);
+        if ($period === '30d') $chartDays = 14;
+        if ($period === 'all') $chartDays = 14;
+
+        $chartLabels = [];
+        $chartData = [];
+        $chartVerified = [];
+        $chartPending = [];
+
+        for ($i = $chartDays - 1; $i >= 0; $i--) {
+            $date = now()->subDays($i);
+            $chartLabels[] = $date->format('d M');
+            $chartData[] = \App\Models\Disaster::whereDate('created_at', $date->toDateString())->count();
+            $chartVerified[] = \App\Models\Disaster::whereDate('created_at', $date->toDateString())
+                ->whereNotIn('status', ['PENDING', 'DECLINE'])->count();
+            $chartPending[] = \App\Models\Disaster::whereDate('created_at', $date->toDateString())
+                ->where('status', 'PENDING')->count();
+        }
+
+        return response()->json([
+            'total' => $total,
+            'pending' => $pending,
+            'selesai' => $selesai,
+            'decline' => $decline,
+            'awas' => $awas,
+            'siaga1' => $siaga1,
+            'siaga2' => $siaga2,
+            'chartLabels' => $chartLabels,
+            'chartData' => $chartData,
+            'chartVerified' => $chartVerified,
+            'chartPending' => $chartPending,
+        ]);
+    })->name('api.admin_stats');
 });
 
 

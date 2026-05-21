@@ -371,41 +371,7 @@
         </section>
 
         {{-- Peta Bencana Section --}}
-        <section class="animate-fade-up min-h-[85vh]" style="animation-delay: 0.2s;">
-            <div class="mb-4 px-1">
-                <h2 class="section-title">Peta Bencana</h2>
-                <p class="text-xs text-slate-500 mt-0.5">Pantau kondisi terkini di sekitar Anda</p>
-            </div>
-
-            <div class="relative">
-                {{-- Legend --}}
-                <div class="legend-card absolute bottom-6 right-4 z-10 shadow-lg bg-white/90">
-                    <p class="text-xs font-bold uppercase tracking-wider mb-2 text-slate-500">Legenda</p>
-                    <div class="flex flex-col gap-y-1">
-                        <div class="legend-item">
-                            <div class="legend-dot" style="background: #D32F2F; border-radius: 50%;"></div>
-                            <span>Darurat</span>
-                        </div>
-                        <div class="legend-item">
-                            <div class="legend-dot" style="background: #1565C0; border-radius: 50%;"></div>
-                            <span>Bahaya</span>
-                        </div>
-                        <div class="legend-item">
-                            <div class="legend-dot" style="background: #616161; border-radius: 50%;"></div>
-                            <span>Waspada</span>
-                        </div>
-                        <div class="legend-item">
-                            <i class="bi bi-house-door-fill text-[#10B981] text-sm"
-                                style="width: 12px; text-align: center;"></i>
-                            <span>Posko</span>
-                        </div>
-                    </div>
-                </div>
-
-                {{-- Map --}}
-                <div class="map-container" id="map"></div>
-            </div>
-        </section>
+        <x-disaster-map />
     </div>
 
 @section('footer')
@@ -420,7 +386,6 @@
             banner.style.transition = 'all 0.3s ease';
             setTimeout(() => banner.style.display = 'none', 300);
         });
-
 
         function updateWarningBanner(count) {
             const banner = document.getElementById('warningBanner');
@@ -448,20 +413,16 @@
                     if (dTitle.includes('banjir')) type = "laporan banjir";
                     else if (dTitle.includes('gempa')) type = "laporan gempa";
                     else if (dTitle.includes('kebakaran')) type = "laporan kebakaran";
-
                     message = `Ada 1 <strong>${type}</strong> baru di sekitar ${window.userCityName || 'Anda'}`;
                 }
 
                 text.innerHTML = `${message}.
                     <div class="mt-2.5">
                         <a href="{{ route('search') }}" class="inline-flex items-center gap-1.5 text-xs font-bold bg-red-600 text-white px-3 py-1.25 rounded-full hover:bg-red-700 transition-colors shadow-sm hover:shadow-md">
-                            Lihat Detail 
-                            <i class="bi bi-arrow-right"></i>
+                            Lihat Detail <i class="bi bi-arrow-right"></i>
                         </a>
                     </div>`;
-                if (dismissBtn) {
-                    dismissBtn.className = 'shrink-0 p-2.5 rounded-full hover:bg-red-200/80 transition-colors text-red-700';
-                }
+                if (dismissBtn) dismissBtn.className = 'shrink-0 p-2.5 rounded-full hover:bg-red-200/80 transition-colors text-red-700';
             } else {
                 banner.className = 'warning-banner animate-fade-up banner-safe';
                 iconBg.className = 'w-12 h-12 rounded-full bg-emerald-100 flex items-center justify-center shrink-0';
@@ -470,9 +431,7 @@
                 title.textContent = 'AMAN';
                 text.className = 'text-sm font-medium text-emerald-900';
                 text.textContent = 'Tidak ada laporan darurat di sekitar lokasi Anda.';
-                if (dismissBtn) {
-                    dismissBtn.className = 'shrink-0 p-2.5 rounded-full hover:bg-emerald-200/80 transition-colors text-emerald-700';
-                }
+                if (dismissBtn) dismissBtn.className = 'shrink-0 p-2.5 rounded-full hover:bg-emerald-200/80 transition-colors text-emerald-700';
             }
         }
 
@@ -481,296 +440,63 @@
                 .then(response => response.json())
                 .then(data => {
                     let nearbyCount = 0;
-                    const maxDistance = 15; // km
-
+                    const maxDistance = 15;
                     data.forEach(item => {
-                        let targetLat = item.lat;
-                        let targetLng = item.lng;
-
-                        // Use only coordinates from database
-                        if (targetLat && targetLng) {
-                            const dist = getDistance(userLat, userLng, targetLat, targetLng);
+                        if (item.lat && item.lng) {
+                            const dist = getDistance(userLat, userLng, item.lat, item.lng);
                             if (dist <= maxDistance) {
                                 nearbyCount++;
-                                if (nearbyCount === 1) {
-                                    window.firstNearbyDisasterTitle = item.title;
-                                }
+                                if (nearbyCount === 1) window.firstNearbyDisasterTitle = item.title;
                             }
                         }
                     });
-
                     updateWarningBanner(nearbyCount);
                 })
-                .catch(error => {
-                    console.error('Error fetching disasters:', error);
-                    updateWarningBanner(0);
-                });
+                .catch(() => updateWarningBanner(0));
         }
 
         function getDistance(lat1, lon1, lat2, lon2) {
             const R = 6371;
-            const dLat = deg2rad(lat2 - lat1);
-            const dLon = deg2rad(lon2 - lon1);
-            const a =
-                Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-                Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) *
-                Math.sin(dLon / 2) * Math.sin(dLon / 2);
-            const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-            return R * c;
+            const dLat = (lat2 - lat1) * Math.PI / 180;
+            const dLon = (lon2 - lon1) * Math.PI / 180;
+            const a = Math.sin(dLat/2)**2 + Math.cos(lat1*Math.PI/180)*Math.cos(lat2*Math.PI/180)*Math.sin(dLon/2)**2;
+            return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
         }
 
-        function deg2rad(deg) {
-            return deg * (Math.PI / 180);
-        }
-
-        // Horizontal scroll for news with smooth animation and indicators
+        // News scroll indicators
         const newsScroll = document.querySelector('.news-scroll');
         const indicatorsContainer = document.getElementById('newsIndicators');
 
         if (newsScroll && indicatorsContainer) {
-            const cards = newsScroll.querySelectorAll('a'); // Card items are now <a> tags
-            const totalCards = cards.length;
-
-            // Generate exactly 3 dots
             for (let i = 0; i < 3; i++) {
                 const dot = document.createElement('div');
                 dot.className = `w-2 h-2 rounded-full transition-all duration-300 cursor-pointer ${i === 0 ? 'bg-[#2B52C3] w-8' : 'bg-slate-300'}`;
-
-                // Click to scroll
                 dot.addEventListener('click', () => {
                     const maxScroll = newsScroll.scrollWidth - newsScroll.clientWidth;
-                    let targetScroll = 0;
-                    if (i === 1) targetScroll = maxScroll * 0.5;
-                    else if (i === 2) targetScroll = maxScroll;
-
-                    newsScroll.scrollTo({
-                        left: targetScroll,
-                        behavior: 'smooth'
-                    });
+                    newsScroll.scrollTo({ left: i === 0 ? 0 : i === 1 ? maxScroll * 0.5 : maxScroll, behavior: 'smooth' });
                 });
-
                 indicatorsContainer.appendChild(dot);
             }
 
             const dots = indicatorsContainer.querySelectorAll('div');
 
-            // Wheel scroll
             newsScroll.addEventListener('wheel', (e) => {
-                if (e.deltaY !== 0) {
-                    e.preventDefault();
-                    newsScroll.scrollBy({
-                        left: e.deltaY * 2.5,
-                        behavior: 'smooth'
-                    });
-                }
+                if (e.deltaY !== 0) { e.preventDefault(); newsScroll.scrollBy({ left: e.deltaY * 2.5, behavior: 'smooth' }); }
             });
 
-            // Update dots on scroll (map to 3 dots)
             newsScroll.addEventListener('scroll', () => {
-                const scrollLeft = newsScroll.scrollLeft;
                 const maxScroll = newsScroll.scrollWidth - newsScroll.clientWidth;
-
                 let activeIndex = 0;
                 if (maxScroll > 0) {
-                    const percentage = scrollLeft / maxScroll;
-                    if (percentage > 0.33 && percentage <= 0.66) activeIndex = 1;
-                    else if (percentage > 0.66) activeIndex = 2;
+                    const pct = newsScroll.scrollLeft / maxScroll;
+                    if (pct > 0.33 && pct <= 0.66) activeIndex = 1;
+                    else if (pct > 0.66) activeIndex = 2;
                 }
-
-                dots.forEach((dot, index) => {
-                    if (index === activeIndex) {
-                        dot.className = 'w-8 h-2 rounded-full bg-[#2B52C3] transition-all duration-300';
-                    } else {
-                        dot.className = 'w-2 h-2 rounded-full bg-slate-300 transition-all duration-300';
-                    }
+                dots.forEach((dot, i) => {
+                    dot.className = i === activeIndex ? 'w-8 h-2 rounded-full bg-[#2B52C3] transition-all duration-300' : 'w-2 h-2 rounded-full bg-slate-300 transition-all duration-300';
                 });
             });
         }
     </script>
-
-    {{-- Map Scripts --}}
-    <script>
-        let map;
-        let markers = [];
-        let infoWindow;
-
-        // Color mapping sesuai Android
-        const statusColors = {
-            'AWAS': '#D32F2F',
-            'SIAGA_1': '#1565C0',
-            'SIAGA_2': '#616161',
-            'PENDING': '#FFA000',
-            'RESOLVED': '#2E7D32',
-        };
-
-        function initMap() {
-            // Center: Surakarta
-            const center = { lat: -7.5505, lng: 110.8063 };
-
-            map = new google.maps.Map(document.getElementById('map'), {
-                zoom: 12,
-                center: center,
-                disableDefaultUI: true,
-                gestureHandling: 'greedy',
-                styles: [
-                    { featureType: "poi", stylers: [{ visibility: "off" }] },
-                    { featureType: "transit", stylers: [{ visibility: "off" }] },
-                ]
-            });
-
-            infoWindow = new google.maps.InfoWindow();
-
-            // Load both disasters and shelters
-            loadDisasters();
-            loadShelters();
-        }
-
-        async function loadDisasters() {
-            try {
-                const response = await fetch('{{ route("api.disasters") }}');
-                const disasters = await response.json();
-
-                disasters.forEach(d => {
-                    const color = statusColors[d.status] || '#FFA000';
-
-                    const marker = new google.maps.Marker({
-                        position: { lat: d.lat, lng: d.lng },
-                        map: map,
-                        title: d.title,
-                        icon: {
-                            url: 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(`
-                                                            <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 40 40">
-                                                              <style>
-                                                                @keyframes pulse {
-                                                                  0% { transform: scale(1); opacity: 1; }
-                                                                  100% { transform: scale(3); opacity: 0; }
-                                                                }
-                                                                .pulse {
-                                                                  animation: pulse 1.5s ease-out infinite;
-                                                                  transform-origin: 20px 20px;
-                                                                }
-                                                              </style>
-                                                              <circle cx="20" cy="20" r="6" fill="${color}" />
-                                                              <circle cx="20" cy="20" r="6" fill="none" stroke="${color}" stroke-width="2" class="pulse" />
-                                                              <circle cx="20" cy="20" r="6" fill="none" stroke="#FFFFFF" stroke-width="1" />
-                                                            </svg>
-                                                        `),
-                            scaledSize: new google.maps.Size(40, 40),
-                            anchor: new google.maps.Point(20, 20),
-                        },
-                        optimized: false
-                    });
-
-                    // Status badge color for info window
-                    let badgeBg, badgeColor;
-                    switch (d.status) {
-                        case 'AWAS': badgeBg = '#FFEBEE'; badgeColor = '#B71C1C'; break;
-                        case 'SIAGA_1': badgeBg = '#E3F2FD'; badgeColor = '#0D47A1'; break;
-                        case 'SIAGA_2': badgeBg = '#F5F5F5'; badgeColor = '#424242'; break;
-                        case 'RESOLVED': badgeBg = '#E8F5E9'; badgeColor = '#1B5E20'; break;
-                        default: badgeBg = '#FFF3E0'; badgeColor = '#E65100'; break;
-                    }
-
-                    const content = `
-                        <div style="max-width: 250px; padding: 4px;">
-                            <p class="info-window-title">${d.title}</p>
-                            <span class="info-window-status" style="background:${badgeBg}; color:${badgeColor};">
-                                ${d.statusLabel}
-                            </span>
-                            <p class="info-window-desc">${d.description}</p>
-                            <p class="info-window-meta">
-                                <i class="bi bi-person"></i> ${d.reporter} &middot;
-                                <i class="bi bi-clock"></i> ${d.date}
-                            </p>
-                            <a href="/laporan/detail/${d.id}" style="font-size:12px; color:#3B6FE8; font-weight:600; text-decoration:none;">
-                                Lihat Detail →
-                            </a>
-                        </div>
-                    `;
-
-                    marker.addListener('click', () => {
-                        infoWindow.setContent(content);
-                        infoWindow.open(map, marker);
-                    });
-
-                    markers.push(marker);
-                });
-
-                fitBounds();
-            } catch (error) {
-                console.error('Failed to load disasters:', error);
-            }
-        }
-
-        async function loadShelters() {
-            try {
-                const response = await fetch('{{ route("api.shelters") }}');
-                const shelters = await response.json();
-
-                shelters.forEach(s => {
-                    const marker = new google.maps.Marker({
-                        position: { lat: s.lat, lng: s.lng },
-                        map: map,
-                        title: s.name,
-                        icon: {
-                            url: 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="#10B981" class="bi bi-house-door-fill" viewBox="0 0 16 16"><path d="M6.5 14.5v-3.505c0-.245.25-.495.5-.495h2c.25 0 .5.25.5.5v3.5a.5.5 0 0 0 .5.5h4a.5.5 0 0 0 .5-.5v-7a.5.5 0 0 0-.146-.354L13 5.793V2.5a.5.5 0 0 0-.5-.5h-1a.5.5 0 0 0-.5.5v1.293L8.354 1.146a.5.5 0 0 0-.708 0l-6 6A.5.5 0 0 0 1.5 7.5v7a.5.5 0 0 0 .5.5h4a.5.5 0 0 0 .5-.5z"/></svg>'),
-                            scaledSize: new google.maps.Size(24, 24),
-                        },
-                    });
-
-                    const statusBg = s.status === 'Penuh' ? '#FCE4EC' : '#E8F5E9';
-                    const statusColor = s.status === 'Penuh' ? '#C62828' : '#2E7D32';
-                    const logisticsHtml = s.logistics.map(l =>
-                        `<span style="display:inline-block; background:#E4F0F6; color:#3B6FE8; font-size:10px; font-weight:600; padding:2px 6px; border-radius:4px; margin:2px;">${l}</span>`
-                    ).join('');
-
-                    const content = `
-                        <div style="max-width: 260px; padding: 4px;">
-                            <p class="info-window-title">${s.name}</p>
-                            <span class="info-window-status" style="background:${statusBg}; color:${statusColor};">
-                                ${s.status}
-                            </span>
-                            <p style="font-size:12px; color:#1D1B20; margin:4px 0;">
-                                Kapasitas: <b>${s.capacity}</b> orang
-                            </p>
-                            <p style="font-size:11px; color:#625b71; margin-bottom:4px;">Kebutuhan Logistik:</p>
-                            <div style="margin-bottom:6px;">${logisticsHtml}</div>
-                            <a href="https://www.google.com/maps/dir/?api=1&destination=${s.lat},${s.lng}"
-                               target="_blank"
-                               style="font-size:12px; color:#3B6FE8; font-weight:600; text-decoration:none;">
-                                Petunjuk Arah →
-                            </a>
-                        </div>
-                    `;
-
-                    marker.addListener('click', () => {
-                        infoWindow.setContent(content);
-                        infoWindow.open(map, marker);
-                    });
-
-                    markers.push(marker);
-                });
-
-                fitBounds();
-            } catch (error) {
-                console.error('Failed to load shelters:', error);
-            }
-        }
-
-        function fitBounds() {
-            if (markers.length > 0) {
-                const bounds = new google.maps.LatLngBounds();
-                markers.forEach(m => bounds.extend(m.getPosition()));
-                map.fitBounds(bounds);
-
-                const listener = google.maps.event.addListener(map, 'idle', () => {
-                    if (map.getZoom() > 15) map.setZoom(15);
-                    google.maps.event.removeListener(listener);
-                });
-            }
-        }
-    </script>
-    <script src="https://maps.googleapis.com/maps/api/js?key={{ config('services.google_maps.key') }}&callback=initMap"
-        async defer></script>
 
 @endsection

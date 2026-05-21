@@ -7,7 +7,7 @@
         style="background: radial-gradient(ellipse, #3B6FE8 0%, transparent 70%);"></div>
 
     <div class="absolute inset-0 opacity-15 pointer-events-none">
-        <img src="{{ asset('images/indonesia_map.png') }}" class="w-full h-full object-cover object-center"
+        <img src="{{ asset('images/indonesia_map.webp') }}" class="w-full h-full object-cover object-center"
             alt="" loading="lazy" decoding="async">
     </div>
 
