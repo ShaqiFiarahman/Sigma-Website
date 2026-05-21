@@ -1,13 +1,11 @@
 <div class="relative rounded-2xl overflow-hidden mb-8"
     style="background: linear-gradient(135deg, #0A0F1E 0%, #0f1f4a 50%, #1a3068 100%);">
 
-    {{-- Decorative blobs --}}
     <div class="absolute -top-16 -right-16 w-64 h-64 rounded-full opacity-20 pointer-events-none"
         style="background: radial-gradient(circle, #E4F0F6 0%, transparent 70%);"></div>
     <div class="absolute bottom-0 left-1/3 w-96 h-48 opacity-10 pointer-events-none"
         style="background: radial-gradient(ellipse, #3B6FE8 0%, transparent 70%);"></div>
 
-    {{-- Indonesia Map Illustration --}}
     <div class="absolute inset-0 opacity-15 pointer-events-none">
         <img src="{{ asset('images/indonesia_map.png') }}" class="w-full h-full object-cover object-center"
             alt="" loading="lazy" decoding="async">
@@ -18,15 +16,9 @@
             <h2 class="text-xl sm:text-2xl font-extrabold text-white tracking-tight mb-3">Halo,
                 {{ auth()->user()->full_name ?? 'Pengguna' }}.
             </h2>
-            @if(strtolower(auth()->user()->role ?? '') === 'admin')
-                <p class="text-sm sm:text-base leading-relaxed" style="color: rgba(228,240,246,0.7);">
-                    Kelola laporan masuk, verifikasi data bencana, dan koordinasikan penugasan relawan.
-                </p>
-            @else
-                <p class="text-sm sm:text-base leading-relaxed" style="color: rgba(228,240,246,0.7);">
-                    Pantau informasi bencana dan laporkan kejadian di sekitar Anda secara cepat.
-                </p>
-            @endif
+            <p class="text-sm sm:text-base leading-relaxed" style="color: rgba(228,240,246,0.7);">
+                Pantau informasi bencana dan laporkan kejadian di sekitar Anda secara cepat.
+            </p>
         </div>
         <div class="shrink-0 hidden sm:flex flex-col items-end gap-1">
             <p class="text-2xl font-bold text-white" id="liveClock">--:--</p>
