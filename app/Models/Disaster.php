@@ -17,6 +17,7 @@ class Disaster extends Model
         'location',
         'status',
         'reporter_name',
+        'disaster_type',
     ];
 
     protected $casts = [
@@ -46,12 +47,12 @@ class Disaster extends Model
     {
         return match($this->status) {
             self::STATUS_PENDING  => 'Pending',
-            self::STATUS_DECLINE  => 'Decline',
+            self::STATUS_DECLINE  => 'Ditolak',
             self::STATUS_RESOLVED => 'Resolved',
             self::STATUS_SIAGA_1  => 'Siaga 1',
             self::STATUS_SIAGA_2  => 'Siaga 2',
             self::STATUS_AWAS     => 'Awas',
-            default               => $this->status,
+            default               => ucfirst(strtolower($this->status)),
         };
     }
 
@@ -66,6 +67,87 @@ class Disaster extends Model
             self::STATUS_SIAGA_2  => 'Siaga 2',
             self::STATUS_RESOLVED => 'Resolved',
             default               => null,
+        };
+    }
+
+    /**
+     * Get disaster type icon class
+     */
+    public function getTypeIconAttribute(): string
+    {
+        $t = strtolower($this->disaster_type ?? 'unknown');
+        if ($t === 'unknown') {
+            $titleLower = strtolower($this->title);
+            if (str_contains($titleLower, 'banjir')) return 'bi-water';
+            if (str_contains($titleLower, 'kebakaran') || str_contains($titleLower, 'api')) return 'bi-fire';
+            if (str_contains($titleLower, 'gempa')) return 'bi-house-exclamation';
+            if (str_contains($titleLower, 'longsor')) return 'bi-mountain';
+            if (str_contains($titleLower, 'tsunami')) return 'bi-water';
+            if (str_contains($titleLower, 'badai') || str_contains($titleLower, 'topan') || str_contains($titleLower, 'angin')) return 'bi-lightning-charge-fill';
+            return 'bi-exclamation-triangle';
+        }
+
+        return match($t) {
+            'flood' => 'bi-water',
+            'fire' => 'bi-fire',
+            'earthquake' => 'bi-house-exclamation',
+            'landslide' => 'bi-mountain',
+            'storm' => 'bi-lightning-charge-fill',
+            default => 'bi-exclamation-triangle',
+        };
+    }
+
+    /**
+     * Get disaster type color class
+     */
+    public function getTypeColorAttribute(): string
+    {
+        $t = strtolower($this->disaster_type ?? 'unknown');
+        if ($t === 'unknown') {
+            $titleLower = strtolower($this->title);
+            if (str_contains($titleLower, 'banjir')) return 'text-blue-500';
+            if (str_contains($titleLower, 'kebakaran') || str_contains($titleLower, 'api')) return 'text-red-500';
+            if (str_contains($titleLower, 'gempa')) return 'text-emerald-500';
+            if (str_contains($titleLower, 'longsor')) return 'text-amber-600';
+            if (str_contains($titleLower, 'tsunami')) return 'text-cyan-500';
+            if (str_contains($titleLower, 'badai') || str_contains($titleLower, 'topan') || str_contains($titleLower, 'angin')) return 'text-cyan-500';
+            return 'text-slate-500';
+        }
+
+        return match($t) {
+            'flood' => 'text-blue-500',
+            'fire' => 'text-red-500',
+            'earthquake' => 'text-emerald-500',
+            'landslide' => 'text-amber-600',
+            'storm' => 'text-cyan-500',
+            default => 'text-slate-500',
+        };
+    }
+
+    /**
+     * Get disaster type label in Indonesian
+     */
+    public function getTypeNameAttribute(): string
+    {
+        $t = strtolower($this->disaster_type ?? 'unknown');
+        if ($t === 'unknown') {
+            $titleLower = strtolower($this->title);
+            if (str_contains($titleLower, 'banjir')) return 'Banjir';
+            if (str_contains($titleLower, 'kebakaran') || str_contains($titleLower, 'api')) return 'Kebakaran';
+            if (str_contains($titleLower, 'gempa')) return 'Gempa Bumi';
+            if (str_contains($titleLower, 'longsor')) return 'Tanah Longsor';
+            if (str_contains($titleLower, 'tsunami')) return 'Tsunami';
+            if (str_contains($titleLower, 'badai') || str_contains($titleLower, 'topan') || str_contains($titleLower, 'angin')) return 'Badai/Angin Topan';
+            return 'Lainnya / Tidak Diketahui';
+        }
+
+        return match($t) {
+            'flood' => 'Banjir',
+            'fire' => 'Kebakaran',
+            'earthquake' => 'Gempa Bumi',
+            'landslide' => 'Tanah Longsor',
+            'storm' => 'Badai/Angin Topan',
+            default => 'Lainnya / Tidak Diketahui',
         };
     }
 }

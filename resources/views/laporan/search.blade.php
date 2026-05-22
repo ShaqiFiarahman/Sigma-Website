@@ -67,7 +67,7 @@
                     <span class="inline-block w-2 h-2 rounded-full bg-violet-500 mr-1"></span>Siaga 2
                 </button>
                 <button type="button" data-filter="RESOLVED" class="filter-chip px-3.5 py-1.5 text-xs font-semibold rounded-full border transition-all duration-200">
-                    <span class="inline-block w-2 h-2 rounded-full bg-emerald-500 mr-1"></span>Resolved
+                    <span class="inline-block w-2 h-2 rounded-full bg-emerald-500 mr-1"></span>Terverifikasi
                 </button>
                 @if(strtolower(auth()->user()->role ?? '') === 'admin' || $disasters->contains('status', 'PENDING'))
                     <button type="button" data-filter="PENDING" class="filter-chip px-3.5 py-1.5 text-xs font-semibold rounded-full border transition-all duration-200">
@@ -86,7 +86,7 @@
     {{-- Result Count --}}
     <div class="flex items-center justify-between mb-4 px-1">
         <p class="text-sm text-slate-500" id="resultCount">
-            <span class="font-semibold text-slate-700">{{ $disasters->count() }}</span> laporan ditemukan
+            <span class="font-semibold text-slate-700">{{ $disasters->count() }}</span> Laporan ditemukan
         </p>
     </div>
 
@@ -96,39 +96,25 @@
             @php
                 $borderColor = match($d->status) {
                     'AWAS'     => 'border-l-red-500',
-                    'SIAGA_1'  => 'border-l-blue-500',
-                    'SIAGA_2'  => 'border-l-slate-400',
+                    'SIAGA_1'  => 'border-l-orange-500',
+                    'SIAGA_2'  => 'border-l-violet-500',
                     'RESOLVED' => 'border-l-emerald-500',
                     'PENDING'  => 'border-l-amber-400',
                     'DECLINE'  => 'border-l-slate-300',
                     default    => 'border-l-slate-300',
                 };
-                $statusLabel = match($d->status) {
-                    'AWAS'     => 'Awas',
-                    'SIAGA_1'  => 'Siaga 1',
-                    'SIAGA_2'  => 'Siaga 2',
-                    'RESOLVED' => 'Resolved',
-                    'PENDING'  => 'Pending',
-                    'DECLINE'  => 'Ditolak',
-                    default    => $d->status,
-                };
+                $statusLabel = $d->status_label;
                 $badgeBg = match($d->status) {
                     'AWAS'     => 'bg-red-50 text-red-700 border-red-100',
-                    'SIAGA_1'  => 'bg-blue-50 text-blue-700 border-blue-100',
-                    'SIAGA_2'  => 'bg-slate-100 text-slate-700 border-slate-200',
+                    'SIAGA_1'  => 'bg-orange-50 text-orange-700 border-orange-100',
+                    'SIAGA_2'  => 'bg-violet-50 text-violet-700 border-violet-100',
                     'RESOLVED' => 'bg-emerald-50 text-emerald-700 border-emerald-100',
                     'PENDING'  => 'bg-amber-50 text-amber-700 border-amber-200',
                     'DECLINE'  => 'bg-slate-50 text-slate-500 border-slate-200',
                     default    => 'bg-slate-50 text-slate-600 border-slate-200',
                 };
-                // Detect disaster type from title
-                $titleLower = strtolower($d->title);
-                if (str_contains($titleLower, 'banjir')) { $typeIcon = 'bi-water'; $typeColor = 'text-blue-500'; }
-                elseif (str_contains($titleLower, 'kebakaran') || str_contains($titleLower, 'api')) { $typeIcon = 'bi-fire'; $typeColor = 'text-red-500'; }
-                elseif (str_contains($titleLower, 'gempa')) { $typeIcon = 'bi-globe-americas'; $typeColor = 'text-emerald-500'; }
-                elseif (str_contains($titleLower, 'longsor')) { $typeIcon = 'bi-layers'; $typeColor = 'text-amber-600'; }
-                elseif (str_contains($titleLower, 'tsunami')) { $typeIcon = 'bi-tsunami'; $typeColor = 'text-cyan-500'; }
-                else { $typeIcon = 'bi-exclamation-triangle'; $typeColor = 'text-slate-500'; }
+                $typeIcon = $d->type_icon;
+                $typeColor = $d->type_color;
             @endphp
 
             <div class="disaster-card bg-white border border-slate-200/80 border-l-4 {{ $borderColor }} rounded-xl p-4 sm:p-5"
@@ -141,7 +127,14 @@
 
                 <div class="flex items-start justify-between gap-3 mb-2">
                     <div class="flex items-center gap-2 min-w-0">
-                        <i class="bi {{ $typeIcon }} {{ $typeColor }} text-base shrink-0"></i>
+                        @if($d->disaster_type === 'earthquake')
+                            <svg class="{{ $typeColor }} w-4 h-4 shrink-0" viewBox="0 0 16 16" fill="currentColor">
+                                <path d="M3 15 L3 8 L8 3 L7.5 6 L9 9 L7 12 L7.5 15 Z" />
+                                <path d="M8.5 16 L8 13 L10 10 L8.5 7 L9 4.5 L14 9.5 L14 16 Z" />
+                            </svg>
+                        @else
+                            <i class="bi {{ $typeIcon }} {{ $typeColor }} text-base shrink-0"></i>
+                        @endif
                         <h3 class="text-sm font-bold text-slate-900 truncate">{{ $d->title }}</h3>
                     </div>
                     <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold border {{ $badgeBg }} shrink-0">

@@ -79,4 +79,25 @@ class SupabaseService
 
         return null;
     }
+
+    /**
+     * Update user details in Supabase Auth
+     */
+    public function updateUser($accessToken, $data)
+    {
+        $response = Http::withHeaders([
+            'apikey' => $this->key,
+            'Authorization' => "Bearer {$accessToken}",
+            'Content-Type' => 'application/json',
+        ])->put("{$this->url}/auth/v1/user", $data);
+
+        if ($response->successful()) {
+            return $response->json();
+        }
+
+        Log::error('Supabase Update User Error: ' . $response->body());
+        return [
+            'error' => $response->json('msg') ?? 'Update failed',
+        ];
+    }
 }

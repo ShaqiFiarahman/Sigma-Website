@@ -13,12 +13,12 @@ class LaporanController extends Controller
     {
         // ─── Statistics ───────────────────────────────────
         $total   = Disaster::count();
-        $pending = Disaster::where('status', Disaster::STATUS_PENDING)->count();
-        $selesai = Disaster::where('status', Disaster::STATUS_RESOLVED)->count();
-        $decline = Disaster::where('status', Disaster::STATUS_DECLINE)->count();
-        $awas    = Disaster::where('status', Disaster::STATUS_AWAS)->count();
-        $siaga1  = Disaster::where('status', Disaster::STATUS_SIAGA_1)->count();
-        $siaga2  = Disaster::where('status', Disaster::STATUS_SIAGA_2)->count();
+        $pending = Disaster::where('status', 'PENDING')->count();
+        $selesai = Disaster::where('status', 'RESOLVED')->count();
+        $decline = Disaster::where('status', 'DECLINE')->count();
+        $awas    = Disaster::where('status', 'AWAS')->count();
+        $siaga1  = Disaster::where('status', 'SIAGA_1')->count();
+        $siaga2  = Disaster::where('status', 'SIAGA_2')->count();
 
         // ─── Volunteer Stats ─────────────────────────────
         $totalVolunteers    = \App\Models\Volunteer::count();
@@ -35,16 +35,16 @@ class LaporanController extends Controller
             $chartLabels[]   = $date->format('d M');
             $chartData[]     = Disaster::whereDate('created_at', $date->toDateString())->count();
             $chartVerified[] = Disaster::whereDate('created_at', $date->toDateString())
-                                ->whereNotIn('status', [Disaster::STATUS_PENDING, Disaster::STATUS_DECLINE])
+                                ->whereNotIn('status', ['PENDING', 'DECLINE'])
                                 ->count();
             $chartPending[]  = Disaster::whereDate('created_at', $date->toDateString())
-                                ->where('status', Disaster::STATUS_PENDING)
+                                ->where('status', 'PENDING')
                                 ->count();
         }
 
         // ─── Recent Pending Reports (5 terbaru) ─────────
         $recentPending = Disaster::with('user')
-            ->where('status', Disaster::STATUS_PENDING)
+            ->where('status', 'PENDING')
             ->latest()
             ->limit(5)
             ->get()
@@ -66,6 +66,9 @@ class LaporanController extends Controller
                 'tingkat'   => $d->tingkat,
                 'tanggal'   => $d->created_at?->format('d M Y') ?? '-',
                 'deskripsi' => \Illuminate\Support\Str::limit($d->description, 120),
+                'type'      => $d->disaster_type,
+                'type_icon' => $d->type_icon,
+                'type_color'=> $d->type_color,
             ]);
 
         // ─── All disasters for client-side period filtering ──
@@ -99,40 +102,12 @@ class LaporanController extends Controller
         // Data tambahan khusus relawan approved (untuk section dashboard relawan)
         $volunteerDashboard = null;
         if ($volunteerData && $volunteerData->status === \App\Models\Volunteer::STATUS_APPROVED) {
-            $totalReports = \App\Models\VolunteerReport::where('volunteer_id', $volunteerData->id)->count();
-            $reportsThisMonth = \App\Models\VolunteerReport::where('volunteer_id', $volunteerData->id)
-                ->whereMonth('created_at', now()->month)
-                ->whereYear('created_at', now()->year)
-                ->count();
-
-            $activeDisasters = Disaster::whereNotIn('status', [
-                    Disaster::STATUS_DECLINE,
-                    Disaster::STATUS_RESOLVED,
-                    Disaster::STATUS_PENDING,
-                ])->count();
-
-            $recentReports = \App\Models\VolunteerReport::where('volunteer_id', $volunteerData->id)
-                ->with('disaster')
-                ->latest()
-                ->limit(3)
-                ->get();
-
-            $teamMembers = collect();
-            if ($volunteerData->assignment) {
-                $teamMembers = \App\Models\Volunteer::where('status', \App\Models\Volunteer::STATUS_APPROVED)
-                    ->where('assignment', $volunteerData->assignment)
-                    ->where('id', '!=', $volunteerData->id)
-                    ->limit(5)
-                    ->get();
-            }
-
-            $volunteerDashboard = (object) [
-                'totalReports' => $totalReports,
-                'reportsThisMonth' => $reportsThisMonth,
-                'activeDisasters' => $activeDisasters,
-                'recentReports' => $recentReports,
-                'teamMembers' => $teamMembers,
-            ];
+            // Redirect ke dashboard relawan terpisah
+            return view('volunteer.dashboard', [
+                'user' => $user,
+                'volunteer' => $volunteerData,
+                'news' => $news,
+            ]);
         }
 
         return view('user.dashboard', compact('user', 'news', 'menu', 'volunteerData', 'volunteerDashboard'));
@@ -241,6 +216,7 @@ class LaporanController extends Controller
             'longitude'     => $request->longitude,
             'location'      => $locationName,
             'status'        => Disaster::STATUS_PENDING,
+            'disaster_type' => 'unknown',
             'reporter_name' => $user->full_name ?? $user->email,
         ]);
 
@@ -252,19 +228,24 @@ class LaporanController extends Controller
         $disaster = Disaster::with('user')->findOrFail($id);
         $laporan  = $this->toArray($disaster);
 
-        return view('laporan.detail', compact('laporan'));
+        return view('laporan.show', compact('laporan'));
     }
 
     public function updateStatus(Request $request, $id)
     {
+        $disaster = Disaster::findOrFail($id);
+
         $request->validate([
-            'status' => 'required|in:DECLINE,RESOLVED,SIAGA_1,SIAGA_2,AWAS',
+            'disaster_type' => 'required|string|in:flood,fire,earthquake,landslide,storm,unknown',
+            'status'        => 'required|string|in:PENDING,AWAS,SIAGA_1,SIAGA_2,RESOLVED,DECLINE',
         ]);
 
-        $disaster = Disaster::findOrFail($id);
-        $disaster->update(['status' => $request->status]);
+        $disaster->update([
+            'disaster_type' => $request->disaster_type,
+            'status'        => $request->status,
+        ]);
 
-        $msg = $request->status === Disaster::STATUS_DECLINE ? 'rejected' : 'approved';
+        $msg = $request->status === 'DECLINE' ? 'rejected' : 'approved';
 
         // Redirect kembali ke detail laporan dengan flash message
         return redirect()->route('laporan.show', $id)->with('msg', $msg);
@@ -286,12 +267,17 @@ class LaporanController extends Controller
             'location'        => $d->location,
             'tanggal'         => $d->created_at?->format('d M Y') ?? '-',
             'status'          => $d->status_label,
+            'status_raw'      => $d->status,
             'tingkat_bencana' => $d->tingkat,
             'deskripsi'       => $d->description,
             'photo_url'       => $d->photo_url,
             'latitude'        => $d->latitude,
             'longitude'       => $d->longitude,
             'reporter_name'   => $d->reporter_name,
+            'disaster_type'   => $d->disaster_type,
+            'type_icon'       => $d->type_icon,
+            'type_color'      => $d->type_color,
+            'type_name'       => $d->type_name,
         ];
     }
 

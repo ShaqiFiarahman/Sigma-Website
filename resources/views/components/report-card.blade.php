@@ -11,20 +11,22 @@
         default    => 'border-l-slate-300',
     };
 
-    $titleLower = strtolower($d->title);
-    if (str_contains($titleLower, 'banjir')) { $typeIcon = 'bi-water'; $typeColor = 'text-blue-500'; }
-    elseif (str_contains($titleLower, 'kebakaran') || str_contains($titleLower, 'api')) { $typeIcon = 'bi-fire'; $typeColor = 'text-red-500'; }
-    elseif (str_contains($titleLower, 'gempa')) { $typeIcon = 'bi-globe-americas'; $typeColor = 'text-emerald-500'; }
-    elseif (str_contains($titleLower, 'longsor')) { $typeIcon = 'bi-layers'; $typeColor = 'text-amber-600'; }
-    elseif (str_contains($titleLower, 'tsunami')) { $typeIcon = 'bi-tsunami'; $typeColor = 'text-cyan-500'; }
-    else { $typeIcon = 'bi-exclamation-triangle'; $typeColor = 'text-slate-500'; }
+    $typeIcon = $d->type_icon;
+    $typeColor = $d->type_color;
 @endphp
 
 <div class="bg-white border border-slate-200/80 border-l-4 {{ $borderColor }} rounded-xl p-4 sm:p-5"
      style="box-shadow: 0 1px 3px rgba(10,15,30,0.04);">
 
     <div class="flex items-center gap-2 mb-2">
-        <i class="bi {{ $typeIcon }} {{ $typeColor }} text-base shrink-0"></i>
+        @if($d->disaster_type === 'earthquake')
+            <svg class="{{ $typeColor }} w-4 h-4 shrink-0" viewBox="0 0 16 16" fill="currentColor">
+                <path d="M3 15 L3 8 L8 3 L7.5 6 L9 9 L7 12 L7.5 15 Z" />
+                <path d="M8.5 16 L8 13 L10 10 L8.5 7 L9 4.5 L14 9.5 L14 16 Z" />
+            </svg>
+        @else
+            <i class="bi {{ $typeIcon }} {{ $typeColor }} text-base shrink-0"></i>
+        @endif
         <h3 class="text-sm font-bold text-slate-900 truncate">{{ $d->title }}</h3>
     </div>
 

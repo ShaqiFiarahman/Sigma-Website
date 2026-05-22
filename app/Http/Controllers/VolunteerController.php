@@ -14,7 +14,7 @@ class VolunteerController extends Controller
     {
         $skills = Volunteer::getSkillOptions();
         $existing = Volunteer::where('user_id', auth()->id())->first();
-        return view('user.volunteer.register', compact('skills', 'existing'));
+        return view('user.register-volunteer', compact('skills', 'existing'));
     }
 
     /**

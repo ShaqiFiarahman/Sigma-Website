@@ -118,4 +118,89 @@ class AuthController extends Controller
 
         return redirect('/');
     }
+
+    /**
+     * Update authenticated user profile details
+     */
+    public function updateProfile(Request $request)
+    {
+        $data = $request->validate([
+            'full_name' => ['required', 'string', 'max:255'],
+        ]);
+
+        $user = Auth::user();
+        $accessToken = session('supabase_token');
+
+        if ($accessToken) {
+            // Update in Supabase
+            $response = $this->supabase->updateUser($accessToken, [
+                'data' => [
+                    'full_name' => $data['full_name'],
+                ]
+            ]);
+
+            if (isset($response['error'])) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Gagal memperbarui di Supabase: ' . $response['error'],
+                ], 400);
+            }
+        }
+
+        // Update locally
+        $user->full_name = $data['full_name'];
+        $user->save();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Profil berhasil diperbarui!',
+            'full_name' => $user->full_name,
+        ]);
+    }
+
+    /**
+     * Update authenticated user password
+     */
+    public function updatePassword(Request $request)
+    {
+        $data = $request->validate([
+            'current_password' => ['required', 'string'],
+            'password' => ['required', 'string', 'min:8', 'confirmed'],
+        ]);
+
+        $user = Auth::user();
+
+        // Verify current password locally
+        if (!Hash::check($data['current_password'], $user->password)) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Kata sandi lama yang Anda masukkan salah.',
+            ], 400);
+        }
+
+        $accessToken = session('supabase_token');
+
+        if ($accessToken) {
+            // Update password in Supabase
+            $response = $this->supabase->updateUser($accessToken, [
+                'password' => $data['password'],
+            ]);
+
+            if (isset($response['error'])) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Gagal memperbarui kata sandi di Supabase: ' . $response['error'],
+                ], 400);
+            }
+        }
+
+        // Update locally
+        $user->password = Hash::make($data['password']);
+        $user->save();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Kata sandi berhasil diperbarui!',
+        ]);
+    }
 }

@@ -25,11 +25,11 @@ class VolunteerReportController extends Controller
         }
 
         $fields = VolunteerReport::getFieldsForSkill($volunteer->skill);
-        $disasters = Disaster::whereNotIn('status', [Disaster::STATUS_DECLINE, Disaster::STATUS_RESOLVED])
+        $disasters = Disaster::whereNotIn('status', ['DECLINE', 'RESOLVED'])
             ->latest()
             ->get(['id', 'title', 'location']);
 
-        return view('user.volunteer.report-create', compact('volunteer', 'fields', 'disasters'));
+        return view('volunteer.report-create', compact('volunteer', 'fields', 'disasters'));
     }
 
     /**
@@ -91,6 +91,6 @@ class VolunteerReportController extends Controller
 
         $fields = VolunteerReport::getFieldsForSkill($volunteer->skill);
 
-        return view('user.volunteer.report-history', compact('volunteer', 'reports', 'fields'));
+        return view('volunteer.report-history', compact('volunteer', 'reports', 'fields'));
     }
 }

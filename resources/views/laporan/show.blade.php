@@ -11,24 +11,19 @@
 @section('content')
 
 @php
-    $s = $laporan['status'];
+    $s = $laporan['status_raw'];
     $borderColor = match($s) {
-        'Awas' => 'border-l-red-500',
-        'Siaga 1' => 'border-l-orange-500',
-        'Siaga 2' => 'border-l-violet-500',
-        'Resolved' => 'border-l-emerald-500',
-        'Decline' => 'border-l-slate-400',
-        default => 'border-l-amber-400',
+        'AWAS'     => 'border-l-red-500',
+        'SIAGA_1'  => 'border-l-orange-500',
+        'SIAGA_2'  => 'border-l-violet-500',
+        'RESOLVED' => 'border-l-emerald-500',
+        'DECLINE'  => 'border-l-slate-400',
+        default    => 'border-l-amber-400',
     };
 
-    // Detect type icon from title
-    $titleLower = strtolower($laporan['judul']);
-    if (str_contains($titleLower, 'banjir')) { $typeIcon = 'bi-water'; $typeColor = 'text-blue-500'; }
-    elseif (str_contains($titleLower, 'kebakaran') || str_contains($titleLower, 'api')) { $typeIcon = 'bi-fire'; $typeColor = 'text-red-500'; }
-    elseif (str_contains($titleLower, 'gempa')) { $typeIcon = 'bi-globe-americas'; $typeColor = 'text-emerald-500'; }
-    elseif (str_contains($titleLower, 'longsor')) { $typeIcon = 'bi-layers'; $typeColor = 'text-amber-600'; }
-    elseif (str_contains($titleLower, 'tsunami')) { $typeIcon = 'bi-tsunami'; $typeColor = 'text-cyan-500'; }
-    else { $typeIcon = 'bi-exclamation-triangle'; $typeColor = 'text-slate-500'; }
+    $typeIcon = $laporan['type_icon'];
+    $typeColor = $laporan['type_color'];
+    $typeName = $laporan['type_name'];
 @endphp
 
 {{-- Flash message --}}
@@ -57,9 +52,29 @@
             <div class="px-6 sm:px-8 py-5 border-b border-slate-100">
                 <div class="flex items-start justify-between gap-3">
                     <div>
-                        <div class="flex items-center gap-2 mb-2">
-                            <i class="bi {{ $typeIcon }} {{ $typeColor }} text-lg"></i>
+                        <div class="flex items-center gap-2 mb-2 flex-wrap">
+                            @if(($laporan['disaster_type'] ?? 'unknown') === 'earthquake')
+                                <svg class="{{ $typeColor }} w-5 h-5 shrink-0" viewBox="0 0 16 16" fill="currentColor">
+                                    <path d="M3 15 L3 8 L8 3 L7.5 6 L9 9 L7 12 L7.5 15 Z" />
+                                    <path d="M8.5 16 L8 13 L10 10 L8.5 7 L9 4.5 L14 9.5 L14 16 Z" />
+                                </svg>
+                            @else
+                                <i class="bi {{ $typeIcon }} {{ $typeColor }} text-lg"></i>
+                            @endif
                             <h2 class="text-lg sm:text-xl font-bold text-slate-900 leading-tight">{{ $laporan['judul'] }}</h2>
+                            @if($s !== 'PENDING' && $s !== 'DECLINE')
+                                <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-lg bg-blue-50 text-blue-700 border border-blue-100 text-[10px] font-bold uppercase tracking-wider">
+                                    @if(($laporan['disaster_type'] ?? 'unknown') === 'earthquake')
+                                        <svg class="w-3.5 h-3.5 shrink-0" viewBox="0 0 16 16" fill="currentColor">
+                                            <path d="M3 15 L3 8 L8 3 L7.5 6 L9 9 L7 12 L7.5 15 Z" />
+                                            <path d="M8.5 16 L8 13 L10 10 L8.5 7 L9 4.5 L14 9.5 L14 16 Z" />
+                                        </svg>
+                                    @else
+                                        <i class="bi {{ $typeIcon }}"></i>
+                                    @endif
+                                    {{ $typeName }}
+                                </span>
+                            @endif
                         </div>
                         <div class="flex flex-wrap items-center gap-3 text-xs text-slate-500">
                             <span class="flex items-center gap-1"><i class="bi bi-calendar2-event text-slate-400"></i> {{ $laporan['tanggal'] }}</span>
@@ -67,29 +82,29 @@
                         </div>
                     </div>
                     {{-- Status Badge --}}
-                    @if($s === 'Pending')
+                    @if($s === 'PENDING')
                         <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[11px] font-bold bg-amber-50 text-amber-700 border border-amber-200 shrink-0">
                             <span class="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse"></span> Pending
                         </span>
-                    @elseif($s === 'Decline')
+                    @elseif($s === 'DECLINE')
                         <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[11px] font-bold bg-slate-100 text-slate-600 border border-slate-200 shrink-0">
                             <span class="w-1.5 h-1.5 rounded-full bg-slate-400"></span> Ditolak
                         </span>
-                    @elseif($s === 'Awas')
+                    @elseif($s === 'AWAS')
                         <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[11px] font-bold bg-red-50 text-red-700 border border-red-200 shrink-0">
                             <span class="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse"></span> Awas
                         </span>
-                    @elseif($s === 'Siaga 1')
+                    @elseif($s === 'SIAGA_1')
                         <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[11px] font-bold bg-orange-50 text-orange-700 border border-orange-200 shrink-0">
                             <span class="w-1.5 h-1.5 rounded-full bg-orange-500"></span> Siaga 1
                         </span>
-                    @elseif($s === 'Siaga 2')
+                    @elseif($s === 'SIAGA_2')
                         <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[11px] font-bold bg-violet-50 text-violet-700 border border-violet-200 shrink-0">
                             <span class="w-1.5 h-1.5 rounded-full bg-violet-500"></span> Siaga 2
                         </span>
                     @else
                         <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[11px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200 shrink-0">
-                            <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> {{ $s }}
+                            <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> Terverifikasi
                         </span>
                     @endif
                 </div>
@@ -231,29 +246,47 @@
                 </h3>
             </div>
             <div class="p-5">
-                    @php $currentStatus = $laporan['status']; @endphp
+                    @php 
+                        $currentStatus = $laporan['status_raw']; 
+                        $currentType = $laporan['disaster_type'];
+                    @endphp
 
-                    <p class="text-xs text-slate-500 mb-3">
-                        {{ $currentStatus === 'Pending' ? 'Tinjau laporan dan tentukan tingkat keparahan.' : 'Update status sesuai kondisi terkini.' }}
+                    <p class="text-xs text-slate-500 mb-4">
+                        {{ $currentStatus === 'PENDING' ? 'Tinjau laporan awal dari masyarakat, lalu tentukan jenis bencana dan statusnya untuk mempublikasikan laporan.' : 'Update jenis atau status bencana sesuai kondisi terkini di lapangan.' }}
                     </p>
 
-                    <form action="{{ route('laporan.update_status', $laporan['id']) }}" method="POST">
+                    <form action="{{ route('laporan.update_status', $laporan['id']) }}" method="POST" class="space-y-4">
                         @csrf
-                        <div class="mb-3">
-                            <select name="status" required
-                                    class="w-full px-3 py-2.5 text-sm border border-slate-200 rounded-xl focus:outline-none focus:border-blue-400 focus:ring-2 focus:ring-blue-500/20 transition-all bg-white text-slate-700">
-                                <option value="">-- Pilih status --</option>
-                                <option value="AWAS"     {{ $currentStatus === 'Awas'     ? 'selected' : '' }}>🔴 Awas</option>
-                                <option value="SIAGA_1"  {{ $currentStatus === 'Siaga 1'  ? 'selected' : '' }}>🔵 Siaga 1</option>
-                                <option value="SIAGA_2"  {{ $currentStatus === 'Siaga 2'  ? 'selected' : '' }}>🟣 Siaga 2</option>
-                                <option value="RESOLVED" {{ $currentStatus === 'Resolved' ? 'selected' : '' }}>✅ Resolved</option>
-                                <option value="DECLINE"  {{ $currentStatus === 'Decline'  ? 'selected' : '' }}>❌ Decline</option>
+                        <div>
+                            <label class="block text-[11px] font-bold text-slate-700 uppercase tracking-wider mb-1.5">Jenis Bencana</label>
+                            <select name="disaster_type" required
+                                    class="w-full px-3 py-2.5 text-sm border border-slate-200 rounded-xl focus:outline-none focus:border-blue-400 focus:ring-2 focus:ring-blue-500/20 transition-all bg-slate-50 hover:bg-white focus:bg-white text-slate-700">
+                                <option value="unknown"    {{ $currentType === 'unknown'    ? 'selected' : '' }}>❓ Belum Diketahui / Lainnya</option>
+                                <option value="flood"      {{ $currentType === 'flood'      ? 'selected' : '' }}>🌊 Banjir</option>
+                                <option value="fire"       {{ $currentType === 'fire'       ? 'selected' : '' }}>🔥 Kebakaran</option>
+                                <option value="earthquake" {{ $currentType === 'earthquake' ? 'selected' : '' }}>🌋 Gempa Bumi</option>
+                                <option value="landslide"  {{ $currentType === 'landslide'  ? 'selected' : '' }}>⛰️ Tanah Longsor</option>
+                                <option value="storm"      {{ $currentType === 'storm'      ? 'selected' : '' }}>🌪️ Badai / Angin Puting Beliung</option>
                             </select>
                         </div>
+
+                        <div>
+                            <label class="block text-[11px] font-bold text-slate-700 uppercase tracking-wider mb-1.5">Status Bencana</label>
+                            <select name="status" required
+                                    class="w-full px-3 py-2.5 text-sm border border-slate-200 rounded-xl focus:outline-none focus:border-blue-400 focus:ring-2 focus:ring-blue-500/20 transition-all bg-slate-50 hover:bg-white focus:bg-white text-slate-700">
+                                <option value="PENDING"  {{ $currentStatus === 'PENDING'  ? 'selected' : '' }}>🟡 Pending (Menunggu Verifikasi)</option>
+                                <option value="AWAS"     {{ $currentStatus === 'AWAS'     ? 'selected' : '' }}>🔴 Awas (Sangat Berbahaya)</option>
+                                <option value="SIAGA_1"  {{ $currentStatus === 'SIAGA_1'  ? 'selected' : '' }}>🟠 Siaga 1 (Bahaya Tinggi)</option>
+                                <option value="SIAGA_2"  {{ $currentStatus === 'SIAGA_2'  ? 'selected' : '' }}>🟣 Siaga 2 (Bahaya Sedang)</option>
+                                <option value="RESOLVED" {{ $currentStatus === 'RESOLVED' ? 'selected' : '' }}>✅ Terverifikasi (Bahaya Rendah / Selesai)</option>
+                                <option value="DECLINE"  {{ $currentStatus === 'DECLINE'  ? 'selected' : '' }}>❌ Ditolak (Laporan Palsu / Salah)</option>
+                            </select>
+                        </div>
+
                         <button type="submit"
-                                class="w-full flex items-center justify-center gap-2 px-4 py-2.5 text-sm font-semibold text-white rounded-xl transition-all"
-                                style="background: linear-gradient(135deg, #059669 0%, #10b981 100%); box-shadow: 0 2px 8px rgba(16,185,129,0.25);">
-                            <i class="bi bi-arrow-repeat"></i> Update Status
+                                class="w-full flex items-center justify-center gap-2 px-4 py-2.5 text-sm font-semibold text-white rounded-xl transition-all hover:opacity-95 shadow-md cursor-pointer"
+                                style="background: linear-gradient(135deg, #059669 0%, #10b981 100%); box-shadow: 0 4px 12px rgba(16,185,129,0.2);">
+                            <i class="bi bi-shield-fill-check"></i> Simpan Verifikasi
                         </button>
                     </form>
             </div>

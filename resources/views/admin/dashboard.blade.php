@@ -88,13 +88,123 @@
             border-color: rgba(59, 111, 232, 0.3);
             box-shadow: 0 4px 12px rgba(59, 111, 232, 0.08);
         }
+        .period-btn.active {
+            background: linear-gradient(135deg, #3B6FE8 0%, #1e3a8a 100%);
+            color: white;
+            box-shadow: 0 1px 4px rgba(30,58,138,0.2);
+        }
     </style>
+    {{-- Dashboard Top Header --}}
+    <div class="flex items-center justify-between mb-6 px-1">
+        <div>
+            <h1 class="text-2xl font-extrabold text-slate-900 tracking-tight">Dashboard Admin</h1>
+            <p class="text-xs text-slate-500 mt-1">Sistem Pemantauan dan Tanggap Bencana SIGMA</p>
+        </div>
+
+        {{-- Dropdown Notifikasi --}}
+        <div class="relative" id="notifWrapper">
+            {{-- Bell Button --}}
+            <button type="button" id="notifBtn"
+                    class="relative w-10 h-10 flex items-center justify-center text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded-xl transition-all duration-200">
+                <i class="bi bi-bell text-lg"></i>
+                <span id="notifBadge" class="hidden absolute top-1 right-1 min-w-[18px] h-[18px] flex items-center justify-center text-[9px] font-bold text-white bg-red-500 rounded-full px-1 animate-pulse">
+                    0
+                </span>
+            </button>
+
+            {{-- Dropdown Panel --}}
+            <div id="notifDropdown" class="hidden absolute right-0 top-full mt-2 w-80 bg-white border border-slate-200/80 rounded-2xl overflow-hidden z-50 shadow-2xl"
+                 style="box-shadow: 0 10px 40px rgba(10,15,30,0.15);">
+
+                {{-- Header --}}
+                <div class="px-5 py-3.5 border-b border-slate-100 flex items-center justify-between"
+                     style="background: linear-gradient(135deg, #0A0F1E 0%, #1e3a8a 100%);">
+                    <div class="flex items-center gap-2">
+                        <i class="bi bi-bell-fill text-white/80 text-sm"></i>
+                        <span class="text-xs font-bold text-white">Notifikasi</span>
+                    </div>
+                    <span id="notifCount" class="text-[10px] font-bold text-blue-200 bg-white/15 px-2 py-0.5 rounded-full">0 baru</span>
+                </div>
+
+                {{-- List --}}
+                <div id="notifList" class="max-h-72 overflow-y-auto">
+                    {{-- Diisi secara dinamis lewat JS --}}
+                </div>
+            </div>
+        </div>
+    </div>
+
     <x-welcome-banner />
-    <x-admin-stats
-        :total="$total" :pending="$pending" :selesai="$selesai" :decline="$decline"
-        :awas="$awas" :siaga1="$siaga1" :siaga2="$siaga2"
-        :approvedVolunteers="$approvedVolunteers" :totalVolunteers="$totalVolunteers"
-    />
+
+    {{-- Period Selector --}}
+    <div class="flex items-center justify-between mb-4 px-1">
+        <div>
+            <h2 class="text-lg font-bold text-slate-900">Ringkasan Laporan</h2>
+            <p class="text-xs text-slate-500 mt-0.5">Statistik laporan bencana</p>
+        </div>
+        <div class="flex items-center gap-1 bg-white border border-slate-200 rounded-lg p-0.5">
+            <button type="button" data-period="1d" class="period-btn px-3 py-1.5 text-[11px] font-medium rounded-md transition-all text-slate-500 hover:text-slate-800">Hari ini</button>
+            <button type="button" data-period="7d" class="period-btn active px-3 py-1.5 text-[11px] font-medium rounded-md transition-all">7 Hari</button>
+            <button type="button" data-period="30d" class="period-btn px-3 py-1.5 text-[11px] font-medium rounded-md transition-all text-slate-500 hover:text-slate-800">30 Hari</button>
+            <button type="button" data-period="all" class="period-btn px-3 py-1.5 text-[11px] font-medium rounded-md transition-all text-slate-500 hover:text-slate-800">Semua</button>
+        </div>
+    </div>
+
+    {{-- Hero Stats --}}
+    <div class="grid grid-cols-1 sm:grid-cols-4 gap-4 mb-4">
+        <div class="sm:col-span-2 bg-white rounded-2xl border border-slate-200/80 p-5 relative overflow-hidden hover:-translate-y-0.5 hover:shadow-md transition-all duration-200" style="box-shadow: 0 1px 3px rgba(10,15,30,0.05);">
+            <i class="bi bi-file-earmark-text absolute top-4 right-4 text-slate-200 text-2xl"></i>
+            <p class="text-xs text-slate-500 font-bold uppercase tracking-wider mb-1">Total Laporan</p>
+            <div class="flex items-end gap-3">
+                <p class="text-4xl font-extrabold text-slate-900" id="stat-total">{{ $total }}</p>
+                <span class="text-xs font-semibold text-emerald-600 mb-1.5" id="stat-total-trend">
+                    @php $todayCount = \App\Models\Disaster::whereDate('created_at', today())->count(); @endphp
+                    @if($todayCount > 0) ↑ +{{ $todayCount }} hari ini @endif
+                </span>
+            </div>
+            <p class="text-xs text-slate-400 mt-1">Seluruh laporan yang masuk ke sistem</p>
+        </div>
+        <div class="bg-white rounded-2xl border border-slate-200/80 p-5 relative overflow-hidden hover:-translate-y-0.5 hover:shadow-md transition-all duration-200" style="box-shadow: 0 1px 3px rgba(10,15,30,0.05);">
+            <i class="bi bi-hourglass-split absolute top-4 right-4 text-amber-200 text-xl"></i>
+            <p class="text-[11px] text-slate-500 font-bold uppercase tracking-wider mb-1">Pending</p>
+            <p class="text-3xl font-extrabold text-amber-600" id="stat-pending">{{ $pending }}</p>
+            <p class="text-[11px] text-slate-400 mt-1.5">Menunggu verifikasi</p>
+        </div>
+        <div class="bg-white rounded-2xl border border-slate-200/80 p-5 relative overflow-hidden hover:-translate-y-0.5 hover:shadow-md transition-all duration-200" style="box-shadow: 0 1px 3px rgba(10,15,30,0.05);">
+            <i class="bi bi-check-circle absolute top-4 right-4 text-emerald-200 text-xl"></i>
+            <p class="text-[11px] text-slate-500 font-bold uppercase tracking-wider mb-1">Verified</p>
+            <p class="text-3xl font-extrabold text-emerald-600" id="stat-selesai">{{ $selesai }}</p>
+            <p class="text-[11px] text-slate-400 mt-1.5">Sudah diverifikasi</p>
+        </div>
+    </div>
+
+    {{-- Secondary Stats --}}
+    <div class="grid grid-cols-2 sm:grid-cols-5 gap-3 mb-8">
+        <div class="bg-white rounded-xl border border-slate-200/80 px-4 py-3.5 hover:-translate-y-0.5 hover:shadow-md transition-all duration-200" style="box-shadow: 0 1px 2px rgba(10,15,30,0.04);">
+            <p class="text-[10px] text-slate-500 font-bold uppercase tracking-wider mb-0.5">Awas</p>
+            <p class="text-xl font-extrabold text-red-600" id="stat-awas">{{ $awas }}</p>
+            <p class="text-[10px] text-slate-400 mt-0.5">laporan aktif</p>
+        </div>
+        <div class="bg-white rounded-xl border border-slate-200/80 px-4 py-3.5 hover:-translate-y-0.5 hover:shadow-md transition-all duration-200" style="box-shadow: 0 1px 2px rgba(10,15,30,0.04);">
+            <p class="text-[10px] text-slate-500 font-bold uppercase tracking-wider mb-0.5">Siaga 1</p>
+            <p class="text-xl font-extrabold text-orange-600" id="stat-siaga1">{{ $siaga1 }}</p>
+            <p class="text-[10px] text-slate-400 mt-0.5">laporan aktif</p>
+        </div>
+        <div class="bg-white rounded-xl border border-slate-200/80 px-4 py-3.5 hover:-translate-y-0.5 hover:shadow-md transition-all duration-200" style="box-shadow: 0 1px 2px rgba(10,15,30,0.04);">
+            <p class="text-[10px] text-slate-500 font-bold uppercase tracking-wider mb-0.5">Siaga 2</p>
+            <p class="text-xl font-extrabold text-violet-600" id="stat-siaga2">{{ $siaga2 }}</p>
+            <p class="text-[10px] text-slate-400 mt-0.5">laporan aktif</p>
+        </div>
+        <div class="bg-white rounded-xl border border-slate-200/80 px-4 py-3.5 hover:-translate-y-0.5 hover:shadow-md transition-all duration-200" style="box-shadow: 0 1px 2px rgba(10,15,30,0.04);">
+            <p class="text-[10px] text-slate-500 font-bold uppercase tracking-wider mb-0.5">Ditolak</p>
+            <p class="text-xl font-extrabold text-slate-600" id="stat-decline">{{ $decline }}</p>
+            <p class="text-[10px] text-slate-400 mt-0.5">laporan ditolak</p>
+        </div>
+        <div class="bg-white rounded-xl border border-slate-200/80 px-4 py-3.5 hover:-translate-y-0.5 hover:shadow-md transition-all duration-200" style="box-shadow: 0 1px 2px rgba(10,15,30,0.04);">
+            <p class="text-[10px] text-slate-500 font-bold uppercase tracking-wider mb-0.5">Relawan</p>
+            <p class="text-xl font-extrabold text-purple-600">{{ $approvedVolunteers }} <span class="text-[11px] font-medium text-slate-400">aktif</span></p>
+        </div>
+    </div>
 
     {{-- ═══════════════════════════════════════════════════
          CHART + RECENT PENDING
@@ -386,5 +496,103 @@
                 computeStats(btn.dataset.period);
             });
         });
+
+        // ═══════════════════════════════════════════════════
+        //  NOTIFICATION POLLING SYSTEM (admin/dashboard only)
+        // ═══════════════════════════════════════════════════
+        (function() {
+            const notifBtn = document.getElementById('notifBtn');
+            const notifDropdown = document.getElementById('notifDropdown');
+            const notifBadge = document.getElementById('notifBadge');
+            const notifCount = document.getElementById('notifCount');
+            const notifList = document.getElementById('notifList');
+
+            if (!notifBtn || !notifDropdown) return;
+
+            // Toggle dropdown
+            notifBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                notifDropdown.classList.toggle('hidden');
+                if (!notifDropdown.classList.contains('hidden')) {
+                    // Update last seen
+                    localStorage.setItem('admin_last_seen_notif', new Date().toISOString());
+                    if (notifBadge) notifBadge.classList.add('hidden');
+                }
+            });
+
+            // Close when clicking outside
+            document.addEventListener('click', (e) => {
+                if (!notifDropdown.classList.contains('hidden') && !e.target.closest('#notifWrapper')) {
+                    notifDropdown.classList.add('hidden');
+                }
+            });
+
+            function fetchNotifications() {
+                fetch('/api/pending-reports')
+                    .then(res => res.json())
+                    .then(data => {
+                        const count = data.length;
+                        const lastSeenStr = localStorage.getItem('admin_last_seen_notif');
+                        const lastSeen = lastSeenStr ? new Date(lastSeenStr) : new Date(0);
+
+                        let unreadCount = 0;
+                        data.forEach(item => {
+                            if (new Date(item.created_at) > lastSeen) {
+                                unreadCount++;
+                            }
+                        });
+
+                        // Update badge
+                        if (unreadCount > 0 && notifBadge) {
+                            notifBadge.textContent = unreadCount;
+                            notifBadge.classList.remove('hidden');
+                        } else if (notifBadge) {
+                            notifBadge.classList.add('hidden');
+                        }
+
+                        // Update header count
+                        if (notifCount) {
+                            notifCount.textContent = `${unreadCount} baru`;
+                        }
+
+                        if (count === 0) {
+                            notifList.innerHTML = `
+                                <div class="px-5 py-8 text-center">
+                                    <i class="bi bi-bell-slash text-slate-300 text-lg block mb-1"></i>
+                                    <p class="text-xs text-slate-400">Tidak ada laporan baru</p>
+                                </div>`;
+                            return;
+                        }
+
+                        notifList.innerHTML = data.map(item => {
+                            const isNew = new Date(item.created_at) > lastSeen;
+                            return `
+                                <div class="px-5 py-3.5 flex items-start gap-3 hover:bg-slate-50 cursor-pointer transition-colors border-b border-slate-50 last:border-0"
+                                     onclick="window.location.href='/laporan/detail/${item.id}'">
+                                    <div class="w-8 h-8 rounded-lg flex items-center justify-center shrink-0 mt-0.5 ${isNew ? 'bg-blue-100' : 'bg-slate-100'}">
+                                        <i class="bi bi-megaphone-fill text-xs ${isNew ? 'text-blue-600' : 'text-slate-400'}"></i>
+                                    </div>
+                                    <div class="flex-1 min-w-0">
+                                        <p class="text-xs font-semibold text-slate-800 truncate">${item.title}</p>
+                                        <p class="text-[10px] text-slate-400 mt-0.5 flex items-center gap-1.5">
+                                            <span>${item.reporter}</span> &middot; <span>${item.date}</span>
+                                        </p>
+                                    </div>
+                                    ${isNew ? '<span class="notif-new-dot w-2 h-2 rounded-full bg-blue-500 shrink-0 mt-2"></span>' : ''}
+                                </div>`;
+                        }).join('');
+                    })
+                    .catch(() => {
+                        notifList.innerHTML = `
+                            <div class="px-5 py-8 text-center">
+                                <i class="bi bi-wifi-off text-slate-300 text-lg block mb-1"></i>
+                                <p class="text-xs text-slate-400">Gagal memuat notifikasi</p>
+                            </div>`;
+                    });
+            }
+
+            fetchNotifications();
+            setInterval(fetchNotifications, 30000);
+        })();
     </script>
 @endsection

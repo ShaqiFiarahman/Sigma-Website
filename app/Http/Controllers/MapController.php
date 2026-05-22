@@ -27,14 +27,14 @@ class MapController extends Controller
         $query = Disaster::latest();
 
         if (strtolower($role) !== 'admin') {
-            // Citizens/Volunteers can see public disasters (Resolved, Siaga, Awas)
-            // AND their own reports (including Pending or Decline)
+            // Citizens/Volunteers can see public disasters (RESOLVED, SIAGA_1, SIAGA_2, AWAS)
+            // AND their own reports (including pending or rejected)
             $query->where(function($q) use ($user) {
                 $q->whereIn('status', [
-                    Disaster::STATUS_RESOLVED,
-                    Disaster::STATUS_SIAGA_1,
-                    Disaster::STATUS_SIAGA_2,
-                    Disaster::STATUS_AWAS
+                    'RESOLVED',
+                    'SIAGA_1',
+                    'SIAGA_2',
+                    'AWAS'
                 ]);
                 if ($user) {
                     $q->orWhere('user_id', $user->id);
@@ -44,7 +44,7 @@ class MapController extends Controller
 
         $disasters = $query->get();
 
-        return view('user.search', compact('disasters'));
+        return view('laporan.search', compact('disasters'));
     }
 
     /**
@@ -53,7 +53,7 @@ class MapController extends Controller
     public function shelterPage()
     {
         $shelters = Shelter::all()->map(fn($s) => $this->shelterToArray($s))->toArray();
-        return view('user.shelter', compact('shelters'));
+        return view('shelter.index', compact('shelters'));
     }
 
     /**
@@ -64,24 +64,29 @@ class MapController extends Controller
         $disasters = Disaster::whereNotNull('latitude')
             ->whereNotNull('longitude')
             ->whereIn('status', [
-                Disaster::STATUS_RESOLVED,
-                Disaster::STATUS_SIAGA_1,
-                Disaster::STATUS_SIAGA_2,
-                Disaster::STATUS_AWAS
+                'RESOLVED',
+                'SIAGA_1',
+                'SIAGA_2',
+                'AWAS'
             ])
+            ->where('created_at', '>=', now()->subDays(7))
             ->latest()
             ->get()
             ->map(fn($d) => [
-                'id'          => $d->id,
-                'title'       => $d->title,
-                'description' => \Illuminate\Support\Str::limit($d->description, 100),
-                'lat'         => $d->latitude,
-                'lng'         => $d->longitude,
-                'status'      => $d->status,
-                'statusLabel' => $d->status_label,
-                'reporter'    => $d->reporter_name,
-                'date'        => $d->created_at?->format('d M Y H:i'),
-                'type'        => 'disaster',
+                'id'            => $d->id,
+                'title'         => $d->title,
+                'description'   => \Illuminate\Support\Str::limit($d->description, 100),
+                'lat'           => $d->latitude,
+                'lng'           => $d->longitude,
+                'status'        => $d->status,
+                'statusLabel'   => $d->status_label,
+                'reporter'      => $d->reporter_name,
+                'date'          => $d->created_at?->format('d M Y H:i'),
+                'type'          => 'disaster',
+                'disaster_type' => $d->disaster_type,
+                'type_icon'     => $d->type_icon,
+                'type_color'    => $d->type_color,
+                'type_name'     => $d->type_name,
             ]);
 
         return response()->json($disasters);

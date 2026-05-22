@@ -6,24 +6,25 @@
 
     <div class="relative">
         {{-- Legend --}}
-        <div class="absolute bottom-6 right-4 z-10 shadow-lg bg-white/90 border border-slate-200/60 rounded-2xl p-4">
-            <p class="text-xs font-bold uppercase tracking-wider mb-2 text-slate-500">Legenda</p>
-            <div class="flex flex-col gap-y-1.5">
+        <div class="absolute bottom-6 right-4 z-10 shadow-lg bg-white/90 backdrop-blur-sm border border-slate-200/60 rounded-2xl p-4">
+            <p class="text-[10px] font-bold uppercase tracking-wider mb-2.5 text-slate-500">Tingkat Status</p>
+            <div class="flex flex-col gap-y-2">
                 <div class="flex items-center gap-2 text-xs text-slate-700">
                     <div class="w-3 h-3 rounded-full" style="background: #D32F2F;"></div>
-                    <span>Awas</span>
+                    <span class="font-medium">Awas</span>
                 </div>
                 <div class="flex items-center gap-2 text-xs text-slate-700">
                     <div class="w-3 h-3 rounded-full" style="background: #EA580C;"></div>
-                    <span>Siaga 1</span>
+                    <span class="font-medium">Siaga 1</span>
                 </div>
                 <div class="flex items-center gap-2 text-xs text-slate-700">
                     <div class="w-3 h-3 rounded-full" style="background: #7C3AED;"></div>
-                    <span>Siaga 2</span>
+                    <span class="font-medium">Siaga 2</span>
                 </div>
+                <div class="h-px bg-slate-200/60 my-1"></div>
                 <div class="flex items-center gap-2 text-xs text-slate-700">
                     <i class="bi bi-house-door-fill text-[#10B981] text-sm" style="width: 12px; text-align: center;"></i>
-                    <span>Posko</span>
+                    <span class="font-medium">Posko Shelter</span>
                 </div>
             </div>
         </div>
@@ -43,7 +44,18 @@
         'SIAGA_1': '#EA580C',
         'SIAGA_2': '#7C3AED',
         'PENDING': '#FFA000',
-        'RESOLVED': '#2E7D32',
+        'RESOLVED': '#10B981',
+        'DECLINE': '#64748B'
+    };
+    const typePaths = {
+        'flood': '<path d="M1 9c1.7 0 2.5-1.5 4.2-1.5S7.5 9 9.2 9s2.5-1.5 4.2-1.5S15.7 9 15 9" fill="none" stroke="#FFF" stroke-width="2" stroke-linecap="round"/><path d="M1 13c1.7 0 2.5-1.5 4.2-1.5S7.5 13 9.2 13s2.5-1.5 4.2-1.5" fill="none" stroke="#FFF" stroke-width="2" stroke-linecap="round"/>',
+        'fire': '<path d="M8 2C8 2 4 6 4 10c0 2.2 1.8 4 4 4s4-1.8 4-4C12 6 8 2 8 2zM8 12.5c-1.4 0-2.5-1.1-2.5-2.5 0-1.5 2.5-4.5 2.5-4.5s2.5 3 2.5 4.5c0 1.4-1.1 2.5-2.5 2.5z" fill="#FFF"/>',
+        'earthquake': '<path d="M2 8h2.5L6 4l2 8 2-6 1.5 4H14" fill="none" stroke="#FFF" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>',
+        'landslide': '<path d="M2 14L8 3l2 4 4-3v10H2z" fill="none" stroke="#FFF" stroke-width="1.5" stroke-linejoin="round"/><circle cx="5" cy="11" r="1.2" fill="#FFF"/><circle cx="9" cy="10" r="1" fill="#FFF"/>',
+        'tsunami': '<path d="M1 11c2-3 4-3 6 0s4 3 6 0" fill="none" stroke="#FFF" stroke-width="2" stroke-linecap="round"/><path d="M8 3v5" stroke="#FFF" stroke-width="1.5" stroke-linecap="round"/><path d="M6 5l2-2 2 2" fill="none" stroke="#FFF" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>',
+        'storm': '<path d="M9 2L4 9h4L6 14l6-7H8l3-5z" fill="#FFF"/>',
+        'volcano': '<path d="M4 14L7 6l1 2 1-2 1 2 1-2 3 8H4z" fill="none" stroke="#FFF" stroke-width="1.5" stroke-linejoin="round"/><path d="M7 4c0-1 .5-2 1-2s1 1 1 2" fill="none" stroke="#FFF" stroke-width="1" stroke-linecap="round"/>',
+        'unknown': '<path d="M8 2l6 12H2L8 2z" fill="none" stroke="#FFF" stroke-width="1.5" stroke-linejoin="round"/><path d="M8 7v3M8 12h.01" stroke="#FFF" stroke-width="1.5" stroke-linecap="round"/>'
     };
 
     function initMap() {
@@ -55,6 +67,8 @@
             disableDefaultUI: true,
             gestureHandling: 'greedy',
             styles: [
+                { featureType: "water", elementType: "geometry", stylers: [{ color: "#c8dff0" }] },
+                { featureType: "landscape", elementType: "geometry", stylers: [{ color: "#f0f4f8" }] },
                 { featureType: "poi", stylers: [{ visibility: "off" }] },
                 { featureType: "transit", stylers: [{ visibility: "off" }] },
             ]
@@ -73,24 +87,41 @@
             disasters.forEach(d => {
                 const color = statusColors[d.status] || '#FFA000';
 
+                // Detect type from disaster_type or fallback from title
+                let dtype = (d.disaster_type || 'unknown').toLowerCase();
+                if (dtype === 'unknown') {
+                    const t = d.title.toLowerCase();
+                    if (t.includes('banjir')) dtype = 'flood';
+                    else if (t.includes('kebakaran') || t.includes('api')) dtype = 'fire';
+                    else if (t.includes('gempa')) dtype = 'earthquake';
+                    else if (t.includes('longsor')) dtype = 'landslide';
+                    else if (t.includes('tsunami')) dtype = 'tsunami';
+                    else if (t.includes('gunung') || t.includes('vulkan')) dtype = 'volcano';
+                    else if (t.includes('badai') || t.includes('angin') || t.includes('petir')) dtype = 'storm';
+                }
+                const iconPath = typePaths[dtype] || typePaths['unknown'];
+
                 const marker = new google.maps.Marker({
                     position: { lat: d.lat, lng: d.lng },
                     map: map,
                     title: d.title,
                     icon: {
                         url: 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(`
-                            <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 40 40">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="44" height="44" viewBox="0 0 44 44">
                               <style>
-                                @keyframes pulse { 0% { transform: scale(1); opacity: 1; } 100% { transform: scale(3); opacity: 0; } }
-                                .pulse { animation: pulse 1.5s ease-out infinite; transform-origin: 20px 20px; }
+                                @keyframes glow { 0%,100%{opacity:0.1;r:20} 50%{opacity:0.3;r:21} }
+                                .pulse-glow { animation: glow 2s ease-in-out infinite; }
                               </style>
-                              <circle cx="20" cy="20" r="6" fill="${color}" />
-                              <circle cx="20" cy="20" r="6" fill="none" stroke="${color}" stroke-width="2" class="pulse" />
-                              <circle cx="20" cy="20" r="6" fill="none" stroke="#FFFFFF" stroke-width="1" />
+                              <circle cx="22" cy="22" r="20" fill="${color}" class="pulse-glow"/>
+                              <circle cx="22" cy="22" r="15" fill="${color}" opacity="0.25"/>
+                              <circle cx="22" cy="22" r="11" fill="${color}"/>
+                              <g transform="translate(14, 14) scale(1)" fill="none">
+                                ${iconPath}
+                              </g>
                             </svg>
                         `),
-                        scaledSize: new google.maps.Size(40, 40),
-                        anchor: new google.maps.Point(20, 20),
+                        scaledSize: new google.maps.Size(44, 44),
+                        anchor: new google.maps.Point(22, 22),
                     },
                     optimized: false
                 });
