@@ -157,16 +157,31 @@
                                 <label class="block text-xs font-bold text-slate-700 mb-2 uppercase tracking-wider">
                                     Penugasan Lokasi
                                 </label>
+
+                                {{-- Pilih dari bencana aktif --}}
+                                <select id="disasterSelect" onchange="document.getElementById('assignmentInput').value = this.options[this.selectedIndex].dataset.location || ''"
+                                    class="w-full px-3 py-2 text-xs border border-slate-200 rounded-lg focus:outline-none focus:border-blue-400 focus:ring-2 focus:ring-blue-500/20 transition-all mb-2 bg-white text-slate-700">
+                                    <option value="">— Pilih bencana aktif —</option>
+                                    @foreach(\App\Models\Disaster::whereNotIn('status', ['PENDING', 'DECLINE', 'RESOLVED'])->latest()->get() as $disaster)
+                                        <option data-location="{{ $disaster->location ?? $disaster->title }}">
+                                            {{ $disaster->title }} — {{ $disaster->location ?? 'Lokasi tidak diketahui' }}
+                                        </option>
+                                    @endforeach
+                                </select>
+
+                                {{-- Atau ketik manual --}}
                                 <div class="flex gap-2">
-                                    <input type="text" name="assignment" placeholder="Contoh: Posko Bantul"
+                                    <input type="text" name="assignment" id="assignmentInput"
+                                           placeholder="Atau ketik manual..."
                                            value="{{ $volunteer->assignment }}"
-                                           class="flex-1 px-3 py-2 text-xs border border-slate-200 rounded-lg focus:outline-none focus:border-purple-400 focus:ring-2 focus:ring-purple-500/20 transition-all">
+                                           class="flex-1 px-3 py-2 text-xs border border-slate-200 rounded-lg focus:outline-none focus:border-blue-400 focus:ring-2 focus:ring-blue-500/20 transition-all">
                                     <button type="submit"
                                             class="px-3 py-2 text-xs font-semibold text-white rounded-lg transition-all hover:opacity-90"
                                             style="background: #3B6FE8;">
                                         <i class="bi bi-check"></i>
                                     </button>
                                 </div>
+                                <p class="text-[10px] text-slate-400 mt-1.5">Pilih bencana atau ketik lokasi manual.</p>
                             </form>
                         </div>
                     @endif

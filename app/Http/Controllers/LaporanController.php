@@ -88,12 +88,54 @@ class LaporanController extends Controller
     public function userDashboard()
     {
         $user = auth()->user();
-        $role = $user?->role ?? 'MASYARAKAT';
+        $role = $user?->role ?? 'Masyarakat';
 
         $news = $this->getDashboardNews();
         $menu = $this->getDashboardMenu($role);
 
-        return view('user.dashboard', compact('user', 'news', 'menu'));
+        // Data relawan (pending/rejected/approved)
+        $volunteerData = \App\Models\Volunteer::where('user_id', $user->id)->first();
+
+        // Data tambahan khusus relawan approved (untuk section dashboard relawan)
+        $volunteerDashboard = null;
+        if ($volunteerData && $volunteerData->status === \App\Models\Volunteer::STATUS_APPROVED) {
+            $totalReports = \App\Models\VolunteerReport::where('volunteer_id', $volunteerData->id)->count();
+            $reportsThisMonth = \App\Models\VolunteerReport::where('volunteer_id', $volunteerData->id)
+                ->whereMonth('created_at', now()->month)
+                ->whereYear('created_at', now()->year)
+                ->count();
+
+            $activeDisasters = Disaster::whereNotIn('status', [
+                    Disaster::STATUS_DECLINE,
+                    Disaster::STATUS_RESOLVED,
+                    Disaster::STATUS_PENDING,
+                ])->count();
+
+            $recentReports = \App\Models\VolunteerReport::where('volunteer_id', $volunteerData->id)
+                ->with('disaster')
+                ->latest()
+                ->limit(3)
+                ->get();
+
+            $teamMembers = collect();
+            if ($volunteerData->assignment) {
+                $teamMembers = \App\Models\Volunteer::where('status', \App\Models\Volunteer::STATUS_APPROVED)
+                    ->where('assignment', $volunteerData->assignment)
+                    ->where('id', '!=', $volunteerData->id)
+                    ->limit(5)
+                    ->get();
+            }
+
+            $volunteerDashboard = (object) [
+                'totalReports' => $totalReports,
+                'reportsThisMonth' => $reportsThisMonth,
+                'activeDisasters' => $activeDisasters,
+                'recentReports' => $recentReports,
+                'teamMembers' => $teamMembers,
+            ];
+        }
+
+        return view('user.dashboard', compact('user', 'news', 'menu', 'volunteerData', 'volunteerDashboard'));
     }
 
     public function index()
@@ -275,13 +317,23 @@ class LaporanController extends Controller
 
     private function getDashboardMenu(string $role): array
     {
+        // Menu khusus Relawan (approved)
+        if (strtolower($role) === 'relawan') {
+            return [
+                ['id' => 12, 'title' => 'Lapor Tugas',       'description' => 'Kirim laporan tugas',  'icon' => 'bi-send-fill'],
+                ['id' => 3,  'title' => 'Info Posko',        'description' => 'Titik pengungsian',    'icon' => 'bi-house-heart-fill'],
+                ['id' => 10, 'title' => 'Panduan Bencana',   'description' => 'Tips mitigasi',        'icon' => 'bi-book-fill'],
+                ['id' => 7,  'title' => 'Cari Bencana',      'description' => 'Pencarian & filter',   'icon' => 'bi-search'],
+            ];
+        }
+
+        // Menu dasar untuk Masyarakat
         $baseMenu = [
-            ['id' => 1,  'title' => 'Peta Bencana',       'description' => 'Zona bahaya',        'icon' => 'bi-map-fill'],
             ['id' => 2,  'title' => 'Lapor Bencana',      'description' => 'Kirim laporan',      'icon' => 'bi-megaphone-fill'],
             ['id' => 3,  'title' => 'Info Posko',         'description' => 'Titik pengungsian',  'icon' => 'bi-house-heart-fill'],
             ['id' => 10, 'title' => 'Panduan Bencana',    'description' => 'Tips mitigasi',      'icon' => 'bi-book-fill'],
-            ['id' => 5,  'title' => 'Registrasi Relawan', 'description' => 'Daftar relawan',     'icon' => 'bi-person-plus-fill'],
             ['id' => 7,  'title' => 'Cari Bencana',       'description' => 'Pencarian & filter', 'icon' => 'bi-search'],
+            ['id' => 5,  'title' => 'Daftar Relawan',     'description' => 'Bergabung jadi relawan', 'icon' => 'bi-person-plus-fill'],
         ];
 
         return $baseMenu;

@@ -6,6 +6,7 @@ use App\Http\Controllers\LaporanController;
 use App\Http\Controllers\MapController;
 use App\Http\Controllers\NewsController;
 use App\Http\Controllers\VolunteerController;
+use App\Http\Controllers\VolunteerDashboardController;
 
 // ─────────────────────────────────────────────
 //  PUBLIC / AUTH ROUTES
@@ -28,6 +29,7 @@ Route::middleware('auth')->group(function () {
         
         // Volunteer Management
         Route::get('/relawan', [VolunteerController::class, 'index'])->name('volunteer.index');
+        Route::get('/relawan/laporan', [VolunteerController::class, 'reports'])->name('admin.volunteer.reports');
         Route::get('/relawan/{id}', [VolunteerController::class, 'show'])->name('volunteer.show');
         Route::post('/relawan/{id}/status', [VolunteerController::class, 'updateStatus'])->name('volunteer.update_status');
         Route::post('/relawan/{id}/assign', [VolunteerController::class, 'assign'])->name('volunteer.assign');
@@ -44,6 +46,16 @@ Route::middleware('auth')->group(function () {
         // Volunteer Registration
         Route::get('/relawan/daftar', [VolunteerController::class, 'create'])->name('volunteer.create');
         Route::post('/relawan/daftar', [VolunteerController::class, 'store'])->name('volunteer.store');
+
+        // Volunteer Reports (hanya relawan yang approved)
+        Route::get('/relawan/laporan', [\App\Http\Controllers\VolunteerReportController::class, 'index'])->name('volunteer.reports');
+        Route::get('/relawan/laporan/buat', [\App\Http\Controllers\VolunteerReportController::class, 'create'])->name('volunteer.report.create');
+        Route::post('/relawan/laporan/buat', [\App\Http\Controllers\VolunteerReportController::class, 'store'])->name('volunteer.report.store');
+
+        // Volunteer Dashboard (khusus relawan approved)
+        Route::get('/relawan/dashboard', [VolunteerDashboardController::class, 'index'])->name('volunteer.dashboard');
+        Route::post('/relawan/ketersediaan', [VolunteerDashboardController::class, 'toggleAvailability'])->name('volunteer.toggle_availability');
+        Route::post('/relawan/notifikasi-dismiss', [VolunteerDashboardController::class, 'dismissNotification'])->name('volunteer.dismiss_notification');
     });
 
     // SHARED ROUTES (accessible by all authenticated users)

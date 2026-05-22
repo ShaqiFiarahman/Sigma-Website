@@ -2,6 +2,12 @@
 @section('title', 'Daftar Relawan')
 @section('subtitle', 'Kelola pendaftaran dan data relawan.')
 
+@section('page-actions')
+    <a href="{{ route('admin.volunteer.reports') }}" class="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-slate-600 bg-white border border-slate-200 rounded-lg hover:bg-slate-50 transition-all shadow-sm">
+        <i class="bi bi-clipboard-data text-xs"></i> Laporan Tugas
+    </a>
+@endsection
+
 @section('content')
 
     @if(session('msg'))

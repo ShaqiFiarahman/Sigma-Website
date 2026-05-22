@@ -15,17 +15,24 @@ class Volunteer extends Model
         'phone_number',
         'status',
         'assignment',
+        'availability',
+        'assignment_notified_at',
     ];
 
     protected $casts = [
         'created_at' => 'datetime',
         'updated_at' => 'datetime',
+        'assignment_notified_at' => 'datetime',
     ];
 
     // Status constants
     const STATUS_PENDING  = 'PENDING';
     const STATUS_APPROVED = 'APPROVED';
     const STATUS_REJECTED = 'REJECTED';
+
+    // Availability constants
+    const AVAILABILITY_AVAILABLE   = 'available';
+    const AVAILABILITY_UNAVAILABLE = 'unavailable';
 
     // Skills enum (sesuai Android SkillsVolunteer enum)
     const SKILL_MEDIS       = 'MEDIS';

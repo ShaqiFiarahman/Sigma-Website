@@ -63,6 +63,42 @@ class VolunteerController extends Controller
     }
 
     /**
+     * Show all volunteer reports (admin only)
+     */
+    public function reports(Request $request)
+    {
+        $query = \App\Models\VolunteerReport::with(['volunteer', 'disaster'])->latest();
+
+        // Filter by skill
+        if ($request->filled('skill')) {
+            $query->where('skill_type', $request->skill);
+        }
+
+        // Filter by disaster
+        if ($request->filled('disaster_id')) {
+            $query->where('disaster_id', $request->disaster_id);
+        }
+
+        // Filter by volunteer
+        if ($request->filled('volunteer_id')) {
+            $query->where('volunteer_id', $request->volunteer_id);
+        }
+
+        $reports = $query->paginate(20)->withQueryString();
+
+        // Data for filters
+        $skills = Volunteer::getSkillOptions();
+        $disasters = \App\Models\Disaster::whereNotIn('status', ['PENDING', 'DECLINE'])
+            ->latest()
+            ->get(['id', 'title', 'location']);
+        $volunteers = Volunteer::where('status', Volunteer::STATUS_APPROVED)
+            ->orderBy('name')
+            ->get(['id', 'name', 'skill']);
+
+        return view('admin.volunteer.reports', compact('reports', 'skills', 'disasters', 'volunteers'));
+    }
+
+    /**
      * Show volunteer detail
      */
     public function show($id)
@@ -83,6 +119,15 @@ class VolunteerController extends Controller
         $volunteer = Volunteer::findOrFail($id);
         $volunteer->update(['status' => $request->status]);
 
+        // Update role di profiles saat approved/rejected
+        if ($request->status === Volunteer::STATUS_APPROVED) {
+            \App\Models\User::where('id', $volunteer->user_id)
+                ->update(['role' => 'Relawan']);
+        } elseif ($request->status === Volunteer::STATUS_REJECTED || $request->status === Volunteer::STATUS_PENDING) {
+            \App\Models\User::where('id', $volunteer->user_id)
+                ->update(['role' => 'Masyarakat']);
+        }
+
         $msg = $request->status === Volunteer::STATUS_APPROVED ? 'approved' : 'rejected';
         return redirect()->route('volunteer.show', $id)->with('msg', $msg);
     }
@@ -97,7 +142,10 @@ class VolunteerController extends Controller
         ]);
 
         $volunteer = Volunteer::findOrFail($id);
-        $volunteer->update(['assignment' => $request->assignment]);
+        $volunteer->update([
+            'assignment' => $request->assignment,
+            'assignment_notified_at' => null, // Reset notifikasi agar relawan lihat banner baru
+        ]);
 
         return redirect()->route('volunteer.show', $id)
             ->with('msg', 'Penugasan berhasil diperbarui.');
