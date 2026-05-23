@@ -3,7 +3,7 @@
 @section('subtitle', 'Temukan laporan berdasarkan lokasi atau jenis bencana.')
 
 @section('page-actions')
-    <button type="button" onclick="window.location.href='{{ route('dashboard') }}'" class="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-slate-600 bg-white border border-slate-200 rounded-lg hover:bg-slate-50 hover:border-slate-300 transition-all duration-200 shadow-sm cursor-pointer">
+    <button type="button" onclick="history.back()" class="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-slate-600 bg-white border border-slate-200 rounded-lg hover:bg-slate-50 hover:border-slate-300 transition-all duration-200 shadow-sm cursor-pointer">
         <i class="bi bi-arrow-left text-xs"></i> Kembali
     </button>
 @endsection

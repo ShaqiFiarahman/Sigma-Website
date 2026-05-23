@@ -3,7 +3,7 @@
 @section('subtitle', 'Pantau detail laporan dan lokasi kejadian.')
 
 @section('page-actions')
-    <button type="button" onclick="window.location.href='{{ route('laporan.index') }}'" class="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-slate-600 bg-white border border-slate-200 rounded-lg hover:bg-slate-50 hover:border-slate-300 transition-all duration-200 shadow-sm cursor-pointer">
+    <button type="button" onclick="history.back()" class="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-slate-600 bg-white border border-slate-200 rounded-lg hover:bg-slate-50 hover:border-slate-300 transition-all duration-200 shadow-sm cursor-pointer">
         <i class="bi bi-arrow-left text-xs"></i> Kembali
     </button>
 @endsection
@@ -53,28 +53,7 @@
                 <div class="flex items-start justify-between gap-3">
                     <div>
                         <div class="flex items-center gap-2 mb-2 flex-wrap">
-                            @if(($laporan['disaster_type'] ?? 'unknown') === 'earthquake')
-                                <svg class="{{ $typeColor }} w-5 h-5 shrink-0" viewBox="0 0 16 16" fill="currentColor">
-                                    <path d="M3 15 L3 8 L8 3 L7.5 6 L9 9 L7 12 L7.5 15 Z" />
-                                    <path d="M8.5 16 L8 13 L10 10 L8.5 7 L9 4.5 L14 9.5 L14 16 Z" />
-                                </svg>
-                            @else
-                                <i class="bi {{ $typeIcon }} {{ $typeColor }} text-lg"></i>
-                            @endif
                             <h2 class="text-lg sm:text-xl font-bold text-slate-900 leading-tight">{{ $laporan['judul'] }}</h2>
-                            @if($s !== 'PENDING' && $s !== 'DECLINE')
-                                <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-lg bg-blue-50 text-blue-700 border border-blue-100 text-[10px] font-bold uppercase tracking-wider">
-                                    @if(($laporan['disaster_type'] ?? 'unknown') === 'earthquake')
-                                        <svg class="w-3.5 h-3.5 shrink-0" viewBox="0 0 16 16" fill="currentColor">
-                                            <path d="M3 15 L3 8 L8 3 L7.5 6 L9 9 L7 12 L7.5 15 Z" />
-                                            <path d="M8.5 16 L8 13 L10 10 L8.5 7 L9 4.5 L14 9.5 L14 16 Z" />
-                                        </svg>
-                                    @else
-                                        <i class="bi {{ $typeIcon }}"></i>
-                                    @endif
-                                    {{ $typeName }}
-                                </span>
-                            @endif
                         </div>
                         <div class="flex flex-wrap items-center gap-3 text-xs text-slate-500">
                             <span class="flex items-center gap-1"><i class="bi bi-calendar2-event text-slate-400"></i> {{ $laporan['tanggal'] }}</span>
@@ -241,93 +220,121 @@
         <div class="bg-white border border-slate-200/80 rounded-2xl overflow-hidden"
              style="box-shadow: 0 1px 3px rgba(10,15,30,0.06);">
             <div class="px-5 py-4 border-b border-slate-100 bg-slate-50">
-                <h3 class="text-sm font-semibold text-slate-800 flex items-center gap-2">
-                    <i class="bi bi-shield-check" style="color: #1e3a8a;"></i> Panel Tindakan
-                </h3>
+                <h3 class="text-sm font-semibold text-slate-800">Panel Tindakan</h3>
             </div>
             <div class="p-5">
                     @php 
-                        $currentStatus = $laporan['status_raw']; 
-                        $currentType = $laporan['disaster_type'];
+                        $currentStatus = $laporan['status_raw'] ?? 'PENDING'; 
+                        $currentType = $laporan['disaster_type'] ?? 'unknown';
                     @endphp
 
                     <p class="text-xs text-slate-500 mb-4">
-                        {{ $currentStatus === 'PENDING' ? 'Tinjau laporan awal dari masyarakat, lalu tentukan jenis bencana dan statusnya untuk mempublikasikan laporan.' : 'Update jenis atau status bencana sesuai kondisi terkini di lapangan.' }}
+                        {{ $currentStatus === 'PENDING' ? 'Tinjau laporan ini, tentukan jenis bencana dan statusnya.' : 'Update status sesuai kondisi terkini.' }}
                     </p>
 
-                    <form action="{{ route('laporan.update_status', $laporan['id']) }}" method="POST" class="space-y-4">
+                    <form id="updateStatusForm" action="{{ route('laporan.update_status', $laporan['id']) }}" method="POST" class="space-y-4">
                         @csrf
                         <div>
-                            <label class="block text-[11px] font-bold text-slate-700 uppercase tracking-wider mb-1.5">Jenis Bencana</label>
+                            <label class="block text-[11px] font-medium text-slate-600 mb-1.5">Jenis Bencana</label>
                             <select name="disaster_type" required
-                                    class="w-full px-3 py-2.5 text-sm border border-slate-200 rounded-xl focus:outline-none focus:border-blue-400 focus:ring-2 focus:ring-blue-500/20 transition-all bg-slate-50 hover:bg-white focus:bg-white text-slate-700">
-                                <option value="unknown"    {{ $currentType === 'unknown'    ? 'selected' : '' }}>❓ Belum Diketahui / Lainnya</option>
-                                <option value="flood"      {{ $currentType === 'flood'      ? 'selected' : '' }}>🌊 Banjir</option>
-                                <option value="fire"       {{ $currentType === 'fire'       ? 'selected' : '' }}>🔥 Kebakaran</option>
-                                <option value="earthquake" {{ $currentType === 'earthquake' ? 'selected' : '' }}>🌋 Gempa Bumi</option>
-                                <option value="landslide"  {{ $currentType === 'landslide'  ? 'selected' : '' }}>⛰️ Tanah Longsor</option>
-                                <option value="storm"      {{ $currentType === 'storm'      ? 'selected' : '' }}>🌪️ Badai / Angin Puting Beliung</option>
+                                    class="w-full px-3 py-2.5 text-sm border border-slate-200 rounded-xl focus:outline-none focus:border-blue-400 focus:ring-2 focus:ring-blue-500/20 transition-all bg-white text-slate-700">
+                                <option value="unknown"    {{ $currentType === 'unknown'    ? 'selected' : '' }}>Belum Diketahui</option>
+                                <option value="flood"      {{ $currentType === 'flood'      ? 'selected' : '' }}>Banjir</option>
+                                <option value="fire"       {{ $currentType === 'fire'       ? 'selected' : '' }}>Kebakaran</option>
+                                <option value="earthquake" {{ $currentType === 'earthquake' ? 'selected' : '' }}>Gempa Bumi</option>
+                                <option value="landslide"  {{ $currentType === 'landslide'  ? 'selected' : '' }}>Tanah Longsor</option>
+                                <option value="tsunami"    {{ $currentType === 'tsunami'    ? 'selected' : '' }}>Tsunami</option>
+                                <option value="storm"      {{ $currentType === 'storm'      ? 'selected' : '' }}>Badai</option>
+                                <option value="volcano"    {{ $currentType === 'volcano'    ? 'selected' : '' }}>Gunung Meletus</option>
                             </select>
                         </div>
 
                         <div>
-                            <label class="block text-[11px] font-bold text-slate-700 uppercase tracking-wider mb-1.5">Status Bencana</label>
+                            <label class="block text-[11px] font-medium text-slate-600 mb-1.5">Status</label>
                             <select name="status" required
-                                    class="w-full px-3 py-2.5 text-sm border border-slate-200 rounded-xl focus:outline-none focus:border-blue-400 focus:ring-2 focus:ring-blue-500/20 transition-all bg-slate-50 hover:bg-white focus:bg-white text-slate-700">
-                                <option value="PENDING"  {{ $currentStatus === 'PENDING'  ? 'selected' : '' }}>🟡 Pending (Menunggu Verifikasi)</option>
-                                <option value="AWAS"     {{ $currentStatus === 'AWAS'     ? 'selected' : '' }}>🔴 Awas (Sangat Berbahaya)</option>
-                                <option value="SIAGA_1"  {{ $currentStatus === 'SIAGA_1'  ? 'selected' : '' }}>🟠 Siaga 1 (Bahaya Tinggi)</option>
-                                <option value="SIAGA_2"  {{ $currentStatus === 'SIAGA_2'  ? 'selected' : '' }}>🟣 Siaga 2 (Bahaya Sedang)</option>
-                                <option value="RESOLVED" {{ $currentStatus === 'RESOLVED' ? 'selected' : '' }}>✅ Terverifikasi (Bahaya Rendah / Selesai)</option>
-                                <option value="DECLINE"  {{ $currentStatus === 'DECLINE'  ? 'selected' : '' }}>❌ Ditolak (Laporan Palsu / Salah)</option>
+                                    class="w-full px-3 py-2.5 text-sm border border-slate-200 rounded-xl focus:outline-none focus:border-blue-400 focus:ring-2 focus:ring-blue-500/20 transition-all bg-white text-slate-700">
+                                <option value="PENDING"  {{ $currentStatus === 'PENDING'  ? 'selected' : '' }}>Pending</option>
+                                <option value="AWAS"     {{ $currentStatus === 'AWAS'     ? 'selected' : '' }}>Awas</option>
+                                <option value="SIAGA_1"  {{ $currentStatus === 'SIAGA_1'  ? 'selected' : '' }}>Siaga 1</option>
+                                <option value="SIAGA_2"  {{ $currentStatus === 'SIAGA_2'  ? 'selected' : '' }}>Siaga 2</option>
+                                <option value="RESOLVED" {{ $currentStatus === 'RESOLVED' ? 'selected' : '' }}>Selesai</option>
+                                <option value="DECLINE"  {{ $currentStatus === 'DECLINE'  ? 'selected' : '' }}>Tolak</option>
                             </select>
                         </div>
 
                         <button type="submit"
-                                class="w-full flex items-center justify-center gap-2 px-4 py-2.5 text-sm font-semibold text-white rounded-xl transition-all hover:opacity-95 shadow-md cursor-pointer"
-                                style="background: linear-gradient(135deg, #059669 0%, #10b981 100%); box-shadow: 0 4px 12px rgba(16,185,129,0.2);">
-                            <i class="bi bi-shield-fill-check"></i> Simpan Verifikasi
+                                class="w-full py-2.5 text-sm font-semibold text-white rounded-xl cursor-pointer"
+                                style="background: linear-gradient(135deg, #059669 0%, #10b981 100%);">
+                            Simpan
                         </button>
                     </form>
             </div>
         </div>
         @endif
 
-        {{-- Peta --}}
-        <div class="bg-white border border-slate-200/80 rounded-2xl overflow-hidden"
-             style="box-shadow: 0 1px 3px rgba(10,15,30,0.06);">
-            <div class="px-5 py-4 border-b border-slate-100 bg-slate-50">
-                <h3 class="text-sm font-semibold text-slate-800 flex items-center gap-2">
-                    <i class="bi bi-map" style="color: #1e3a8a;"></i> Lokasi pada Peta
-                </h3>
+    </div>
+</div>
+
+{{-- Custom Confirm Modal --}}
+<div id="confirmModal" class="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm hidden opacity-0 transition-opacity duration-200">
+    <div class="bg-white rounded-2xl w-full max-w-sm overflow-hidden shadow-2xl border border-slate-100/80 transform scale-95 transition-transform duration-200">
+        <div class="p-6 text-center">
+            <div class="w-12 h-12 rounded-2xl bg-gradient-to-tr from-emerald-500 to-teal-400 text-white flex items-center justify-center mx-auto mb-5 shadow-lg shadow-emerald-500/20 transform rotate-3 hover:rotate-0 transition-transform duration-300">
+                <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="20 6 9 17 4 12"></polyline>
+                </svg>
             </div>
-            <div class="p-4">
-                <div id="detailMap" class="w-full h-56 rounded-xl border border-slate-100 overflow-hidden"></div>
+            <h3 class="text-base font-bold text-slate-900 mb-2">Selesaikan Laporan?</h3>
+            <p class="text-xs text-slate-500 leading-relaxed mb-6">Apakah Anda yakin ingin mengubah status laporan ini menjadi <strong>Selesai</strong>? Laporan yang diselesaikan akan ditandai sebagai teratasi.</p>
+            <div class="flex items-center gap-2.5">
+                <button type="button" id="confirmCancelBtn" class="flex-1 py-2.5 text-xs font-bold text-slate-600 border border-slate-200 bg-white rounded-xl hover:bg-slate-50 transition-colors cursor-pointer">Batalkan</button>
+                <button type="button" id="confirmOkBtn" class="flex-1 py-2.5 text-xs font-bold text-white rounded-xl shadow-md transition-all hover:opacity-95 cursor-pointer" style="background: linear-gradient(135deg, #059669 0%, #10b981 100%);">Ya, Selesai</button>
             </div>
         </div>
-
     </div>
 </div>
 @endsection
 
 @section('scripts')
-<script src="https://maps.googleapis.com/maps/api/js?key={{ config('services.google_maps.key') }}&callback=initDetailMap" async defer></script>
 <script>
-    function initDetailMap() {
-        const lat = {{ $laporan['latitude'] ?? -7.5505 }};
-        const lng = {{ $laporan['longitude'] ?? 110.8063 }};
-        const map = new google.maps.Map(document.getElementById("detailMap"), {
-            zoom: 14,
-            center: { lat, lng },
-            disableDefaultUI: true,
-            gestureHandling: 'greedy',
-            styles: [
-                { featureType: "water", elementType: "geometry", stylers: [{ color: "#c8dff0" }] },
-                { featureType: "landscape", elementType: "geometry", stylers: [{ color: "#f0f4f8" }] },
-                { featureType: "poi", stylers: [{ visibility: "off" }] },
-            ]
-        });
-        new google.maps.Marker({ position: { lat, lng }, map, title: "{{ addslashes($laporan['judul']) }}", animation: google.maps.Animation.DROP });
+    function showConfirmModal(callback) {
+        const modal = document.getElementById('confirmModal');
+        const content = modal.querySelector('.transform');
+        const okBtn = document.getElementById('confirmOkBtn');
+        const cancelBtn = document.getElementById('confirmCancelBtn');
+
+        modal.classList.remove('hidden');
+        setTimeout(() => {
+            modal.classList.remove('opacity-0');
+            content.classList.remove('scale-95');
+        }, 10);
+
+        const closeModal = () => {
+            modal.classList.add('opacity-0');
+            content.classList.add('scale-95');
+            setTimeout(() => { modal.classList.add('hidden'); }, 200);
+        };
+
+        const newOkBtn = okBtn.cloneNode(true);
+        const newCancelBtn = cancelBtn.cloneNode(true);
+        okBtn.parentNode.replaceChild(newOkBtn, okBtn);
+        cancelBtn.parentNode.replaceChild(newCancelBtn, cancelBtn);
+
+        newOkBtn.addEventListener('click', () => { closeModal(); callback(true); });
+        newCancelBtn.addEventListener('click', () => { closeModal(); callback(false); });
+        modal.onclick = (e) => { if (e.target === modal) { closeModal(); callback(false); } };
     }
+
+    document.getElementById('updateStatusForm')?.addEventListener('submit', function(e) {
+        const select = this.querySelector('select[name="status"]');
+        if (select && select.value === 'RESOLVED') {
+            e.preventDefault();
+            showConfirmModal((confirmed) => {
+                if (confirmed) {
+                    this.submit();
+                }
+            });
+        }
+    });
 </script>
 @endsection

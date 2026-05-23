@@ -25,7 +25,10 @@ Route::middleware('auth')->group(function () {
     // ADMIN ROUTES
     Route::middleware('role:admin')->prefix('admin')->group(function () {
         Route::get('/dashboard', [LaporanController::class, 'adminDashboard'])->name('admin.dashboard');
+        Route::get('/laporan', [LaporanController::class, 'adminLaporan'])->name('admin.laporan');
+        Route::get('/api/laporan/{id}', [LaporanController::class, 'adminLaporanDetail'])->name('admin.laporan.detail');
         Route::post('/laporan/update-status/{id}', [LaporanController::class, 'updateStatus'])->name('laporan.update_status');
+        Route::post('/laporan/update-type/{id}', [LaporanController::class, 'updateType'])->name('laporan.update_type');
         
         // Volunteer Management
         Route::get('/relawan', [VolunteerController::class, 'index'])->name('volunteer.index');

@@ -217,3 +217,35 @@ body {
     color: #0A0F1E;
     letter-spacing: -0.01em;
 }
+
+/* Admin Dashboard */
+.stat-card {
+    background: #FFFFFF;
+    border: 1px solid rgba(10, 15, 30, 0.06);
+    border-radius: 20px;
+    padding: 1.25rem 1.5rem;
+    box-shadow: 0 2px 8px rgba(10, 15, 30, 0.04);
+    transition: all 0.3s ease;
+}
+.stat-card:hover {
+    box-shadow: 0 8px 20px rgba(10, 15, 30, 0.08);
+    transform: translateY(-2px);
+}
+
+.pending-item {
+    padding: 1rem 1.25rem;
+    border-radius: 16px;
+    border: 1px solid rgba(10, 15, 30, 0.06);
+    background: #FFFFFF;
+    transition: all 0.2s ease;
+}
+.pending-item:hover {
+    border-color: rgba(59, 111, 232, 0.3);
+    box-shadow: 0 4px 12px rgba(59, 111, 232, 0.08);
+}
+
+.period-btn.active {
+    background: linear-gradient(135deg, #3B6FE8 0%, #1e3a8a 100%);
+    color: white;
+    box-shadow: 0 1px 4px rgba(30,58,138,0.2);
+}

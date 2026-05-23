@@ -73,11 +73,11 @@
                 @php
                     $roleType = strtolower(auth()->user()->role ?? '');
                     if ($roleType === 'admin') {
-                        $laporanLabel = 'Semua Laporan Masuk';
-                        $laporanCount = \App\Models\Disaster::count() . ' Laporan';
+                        $laporanLabel = 'Laporan Anda';
+                        $laporanCount = \App\Models\Disaster::where('user_id', auth()->id())->count() . ' Laporan';
                     } else {
                         $laporanLabel = 'Total Laporan Anda';
-                        $laporanCount = auth()->user()->disasters()->count() . ' Laporan';
+                        $laporanCount = \App\Models\Disaster::where('user_id', auth()->id())->count() . ' Laporan';
                     }
                 @endphp
                 <div class="pt-3.5 border-t border-slate-100">
