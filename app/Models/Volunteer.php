@@ -25,16 +25,13 @@ class Volunteer extends Model
         'assignment_notified_at' => 'datetime',
     ];
 
-    // Status constants
     const STATUS_PENDING  = 'PENDING';
     const STATUS_APPROVED = 'APPROVED';
     const STATUS_REJECTED = 'REJECTED';
 
-    // Availability constants
     const AVAILABILITY_AVAILABLE   = 'available';
     const AVAILABILITY_UNAVAILABLE = 'unavailable';
 
-    // Skills enum (sesuai Android SkillsVolunteer enum)
     const SKILL_MEDIS       = 'MEDIS';
     const SKILL_SAR         = 'SAR';
     const SKILL_LOGISTIK    = 'LOGISTIK';
@@ -57,9 +54,6 @@ class Volunteer extends Model
         return $this->belongsTo(User::class);
     }
 
-    /**
-     * Get human-readable status
-     */
     public function getStatusLabelAttribute(): string
     {
         return match($this->status) {

@@ -66,9 +66,7 @@
                 <button type="button" data-filter="SIAGA_2" class="filter-chip px-3.5 py-1.5 text-xs font-semibold rounded-full border transition-all duration-200">
                     <span class="inline-block w-2 h-2 rounded-full bg-violet-500 mr-1"></span>Siaga 2
                 </button>
-                <button type="button" data-filter="RESOLVED" class="filter-chip px-3.5 py-1.5 text-xs font-semibold rounded-full border transition-all duration-200">
-                    <span class="inline-block w-2 h-2 rounded-full bg-emerald-500 mr-1"></span>Terverifikasi
-                </button>
+
                 @if(strtolower(auth()->user()->role ?? '') === 'admin' || $disasters->contains('status', 'PENDING'))
                     <button type="button" data-filter="PENDING" class="filter-chip px-3.5 py-1.5 text-xs font-semibold rounded-full border transition-all duration-200">
                         <span class="inline-block w-2 h-2 rounded-full bg-amber-500 mr-1"></span>Pending
@@ -127,14 +125,6 @@
 
                 <div class="flex items-start justify-between gap-3 mb-2">
                     <div class="flex items-center gap-2 min-w-0">
-                        @if($d->disaster_type === 'earthquake')
-                            <svg class="{{ $typeColor }} w-4 h-4 shrink-0" viewBox="0 0 16 16" fill="currentColor">
-                                <path d="M3 15 L3 8 L8 3 L7.5 6 L9 9 L7 12 L7.5 15 Z" />
-                                <path d="M8.5 16 L8 13 L10 10 L8.5 7 L9 4.5 L14 9.5 L14 16 Z" />
-                            </svg>
-                        @else
-                            <i class="bi {{ $typeIcon }} {{ $typeColor }} text-base shrink-0"></i>
-                        @endif
                         <h3 class="text-sm font-bold text-slate-900 truncate">{{ $d->title }}</h3>
                     </div>
                     <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold border {{ $badgeBg }} shrink-0">

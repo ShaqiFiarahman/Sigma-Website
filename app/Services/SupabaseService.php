@@ -16,9 +16,6 @@ class SupabaseService
         $this->key = config('services.supabase.key');
     }
 
-    /**
-     * Register a new user with Supabase Auth
-     */
     public function register($email, $password, $metadata = [])
     {
         $response = Http::withHeaders([
@@ -40,9 +37,6 @@ class SupabaseService
         ];
     }
 
-    /**
-     * Login user with Supabase Auth
-     */
     public function login($email, $password)
     {
         $response = Http::withHeaders([
@@ -58,14 +52,45 @@ class SupabaseService
         }
 
         Log::error('Supabase Login Error: ' . $response->body());
-        return [
-            'error' => $response->json('error_description') ?? $response->json('msg') ?? 'Login failed',
-        ];
+
+        $rawError = strtolower(
+            $response->json('error_description') ?? $response->json('msg') ?? $response->json('error') ?? ''
+        );
+
+        $message = $this->translateLoginError($rawError);
+
+        return ['error' => $message];
     }
 
-    /**
-     * Get current user details from Supabase using access token
-     */
+    protected function translateLoginError(string $raw): string
+    {
+        if (str_contains($raw, 'invalid login credentials') || str_contains($raw, 'invalid password')) {
+            return 'Email atau kata sandi yang Anda masukkan salah. Silakan periksa kembali.';
+        }
+
+        if (str_contains($raw, 'email not confirmed')) {
+            return 'Akun Anda belum diverifikasi. Silakan cek email untuk mengkonfirmasi akun.';
+        }
+
+        if (str_contains($raw, 'user not found') || str_contains($raw, 'no user found')) {
+            return 'Akun dengan email tersebut tidak ditemukan. Pastikan email sudah terdaftar.';
+        }
+
+        if (str_contains($raw, 'too many requests') || str_contains($raw, 'rate limit')) {
+            return 'Terlalu banyak percobaan login. Silakan tunggu beberapa saat sebelum mencoba lagi.';
+        }
+
+        if (str_contains($raw, 'account disabled') || str_contains($raw, 'user is disabled') || str_contains($raw, 'banned')) {
+            return 'Akun Anda telah dinonaktifkan. Silakan hubungi administrator.';
+        }
+
+        if (str_contains($raw, 'network') || str_contains($raw, 'timeout') || str_contains($raw, 'connection')) {
+            return 'Gagal terhubung ke server. Periksa koneksi internet Anda dan coba lagi.';
+        }
+
+        return 'Login gagal. Silakan coba lagi atau hubungi administrator jika masalah berlanjut.';
+    }
+
     public function getUser($accessToken)
     {
         $response = Http::withHeaders([
@@ -80,9 +105,6 @@ class SupabaseService
         return null;
     }
 
-    /**
-     * Update user details in Supabase Auth
-     */
     public function updateUser($accessToken, $data)
     {
         $response = Http::withHeaders([

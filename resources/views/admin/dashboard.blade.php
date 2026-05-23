@@ -239,68 +239,28 @@
                         <span class="w-2 h-2 rounded-full bg-amber-400 animate-pulse"></span>
                         Menunggu Verifikasi
                     </h3>
-                    <p class="text-[11px] text-slate-400 mt-0.5">{{ $pending }} laporan pending</p>
+                    <p class="text-[11px] text-slate-400 mt-0.5" id="pending-subtitle">{{ $pending }} laporan pending</p>
                 </div>
                 <a href="{{ route('laporan.index') }}" class="text-[11px] font-bold text-blue-600 hover:text-blue-800 transition-colors">
                     Lihat Semua
                 </a>
             </div>
-            <div class="flex-1 overflow-y-auto p-4 space-y-3 max-h-[320px]">
-                @forelse($recentPending as $item)
-                    <div class="pending-item">
-                        <div class="flex items-start justify-between gap-2 mb-2">
-                            <h4 class="text-[13px] font-bold text-slate-900 leading-tight line-clamp-1">{{ $item['judul'] }}</h4>
-                            <span class="shrink-0 text-[10px] text-slate-400 font-medium">{{ $item['tanggal'] }}</span>
-                        </div>
-                        <p class="text-[11px] text-slate-500 mb-3 flex items-center gap-1.5">
-                            <i class="bi bi-geo-alt text-slate-300 text-[10px]"></i>
-                            <span class="line-clamp-1">{{ \Illuminate\Support\Str::limit($item['lokasi'], 40) }}</span>
-                        </p>
-                        <div class="flex items-center gap-2">
-                            <form action="{{ route('laporan.update_status', $item['id']) }}" method="POST" class="inline">
-                                @csrf
-                                <input type="hidden" name="status" value="SIAGA_2">
-                                <button type="submit" class="px-3 py-1.5 text-[10px] font-bold rounded-lg bg-emerald-50 text-emerald-700 border border-emerald-200 hover:bg-emerald-100 transition-colors">
-                                    <i class="bi bi-check-lg mr-0.5"></i> Verifikasi
-                                </button>
-                            </form>
-                            <form action="{{ route('laporan.update_status', $item['id']) }}" method="POST" class="inline">
-                                @csrf
-                                <input type="hidden" name="status" value="DECLINE">
-                                <button type="submit" class="px-3 py-1.5 text-[10px] font-bold rounded-lg bg-red-50 text-red-700 border border-red-200 hover:bg-red-100 transition-colors">
-                                    <i class="bi bi-x-lg mr-0.5"></i> Tolak
-                                </button>
-                            </form>
-                            <a href="{{ route('laporan.show', $item['id']) }}" class="ml-auto text-[10px] font-bold text-slate-500 hover:text-blue-600 transition-colors">
-                                Detail →
-                            </a>
-                        </div>
-                    </div>
-                @empty
-                    <div class="flex-1 flex flex-col items-center justify-center py-8 text-center">
-                        <div class="w-12 h-12 rounded-2xl flex items-center justify-center mb-3 bg-emerald-50">
-                            <i class="bi bi-check-all text-xl text-emerald-600"></i>
-                        </div>
-                        <p class="text-sm font-bold text-slate-700">Semua terverifikasi</p>
-                        <p class="text-xs text-slate-400 mt-0.5">Tidak ada laporan pending saat ini.</p>
-                    </div>
-                @endforelse
+            <div class="flex-1 overflow-y-auto p-4 space-y-3 max-h-[320px]" id="pending-list">
+                {{-- Diisi secara dinamis lewat JS --}}
+                <div class="flex items-center justify-center py-8">
+                    <div class="w-5 h-5 border-2 border-blue-200 border-t-blue-500 rounded-full animate-spin"></div>
+                </div>
             </div>
             {{-- Footer info --}}
             <div class="px-5 py-3 border-t border-slate-100 bg-slate-50/50">
                 <div class="space-y-1.5">
-                    @php
-                        $verifiedTotal = \App\Models\Disaster::whereNotIn('status', ['PENDING', 'DECLINE'])->count();
-                        $weekVerified = \App\Models\Disaster::where('created_at', '>=', now()->subWeek())
-                            ->whereNotIn('status', ['PENDING', 'DECLINE'])->count();
-                    @endphp
                     <div class="flex items-center gap-2 text-[11px] text-slate-500">
                         <i class="bi bi-check-circle-fill text-emerald-500 text-[10px]"></i>
-                        <span>{{ $verifiedTotal }} diverifikasi total</span>
+                        <span id="footer-verified-total">{{ \App\Models\Disaster::whereNotIn('status', ['PENDING', 'DECLINE'])->count() }} diverifikasi total</span>
                     </div>
                     <div class="flex items-center gap-2 text-[11px] text-slate-500">
                         <i class="bi bi-graph-up text-blue-500 text-[10px]"></i>
-                        <span>{{ $weekVerified }} diverifikasi minggu ini</span>
+                        <span id="footer-week-verified">{{ \App\Models\Disaster::where('created_at', '>=', now()->subWeek())->whereNotIn('status', ['PENDING', 'DECLINE'])->count() }} diverifikasi minggu ini</span>
                     </div>
                 </div>
             </div>
@@ -349,8 +309,18 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     <script>
+        // ═══════════════════════════════════════════════════
+        //  CSRF TOKEN for AJAX requests
+        // ═══════════════════════════════════════════════════
+        const CSRF_TOKEN = '{{ csrf_token() }}';
+        const UPDATE_STATUS_BASE = '{{ url('admin/laporan/update-status') }}';
+
+        // ═══════════════════════════════════════════════════
+        //  Live data — will be refreshed from API
+        // ═══════════════════════════════════════════════════
+        let allDisasters = {!! json_encode($allDisasters) !!};
         let reportChart;
-        const allDisasters = {!! json_encode($allDisasters) !!};
+        let currentPeriod = '7d';
 
         const ctx = document.getElementById('reportChart').getContext('2d');
         const gradient = ctx.createLinearGradient(0, 0, 0, 260);
@@ -484,7 +454,7 @@
             {!! json_encode($chartPending) !!}
         );
 
-        // Period switching - instant, no fetch
+        // Period switching — instant, uses live allDisasters
         document.querySelectorAll('.period-btn').forEach(btn => {
             btn.addEventListener('click', () => {
                 document.querySelectorAll('.period-btn').forEach(b => {
@@ -493,34 +463,171 @@
                 });
                 btn.classList.add('active');
                 btn.classList.remove('text-slate-500');
-                computeStats(btn.dataset.period);
+                currentPeriod = btn.dataset.period;
+                computeStats(currentPeriod);
             });
         });
 
         // ═══════════════════════════════════════════════════
-        //  NOTIFICATION POLLING SYSTEM (admin/dashboard only)
+        //  PENDING LIST RENDERER
+        // ═══════════════════════════════════════════════════
+        function renderPendingList(items) {
+            const container = document.getElementById('pending-list');
+            if (!container) return;
+
+            if (items.length === 0) {
+                container.innerHTML = `
+                    <div class="flex-1 flex flex-col items-center justify-center py-8 text-center">
+                        <div class="w-12 h-12 rounded-2xl flex items-center justify-center mb-3 bg-emerald-50">
+                            <i class="bi bi-check-all text-xl text-emerald-600"></i>
+                        </div>
+                        <p class="text-sm font-bold text-slate-700">Semua terverifikasi</p>
+                        <p class="text-xs text-slate-400 mt-0.5">Tidak ada laporan pending saat ini.</p>
+                    </div>`;
+                return;
+            }
+
+            container.innerHTML = items.map(item => {
+                const lokasi = item.lokasi.length > 40 ? item.lokasi.substring(0, 40) + '...' : item.lokasi;
+                return `
+                    <div class="pending-item" id="pending-item-${item.id}">
+                        <div class="flex items-start justify-between gap-2 mb-2">
+                            <h4 class="text-[13px] font-bold text-slate-900 leading-tight line-clamp-1">${item.judul}</h4>
+                            <span class="shrink-0 text-[10px] text-slate-400 font-medium">${item.tanggal}</span>
+                        </div>
+                        <p class="text-[11px] text-slate-500 mb-3 flex items-center gap-1.5">
+                            <i class="bi bi-geo-alt text-slate-300 text-[10px]"></i>
+                            <span class="line-clamp-1">${lokasi}</span>
+                        </p>
+                        <div class="flex items-center gap-2">
+                            <button onclick="adminUpdateStatus(${item.id}, 'SIAGA_2', this)"
+                                    class="px-3 py-1.5 text-[10px] font-bold rounded-lg bg-emerald-50 text-emerald-700 border border-emerald-200 hover:bg-emerald-100 transition-colors">
+                                <i class="bi bi-check-lg mr-0.5"></i> Verifikasi
+                            </button>
+                            <button onclick="adminUpdateStatus(${item.id}, 'DECLINE', this)"
+                                    class="px-3 py-1.5 text-[10px] font-bold rounded-lg bg-red-50 text-red-700 border border-red-200 hover:bg-red-100 transition-colors">
+                                <i class="bi bi-x-lg mr-0.5"></i> Tolak
+                            </button>
+                            <a href="/laporan/detail/${item.id}" class="ml-auto text-[10px] font-bold text-slate-500 hover:text-blue-600 transition-colors">
+                                Detail →
+                            </a>
+                        </div>
+                    </div>`;
+            }).join('');
+        }
+
+        // ═══════════════════════════════════════════════════
+        //  AJAX: Verify / Reject without page reload
+        // ═══════════════════════════════════════════════════
+        window.adminUpdateStatus = function(id, status, btn) {
+            btn.disabled = true;
+            btn.innerHTML = '<span class="inline-block w-3 h-3 border border-current border-t-transparent rounded-full animate-spin"></span>';
+
+            fetch(`${UPDATE_STATUS_BASE}/${id}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': CSRF_TOKEN,
+                    'Accept': 'application/json',
+                },
+                body: JSON.stringify({ status }),
+            })
+            .then(res => {
+                if (!res.ok) throw new Error('Server error');
+                // Remove card with animation
+                const card = document.getElementById(`pending-item-${id}`);
+                if (card) {
+                    card.style.transition = 'all 0.3s ease';
+                    card.style.opacity = '0';
+                    card.style.transform = 'translateX(20px)';
+                    setTimeout(() => {
+                        card.remove();
+                        // If no cards left, show empty state
+                        const container = document.getElementById('pending-list');
+                        if (container && container.children.length === 0) {
+                            renderPendingList([]);
+                        }
+                    }, 300);
+                }
+                // Immediately refresh stats
+                fetchAdminStats();
+            })
+            .catch(() => {
+                btn.disabled = false;
+                btn.innerHTML = status === 'SIAGA_2'
+                    ? '<i class="bi bi-check-lg mr-0.5"></i> Verifikasi'
+                    : '<i class="bi bi-x-lg mr-0.5"></i> Tolak';
+                alert('Gagal mengubah status. Silakan coba lagi.');
+            });
+        };
+
+        // ═══════════════════════════════════════════════════
+        //  LIVE POLLING: Admin Stats every 15 seconds
+        // ═══════════════════════════════════════════════════
+        function fetchAdminStats() {
+            fetch('/api/admin-stats')
+                .then(res => res.json())
+                .then(data => {
+                    // Update live allDisasters and recompute chart
+                    allDisasters = data.all_disasters.map(d => ({
+                        id: d.id, status: d.status, date: d.date
+                    }));
+                    computeStats(currentPeriod);
+
+                    // Update stat cards
+                    document.getElementById('stat-total').textContent   = data.total;
+                    document.getElementById('stat-pending').textContent  = data.pending;
+                    document.getElementById('stat-selesai').textContent  = data.selesai;
+                    document.getElementById('stat-decline').textContent  = data.decline;
+                    document.getElementById('stat-awas').textContent     = data.awas;
+                    document.getElementById('stat-siaga1').textContent   = data.siaga1;
+                    document.getElementById('stat-siaga2').textContent   = data.siaga2;
+
+                    // Update footer
+                    const footerVerified = document.getElementById('footer-verified-total');
+                    const footerWeek     = document.getElementById('footer-week-verified');
+                    if (footerVerified) footerVerified.textContent = `${data.verified_total} diverifikasi total`;
+                    if (footerWeek)     footerWeek.textContent     = `${data.week_verified} diverifikasi minggu ini`;
+
+                    // Update pending subtitle
+                    const sub = document.getElementById('pending-subtitle');
+                    if (sub) sub.textContent = `${data.pending} laporan pending`;
+
+                    // Update today trend
+                    const trendEl = document.getElementById('stat-total-trend');
+                    if (trendEl) {
+                        trendEl.innerHTML = data.today_count > 0
+                            ? `<span class="text-emerald-600">↑ +${data.today_count} hari ini</span>`
+                            : '';
+                    }
+
+                    // Update pending list (only re-render if count changed to avoid flicker)
+                    renderPendingList(data.pending_items);
+                })
+                .catch(err => console.warn('Admin stats fetch failed:', err));
+        }
+
+        // ═══════════════════════════════════════════════════
+        //  NOTIFICATION POLLING SYSTEM
         // ═══════════════════════════════════════════════════
         (function() {
-            const notifBtn = document.getElementById('notifBtn');
+            const notifBtn      = document.getElementById('notifBtn');
             const notifDropdown = document.getElementById('notifDropdown');
-            const notifBadge = document.getElementById('notifBadge');
-            const notifCount = document.getElementById('notifCount');
-            const notifList = document.getElementById('notifList');
+            const notifBadge    = document.getElementById('notifBadge');
+            const notifCount    = document.getElementById('notifCount');
+            const notifList     = document.getElementById('notifList');
 
             if (!notifBtn || !notifDropdown) return;
 
-            // Toggle dropdown
             notifBtn.addEventListener('click', (e) => {
                 e.stopPropagation();
                 notifDropdown.classList.toggle('hidden');
                 if (!notifDropdown.classList.contains('hidden')) {
-                    // Update last seen
                     localStorage.setItem('admin_last_seen_notif', new Date().toISOString());
                     if (notifBadge) notifBadge.classList.add('hidden');
                 }
             });
 
-            // Close when clicking outside
             document.addEventListener('click', (e) => {
                 if (!notifDropdown.classList.contains('hidden') && !e.target.closest('#notifWrapper')) {
                     notifDropdown.classList.add('hidden');
@@ -531,31 +638,18 @@
                 fetch('/api/pending-reports')
                     .then(res => res.json())
                     .then(data => {
-                        const count = data.length;
                         const lastSeenStr = localStorage.getItem('admin_last_seen_notif');
-                        const lastSeen = lastSeenStr ? new Date(lastSeenStr) : new Date(0);
+                        const lastSeen    = lastSeenStr ? new Date(lastSeenStr) : new Date(0);
 
-                        let unreadCount = 0;
-                        data.forEach(item => {
-                            if (new Date(item.created_at) > lastSeen) {
-                                unreadCount++;
-                            }
-                        });
+                        const unreadCount = data.filter(item => new Date(item.created_at) > lastSeen).length;
 
-                        // Update badge
-                        if (unreadCount > 0 && notifBadge) {
+                        if (notifBadge) {
                             notifBadge.textContent = unreadCount;
-                            notifBadge.classList.remove('hidden');
-                        } else if (notifBadge) {
-                            notifBadge.classList.add('hidden');
+                            notifBadge.classList.toggle('hidden', unreadCount === 0);
                         }
+                        if (notifCount) notifCount.textContent = `${unreadCount} baru`;
 
-                        // Update header count
-                        if (notifCount) {
-                            notifCount.textContent = `${unreadCount} baru`;
-                        }
-
-                        if (count === 0) {
+                        if (data.length === 0) {
                             notifList.innerHTML = `
                                 <div class="px-5 py-8 text-center">
                                     <i class="bi bi-bell-slash text-slate-300 text-lg block mb-1"></i>
@@ -578,7 +672,7 @@
                                             <span>${item.reporter}</span> &middot; <span>${item.date}</span>
                                         </p>
                                     </div>
-                                    ${isNew ? '<span class="notif-new-dot w-2 h-2 rounded-full bg-blue-500 shrink-0 mt-2"></span>' : ''}
+                                    ${isNew ? '<span class="w-2 h-2 rounded-full bg-blue-500 shrink-0 mt-2"></span>' : ''}
                                 </div>`;
                         }).join('');
                     })
@@ -594,5 +688,21 @@
             fetchNotifications();
             setInterval(fetchNotifications, 30000);
         })();
+
+        // ═══════════════════════════════════════════════════
+        //  INITIAL LOAD + START POLLING
+        // ═══════════════════════════════════════════════════
+        // Initial chart render from server-side data
+        createChart(
+            {!! json_encode($chartLabels) !!},
+            {!! json_encode($chartData) !!},
+            {!! json_encode($chartVerified) !!},
+            {!! json_encode($chartPending) !!}
+        );
+
+        // Load pending list and start live updates
+        fetchAdminStats();
+        setInterval(fetchAdminStats, 15000);
     </script>
 @endsection
+

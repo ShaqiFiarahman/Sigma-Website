@@ -124,7 +124,7 @@
                 <div class="hidden md:flex items-center gap-3 pl-4 border-l border-slate-200 cursor-pointer group"
                     onclick="document.getElementById('profileModal').classList.remove('hidden')">
                     <div class="text-right">
-                        <p class="text-sm font-semibold text-slate-900 leading-none group-hover:text-blue-800 transition-colors">{{ auth()->user()->full_name }}</p>
+                        <p class="text-sm font-semibold text-slate-900 leading-none group-hover:text-blue-800 transition-colors">{{ auth()->user()->short_name }}</p>
                         <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1">
                             {{ auth()->user()->role }}
                         </p>
@@ -192,6 +192,12 @@
     @yield('footer')
 
     <x-profile-modal />
+
+    {{-- Toast Notification Container (Below navbar on the right) --}}
+    <div id="disaster-toast-container" class="fixed top-24 right-6 z-[9999] flex flex-col gap-3 pointer-events-none w-[calc(100%-2rem)] max-w-sm sm:w-80"></div>
+    
+    {{-- Reusable Toast HTML Template --}}
+    <x-disaster-toast />
 
     <script>
         const toggle = document.getElementById('mobileToggle');

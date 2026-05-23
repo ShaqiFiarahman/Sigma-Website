@@ -64,7 +64,6 @@ class MapController extends Controller
         $disasters = Disaster::whereNotNull('latitude')
             ->whereNotNull('longitude')
             ->whereIn('status', [
-                'RESOLVED',
                 'SIAGA_1',
                 'SIAGA_2',
                 'AWAS'
@@ -81,12 +80,13 @@ class MapController extends Controller
                 'status'        => $d->status,
                 'statusLabel'   => $d->status_label,
                 'reporter'      => $d->reporter_name,
-                'date'          => $d->created_at?->format('d M Y H:i'),
+                'date'          => $d->created_at?->toIso8601String(),
                 'type'          => 'disaster',
                 'disaster_type' => $d->disaster_type,
                 'type_icon'     => $d->type_icon,
                 'type_color'    => $d->type_color,
                 'type_name'     => $d->type_name,
+                'photo'         => $d->photo_url ? (json_decode($d->photo_url)[0] ?? null) : null,
             ]);
 
         return response()->json($disasters);
@@ -107,16 +107,17 @@ class MapController extends Controller
     private function shelterToArray(Shelter $s): array
     {
         return [
-            'id'        => $s->id,
-            'name'      => $s->name,
-            'address'   => $s->address,
-            'distance'  => '—', // Will be calculated client-side
-            'capacity'  => $s->capacity_label,
-            'status'    => $s->status,
-            'lat'       => $s->latitude,
-            'lng'       => $s->longitude,
-            'logistics' => $s->logistics ?? [],
+            'id'            => $s->id,
+            'name'          => $s->name,
+            'address'       => $s->address,
+            'distance'      => '—', // Will be calculated client-side
+            'capacity'      => $s->capacity_label,
+            'status'        => $s->status,
+            'lat'           => $s->latitude,
+            'lng'           => $s->longitude,
+            'logistics'     => $s->logistics ?? [],
             'contact_phone' => $s->contact_phone,
+            'photo_url'     => $s->photo_url,
         ];
     }
 }

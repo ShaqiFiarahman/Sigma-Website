@@ -91,4 +91,39 @@ Route::middleware('auth')->group(function () {
         );
     })->name('api.pending_reports');
 
+    Route::get('/api/admin-stats', function () {
+        if (strtolower(auth()->user()->role ?? '') !== 'admin') {
+            return response()->json([], 403);
+        }
+
+        $disasters = \App\Models\Disaster::all();
+
+        return response()->json([
+            'total'          => $disasters->count(),
+            'pending'        => $disasters->where('status', 'PENDING')->count(),
+            'selesai'        => $disasters->whereNotIn('status', ['PENDING', 'DECLINE'])->count(),
+            'decline'        => $disasters->where('status', 'DECLINE')->count(),
+            'awas'           => $disasters->where('status', 'AWAS')->count(),
+            'siaga1'         => $disasters->where('status', 'SIAGA_1')->count(),
+            'siaga2'         => $disasters->where('status', 'SIAGA_2')->count(),
+            'verified_total' => $disasters->whereNotIn('status', ['PENDING', 'DECLINE'])->count(),
+            'week_verified'  => \App\Models\Disaster::where('created_at', '>=', now()->subWeek())
+                ->whereNotIn('status', ['PENDING', 'DECLINE'])->count(),
+            'today_count'    => \App\Models\Disaster::whereDate('created_at', today())->count(),
+            'all_disasters'  => $disasters->map(fn($d) => [
+                'id'     => $d->id,
+                'status' => $d->status,
+                'date'   => $d->created_at?->toIso8601String(),
+            ]),
+            'pending_items'  => \App\Models\Disaster::where('status', 'PENDING')
+                ->latest()->limit(5)->get()->map(fn($d) => [
+                    'id'         => $d->id,
+                    'judul'      => $d->title,
+                    'lokasi'     => $d->location ?? '',
+                    'tanggal'    => $d->created_at?->format('d M Y'),
+                    'created_at' => $d->created_at?->toISOString(),
+                ]),
+        ]);
+    })->name('api.admin_stats');
+
 });

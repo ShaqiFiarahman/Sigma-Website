@@ -61,7 +61,6 @@ class NewsService
     {
         $text = strtolower($text);
 
-        // Abaikan berita jika mengandung kata yang sering false-positive
         if (str_contains($text, 'gempar') || str_contains($text, 'olahraga') || str_contains($text, 'sepakbola')) {
             return false;
         }
@@ -76,12 +75,10 @@ class NewsService
 
     protected function extractImage($item)
     {
-        // Try enclosure first
         if ($item->enclosure) {
             return (string) $item->enclosure['url'];
         }
 
-        // Try media:content or media:thumbnail
         $namespaces = $item->getNamespaces(true);
         if (isset($namespaces['media'])) {
             $media = $item->children($namespaces['media']);
@@ -99,7 +96,6 @@ class NewsService
             }
         }
 
-        // Try matching in description
         preg_match('/<img.+src=[\'"]([^\'"]+)[\'"].*>/i', (string) $item->description, $matches);
         if (isset($matches[1])) {
             return $matches[1];

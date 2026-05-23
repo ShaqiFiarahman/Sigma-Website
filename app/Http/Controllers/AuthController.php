@@ -49,7 +49,7 @@ class AuthController extends Controller
         $supabaseUser = $this->supabase->getUser($response['access_token']);
         
         if (!$supabaseUser) {
-            return back()->withErrors(['email' => 'Failed to retrieve user data from Supabase.']);
+            return back()->withErrors(['email' => 'Gagal mengambil data pengguna. Silakan coba login kembali.']);
         }
 
         $user = User::where('email', $credentials['email'])->first();

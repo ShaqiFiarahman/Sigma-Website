@@ -31,9 +31,6 @@ class VolunteerReport extends Model
         return $this->belongsTo(Disaster::class);
     }
 
-    /**
-     * Get form fields definition per skill type
-     */
     public static function getFieldsForSkill(string $skill): array
     {
         return match ($skill) {

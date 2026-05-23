@@ -103,9 +103,9 @@
                                         <span id="coordLong"></span>
                                     </div>
                                 </div>
-                                <p class="text-xs text-slate-400 mt-1.5 flex items-center gap-1">
-                                    <i class="bi bi-info-circle"></i>
-                                    Klik pada peta untuk menentukan lokasi kejadian
+                                <p id="mapHelpText" class="text-xs text-slate-400 mt-1.5 flex items-center gap-1 transition-all duration-300">
+                                    <i id="mapHelpIcon" class="bi bi-info-circle"></i>
+                                    <span id="mapHelpSpan">Klik pada peta untuk menentukan lokasi kejadian</span>
                                 </p>
                             </div>
 
@@ -114,11 +114,11 @@
                             <input type="hidden" name="longitude" id="longitude">
 
                             {{-- Upload Foto --}}
-                            <div>
+                             <div>
                                 <label class="block text-xs font-bold text-slate-700 mb-2 uppercase tracking-wider">
                                     Dokumentasi Foto <span class="text-red-500">*</span>
                                 </label>
-                                <label for="foto"
+                                <label for="foto" id="photoUploadBox"
                                     class="flex flex-col items-center justify-center w-full h-32 px-4 transition-all duration-200 border-2 border-slate-200 border-dashed rounded-xl cursor-pointer hover:border-blue-400 hover:bg-blue-50/30"
                                     style="background: #F8FAFC;">
                                     <input type="file" id="foto" name="foto[]" accept="image/*" class="hidden" multiple required>
@@ -140,6 +140,10 @@
                                         <p class="text-xs text-slate-400 mt-0.5">Klik untuk mengganti</p>
                                     </div>
                                 </label>
+                                <p id="photoHelpText" class="text-xs text-slate-400 mt-1.5 flex items-center gap-1 transition-all duration-300">
+                                    <i id="photoHelpIcon" class="bi bi-info-circle"></i>
+                                    <span id="photoHelpSpan">Pilih berkas foto dokumentasi kejadian yang valid</span>
+                                </p>
                             </div>
 
                         </div>
@@ -322,6 +326,18 @@
 @endsection
 
 @section('scripts')
+    <style>
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            15%, 45%, 75% { transform: translateX(-6px); }
+            30%, 60% { transform: translateX(6px); }
+        }
+        .shake-highlight {
+            animation: shake 0.5s ease-in-out;
+            border-color: #EF4444 !important;
+            box-shadow: 0 0 0 4px rgba(239, 68, 68, 0.25) !important;
+        }
+    </style>
     <script src="https://maps.googleapis.com/maps/api/js?key={{ config('services.google_maps.key') }}&callback=initMap"
         async defer></script>
     <script>
@@ -355,7 +371,8 @@
                 locDisplay.classList.remove('hidden');
                 locDisplay.classList.add('flex');
 
-
+                // Reset warning styles
+                resetWarning();
             });
         };
 
@@ -382,7 +399,8 @@
                         locDisplay.classList.remove('hidden');
                         locDisplay.classList.add('flex');
                         
-
+                        // Reset warning styles
+                        resetWarning();
                         
                         this.innerHTML = originalText;
                         this.disabled = false;
@@ -409,6 +427,22 @@
             map.panTo({ lat, lng });
         }
 
+        function resetWarning() {
+            const mapContainer = document.getElementById('mapContainer');
+            const mapHelpText = document.getElementById('mapHelpText');
+            const mapHelpIcon = document.getElementById('mapHelpIcon');
+            const mapHelpSpan = document.getElementById('mapHelpSpan');
+
+            if (mapContainer.classList.contains('shake-highlight')) {
+                mapContainer.classList.remove('shake-highlight');
+            }
+            if (mapHelpText && mapHelpIcon && mapHelpSpan) {
+                mapHelpText.className = "text-xs text-slate-400 mt-1.5 flex items-center gap-1 transition-all duration-300";
+                mapHelpIcon.className = "bi bi-info-circle";
+                mapHelpSpan.textContent = "Klik pada peta untuk menentukan lokasi kejadian";
+            }
+        }
+
         const fileInput = document.getElementById('foto');
         const placeholder = document.getElementById('uploadPlaceholder');
         const previewBox = document.getElementById('uploadPreview');
@@ -416,12 +450,39 @@
 
         fileInput?.addEventListener('change', function () {
             const files = this.files;
+            const photoUploadBox = document.getElementById('photoUploadBox');
+            const photoHelpText = document.getElementById('photoHelpText');
+            const photoHelpIcon = document.getElementById('photoHelpIcon');
+            const photoHelpSpan = document.getElementById('photoHelpSpan');
+
+            // Reset warnings
+            if (photoUploadBox.classList.contains('shake-highlight')) {
+                photoUploadBox.classList.remove('shake-highlight');
+            }
+            if (photoHelpText && photoHelpIcon && photoHelpSpan) {
+                photoHelpText.className = "text-xs text-slate-400 mt-1.5 flex items-center gap-1 transition-all duration-300";
+                photoHelpIcon.className = "bi bi-info-circle";
+                photoHelpSpan.textContent = "Pilih berkas foto dokumentasi kejadian yang valid";
+            }
+
             if (files.length > 3) {
-                alert('Maksimal 3 foto yang boleh diunggah.');
                 this.value = ''; // Reset
                 placeholder.classList.remove('hidden');
                 previewBox.classList.add('hidden');
                 previewBox.classList.remove('flex');
+
+                // Shake and highlight border
+                photoUploadBox.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                photoUploadBox.classList.remove('shake-highlight');
+                void photoUploadBox.offsetWidth; // trigger reflow
+                photoUploadBox.classList.add('shake-highlight');
+
+                // Set warning helper text
+                if (photoHelpText && photoHelpIcon && photoHelpSpan) {
+                    photoHelpText.className = "text-xs text-red-500 font-bold mt-1.5 flex items-center gap-1.5 animate-pulse transition-all duration-300";
+                    photoHelpIcon.className = "bi bi-exclamation-triangle-fill text-red-500";
+                    photoHelpSpan.textContent = "Maksimal 3 foto yang boleh diunggah!";
+                }
                 return;
             }
             
@@ -432,11 +493,23 @@
             
             const totalSizeMB = totalSize / (1024 * 1024);
             if (totalSizeMB > 25) {
-                alert('Total ukuran file melebihi 25MB.');
                 this.value = ''; // Reset
                 placeholder.classList.remove('hidden');
                 previewBox.classList.add('hidden');
                 previewBox.classList.remove('flex');
+
+                // Shake and highlight border
+                photoUploadBox.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                photoUploadBox.classList.remove('shake-highlight');
+                void photoUploadBox.offsetWidth; // trigger reflow
+                photoUploadBox.classList.add('shake-highlight');
+
+                // Set warning helper text
+                if (photoHelpText && photoHelpIcon && photoHelpSpan) {
+                    photoHelpText.className = "text-xs text-red-500 font-extrabold mt-1.5 flex items-center gap-1.5 animate-pulse transition-all duration-300";
+                    photoHelpIcon.className = "bi bi-exclamation-triangle-fill text-red-500";
+                    photoHelpSpan.textContent = "Total ukuran file melebihi 25MB!";
+                }
                 return;
             }
             
@@ -459,7 +532,26 @@
             const lng = document.getElementById('longitude').value;
             if (!lat || !lng) {
                 e.preventDefault();
-                alert('Silakan klik pada peta untuk menentukan lokasi kejadian terlebih dahulu.');
+                
+                const mapContainer = document.getElementById('mapContainer');
+                const mapHelpText = document.getElementById('mapHelpText');
+                const mapHelpIcon = document.getElementById('mapHelpIcon');
+                const mapHelpSpan = document.getElementById('mapHelpSpan');
+
+                // Scroll to map smoothly
+                mapContainer.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+                // Trigger shake and highlight border
+                mapContainer.classList.remove('shake-highlight');
+                void mapContainer.offsetWidth; // trigger reflow
+                mapContainer.classList.add('shake-highlight');
+
+                // Update instruction text to red pulsing warning
+                if (mapHelpText && mapHelpIcon && mapHelpSpan) {
+                    mapHelpText.className = "text-xs text-red-500 font-extrabold mt-1.5 flex items-center gap-1.5 animate-pulse transition-all duration-300";
+                    mapHelpIcon.className = "bi bi-exclamation-triangle-fill text-red-500";
+                    mapHelpSpan.textContent = "Silakan klik pada peta untuk menentukan lokasi kejadian terlebih dahulu!";
+                }
                 return;
             }
             submitBtn.innerHTML = '<i class="bi bi-hourglass-split"></i> Mengirim...';
