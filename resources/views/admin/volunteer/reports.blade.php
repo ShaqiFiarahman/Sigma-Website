@@ -3,9 +3,12 @@
 @section('subtitle', 'Monitoring laporan yang dikirim relawan di lapangan.')
 
 @section('page-actions')
-    <a href="{{ route('volunteer.index') }}" class="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-slate-600 bg-white border border-slate-200 rounded-lg hover:bg-slate-50 transition-all shadow-sm">
-        <i class="bi bi-people text-xs"></i> Daftar Relawan
-    </a>
+    <button type="button" onclick="window.location.href='{{ route('volunteer.index') }}'" class="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-slate-600 bg-white border border-slate-200 rounded-lg hover:bg-slate-50 hover:border-slate-300 transition-all duration-200 shadow-sm cursor-pointer group">
+        <svg class="w-3.5 h-3.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M19 12H5M12 19l-7-7 7-7" />
+        </svg>
+        <span>Kembali</span>
+    </button>
 @endsection
 
 @section('content')
@@ -57,11 +60,7 @@
                 @endforeach
             </select>
         </div>
-        <div>
-            <button type="button" id="resetBtn" class="px-4.5 py-1.75 text-xs font-semibold text-slate-600 bg-slate-100 hover:bg-slate-200/80 rounded-xl transition-all duration-200 cursor-pointer w-full sm:w-auto h-[32px] flex items-center justify-center gap-1.5 shadow-sm border border-slate-150">
-                <i class="bi bi-x-circle text-[10px]"></i> Reset
-            </button>
-        </div>
+
     </div>
 </div>
 
@@ -86,11 +85,27 @@
                         <p class="text-[11px] text-slate-400">{{ $report->skill_type }} · {{ $report->created_at->format('d M Y, H:i') }}</p>
                     </div>
                 </div>
-                @if($report->disaster)
-                    <span class="text-[11px] font-semibold text-blue-600 bg-blue-50 px-2.5 py-1 rounded-lg border border-blue-100 hidden sm:inline-flex items-center gap-1">
-                        <i class="bi bi-geo-alt text-[9px]"></i> {{ \Illuminate\Support\Str::limit($report->disaster->title, 25) }}
-                    </span>
-                @endif
+                <div class="hidden sm:flex items-center gap-2 shrink-0">
+                    @if($report->volunteer && $report->volunteer->assignment)
+                        <span class="text-[11px] font-medium text-slate-600 bg-slate-50 px-2.5 py-1 rounded-xl border border-slate-200/60 inline-flex items-center gap-1.5 shadow-sm">
+                            <svg class="w-3.5 h-3.5 text-teal-500 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                                <polyline points="9 22 9 12 15 12 15 22"></polyline>
+                            </svg>
+                            <span>Posko: {{ $report->volunteer->assignment }}</span>
+                        </span>
+                    @endif
+                    @if($report->disaster)
+                        <span class="text-[11px] font-medium text-slate-600 bg-slate-50 px-2.5 py-1 rounded-xl border border-slate-200/60 inline-flex items-center gap-1.5 shadow-sm">
+                            <svg class="w-3.5 h-3.5 text-rose-500 shrink-0 animate-pulse" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+                                <line x1="12" y1="9" x2="12" y2="13"></line>
+                                <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                            </svg>
+                            <span>{{ \Illuminate\Support\Str::limit($report->disaster->title, 25) }}</span>
+                        </span>
+                    @endif
+                </div>
             </div>
 
             {{-- Data --}}
@@ -123,11 +138,27 @@
                     </div>
                 @endif
 
-                @if($report->disaster)
-                    <p class="text-[11px] text-slate-400 mt-3 sm:hidden">
-                        <i class="bi bi-geo-alt"></i> {{ $report->disaster->title }}
-                    </p>
-                @endif
+                <div class="flex flex-wrap items-center gap-2 mt-3.5 sm:hidden border-t border-slate-100/70 pt-3">
+                    @if($report->volunteer && $report->volunteer->assignment)
+                        <span class="text-[10px] font-medium text-slate-600 bg-slate-50 px-2 py-1 rounded-lg border border-slate-200/60 inline-flex items-center gap-1">
+                            <svg class="w-3 h-3 text-teal-500 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                                <polyline points="9 22 9 12 15 12 15 22"></polyline>
+                            </svg>
+                            <span>Posko: {{ $report->volunteer->assignment }}</span>
+                        </span>
+                    @endif
+                    @if($report->disaster)
+                        <span class="text-[10px] font-medium text-slate-600 bg-slate-50 px-2 py-1 rounded-lg border border-slate-200/60 inline-flex items-center gap-1">
+                            <svg class="w-3 h-3 text-rose-500 shrink-0 animate-pulse" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+                                <line x1="12" y1="9" x2="12" y2="13"></line>
+                                <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                            </svg>
+                            <span>{{ $report->disaster->title }}</span>
+                        </span>
+                    @endif
+                </div>
             </div>
         </div>
     @empty
@@ -157,7 +188,7 @@
         const filterSkill = document.getElementById('filterSkill');
         const filterDisaster = document.getElementById('filterDisaster');
         const filterVolunteer = document.getElementById('filterVolunteer');
-        const resetBtn = document.getElementById('resetBtn');
+
         const cards = document.querySelectorAll('.report-card');
         const noReportsFound = document.getElementById('noReportsFound');
 
@@ -204,13 +235,7 @@
             if (e.key === 'Enter') e.preventDefault();
         });
 
-        resetBtn?.addEventListener('click', () => {
-            if (reportSearch) reportSearch.value = '';
-            if (filterSkill) filterSkill.value = '';
-            if (filterDisaster) filterDisaster.value = '';
-            if (filterVolunteer) filterVolunteer.value = '';
-            filterReports();
-        });
+
     });
 </script>
 @endsection

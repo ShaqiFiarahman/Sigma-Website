@@ -3,7 +3,7 @@
 @section('subtitle', 'Temukan lokasi posko evakuasi terdekat dan informasi kapasitas terkini.')
 
 @section('page-actions')
-    <button type="button" onclick="window.location.href='{{ route('dashboard') }}'" class="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-slate-600 bg-white border border-slate-200 rounded-lg hover:bg-slate-50 hover:border-slate-300 transition-all duration-200 shadow-sm cursor-pointer group">
+    <button type="button" onclick="window.location.href='{{ strtolower(auth()->user()->role ?? '') === 'admin' ? route('admin.dashboard') : route('dashboard') }}'" class="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-slate-600 bg-white border border-slate-200 rounded-lg hover:bg-slate-50 hover:border-slate-300 transition-all duration-200 shadow-sm cursor-pointer group">
         <svg class="w-3.5 h-3.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
             <path d="M19 12H5M12 19l-7-7 7-7" />
         </svg>
@@ -12,48 +12,62 @@
 @endsection
 
 @section('content')
-<div class="max-w-5xl mx-auto">
+<div class="max-w-7xl mx-auto">
 
     {{-- Search & Filter --}}
     <div class="bg-white border border-slate-200/80 rounded-2xl shadow-sm overflow-hidden mb-6"
          style="box-shadow: 0 1px 3px rgba(10,15,30,0.06), 0 4px 16px rgba(10,15,30,0.04);">
         <div class="p-4 sm:p-5">
-            <div class="flex flex-col sm:flex-row gap-3">
+            <form action="{{ route('shelter') }}" method="GET" class="flex flex-col sm:flex-row gap-3">
+                @if(request('status'))<input type="hidden" name="status" value="{{ request('status') }}">@endif
                 <div class="relative flex-1">
                     <i class="bi bi-search absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
-                    <input type="text" id="searchPosko" placeholder="Cari nama posko..."
+                    <input type="text" name="q" value="{{ request('q') }}" placeholder="Cari nama posko..."
                            class="w-full pl-10 pr-4 py-2.5 text-sm border border-slate-200 rounded-xl focus:outline-none focus:border-blue-400 focus:ring-2 focus:ring-blue-500/20 transition-all bg-slate-50 focus:bg-white text-slate-800 placeholder:text-slate-400">
                 </div>
-                <div class="flex items-center gap-2 flex-wrap">
-                    <button type="button" data-filter="all" class="filter-chip active px-3.5 py-2 text-xs font-semibold rounded-lg border transition-all duration-200">Semua</button>
-                    <button type="button" data-filter="terdekat" class="filter-chip px-3.5 py-2 text-xs font-semibold rounded-lg border transition-all duration-200"><i class="bi bi-geo-alt text-[10px]"></i> Terdekat</button>
-                    <button type="button" data-filter="tersedia" class="filter-chip px-3.5 py-2 text-xs font-semibold rounded-lg border transition-all duration-200"><i class="bi bi-check-circle text-[10px]"></i> Tersedia</button>
-                    <button type="button" data-filter="penuh" class="filter-chip px-3.5 py-2 text-xs font-semibold rounded-lg border transition-all duration-200"><i class="bi bi-x-circle text-[10px]"></i> Penuh</button>
+            </form>
+            <div class="flex items-center gap-2 flex-wrap mt-3">
+                    <a href="{{ route('shelter') }}" class="filter-chip {{ !request('status') ? 'active' : '' }} px-3.5 py-2 text-xs font-semibold rounded-lg border transition-all duration-200">Semua</a>
+                    <button type="button" id="btnTerdekat" class="filter-chip px-3.5 py-2 text-xs font-semibold rounded-lg border transition-all duration-200"><i class="bi bi-geo-alt text-[10px]"></i> Terdekat</button>
+                    <a href="{{ route('shelter', ['status' => 'Tersedia', 'q' => request('q')]) }}" class="filter-chip {{ request('status') === 'Tersedia' ? 'active' : '' }} px-3.5 py-2 text-xs font-semibold rounded-lg border transition-all duration-200"><i class="bi bi-check-circle text-[10px]"></i> Tersedia</a>
+                    <a href="{{ route('shelter', ['status' => 'Penuh', 'q' => request('q')]) }}" class="filter-chip {{ request('status') === 'Penuh' ? 'active' : '' }} px-3.5 py-2 text-xs font-semibold rounded-lg border transition-all duration-200"><i class="bi bi-x-circle text-[10px]"></i> Penuh</a>
                 </div>
             </div>
         </div>
     </div>
 
     {{-- Stats Summary --}}
-    <div class="grid grid-cols-3 gap-3 mb-6">
+    {{-- Stats (admin only) --}}
+    @if(strtolower(auth()->user()->role ?? '') === 'admin')
+    <div class="grid grid-cols-3 gap-3 mb-5">
         @php
-            $totalPosko = count($shelters);
-            $tersedia = collect($shelters)->where('status', 'Tersedia')->count();
-            $penuh = collect($shelters)->where('status', 'Penuh')->count();
+            $totalPosko = \App\Models\Shelter::count();
+            $tersedia = \App\Models\Shelter::where('status', 'Tersedia')->count();
+            $penuh = \App\Models\Shelter::where('status', 'Penuh')->count();
         @endphp
-        <div class="bg-white border border-slate-200/80 rounded-xl p-4 text-center" style="box-shadow: 0 1px 3px rgba(10,15,30,0.04);">
-            <p class="text-2xl font-bold text-slate-900">{{ $totalPosko }}</p>
-            <p class="text-[11px] text-slate-500 font-medium">Total Posko</p>
+        <div class="bg-white border border-slate-200/80 rounded-xl px-4 py-3 flex items-center gap-3" style="box-shadow: 0 1px 3px rgba(10,15,30,0.04);">
+            <i class="bi bi-buildings text-blue-500"></i>
+            <div>
+                <p class="text-lg font-bold text-slate-900">{{ $totalPosko }}</p>
+                <p class="text-[10px] text-slate-500">Total Posko</p>
+            </div>
         </div>
-        <div class="bg-white border border-emerald-100 rounded-xl p-4 text-center" style="box-shadow: 0 1px 3px rgba(10,15,30,0.04);">
-            <p class="text-2xl font-bold text-emerald-600">{{ $tersedia }}</p>
-            <p class="text-[11px] text-slate-500 font-medium">Tersedia</p>
+        <div class="bg-white border border-slate-200/80 rounded-xl px-4 py-3 flex items-center gap-3" style="box-shadow: 0 1px 3px rgba(10,15,30,0.04);">
+            <i class="bi bi-check-circle text-emerald-500"></i>
+            <div>
+                <p class="text-lg font-bold text-emerald-600">{{ $tersedia }}</p>
+                <p class="text-[10px] text-slate-500">Tersedia</p>
+            </div>
         </div>
-        <div class="bg-white border border-red-100 rounded-xl p-4 text-center" style="box-shadow: 0 1px 3px rgba(10,15,30,0.04);">
-            <p class="text-2xl font-bold text-red-600">{{ $penuh }}</p>
-            <p class="text-[11px] text-slate-500 font-medium">Penuh</p>
+        <div class="bg-white border border-slate-200/80 rounded-xl px-4 py-3 flex items-center gap-3" style="box-shadow: 0 1px 3px rgba(10,15,30,0.04);">
+            <i class="bi bi-x-circle text-red-500"></i>
+            <div>
+                <p class="text-lg font-bold text-red-600">{{ $penuh }}</p>
+                <p class="text-[10px] text-slate-500">Penuh</p>
+            </div>
         </div>
     </div>
+    @endif
 
     {{-- Shelter Cards --}}
     <div class="space-y-4" id="shelterList">
@@ -81,13 +95,20 @@
                 }
             @endphp
 
-            <div class="shelter-card bg-white border border-slate-200/80 rounded-2xl p-5 sm:p-6"
+            <div class="shelter-card bg-white border border-slate-200/80 rounded-2xl overflow-hidden"
                  style="box-shadow: 0 1px 3px rgba(10,15,30,0.06), 0 4px 16px rgba(10,15,30,0.04);"
                  data-name="{{ $shelter['name'] }}"
                  data-status="{{ strtolower($shelter['status']) }}"
                  data-lat="{{ $shelter['lat'] }}"
                  data-lng="{{ $shelter['lng'] }}">
 
+                <div class="flex">
+                    @if(!empty($shelter['photo_url']))
+                        <div class="w-36 shrink-0 hidden sm:block">
+                            <img src="{{ $shelter['photo_url'] }}" alt="{{ $shelter['name'] }}" class="w-full h-full object-cover" loading="lazy">
+                        </div>
+                    @endif
+                    <div class="flex-1 p-5 sm:p-6">
                 <div class="flex flex-col sm:flex-row sm:items-start gap-4">
                     <div class="flex-1 min-w-0">
 
@@ -107,7 +128,10 @@
                                 </div>
                             </div>
                             <span class="inline-flex items-center gap-1.5 text-[11px] font-bold shrink-0 {{ $statusText }}">
-                                <span class="w-1.5 h-1.5 rounded-full {{ $statusDot }}"></span> {{ $statusLabel }}
+                                @if($statusLabel !== 'Tersedia' && $statusLabel !== 'Penuh')
+                                    <span class="w-1.5 h-1.5 rounded-full {{ $statusDot }}"></span>
+                                @endif
+                                {{ $statusLabel }}
                             </span>
                         </div>
 
@@ -148,17 +172,34 @@
                            style="background: linear-gradient(135deg, #3B6FE8 0%, #1e3a8a 100%); box-shadow: 0 2px 8px rgba(30,58,138,0.2);">
                             <i class="bi bi-signpost-2-fill text-[11px]"></i> Petunjuk Arah
                         </button>
-                        <button type="button"
-                           onclick="window.open('https://api.whatsapp.com/send?phone={{ $shelter['contact_phone'] ?? '6285934415914' }}&text={{ urlencode('Halo, saya ingin mengirimkan bantuan logistik ke ' . $shelter['name'] . ' berupa: ' . implode(', ', $shelter['logistics'] ?? [])) }}', '_blank')"
-                           class="inline-flex items-center justify-center gap-1.5 w-full sm:w-40 px-4 py-2.5 text-xs font-semibold text-white rounded-xl transition-all duration-200 hover:-translate-y-0.5 shadow-sm hover:shadow-md cursor-pointer"
-                           style="background: #25D366; box-shadow: 0 2px 8px rgba(37,211,102,0.2);">
-                            <i class="bi bi-whatsapp text-[11px]"></i> Hubungi WA
-                        </button>
+                        @if(strtolower(auth()->user()->role ?? '') === 'admin')
+                            <button type="button"
+                               onclick="window.location.href='/admin/posko/{{ $shelter['id'] }}/edit'"
+                               class="inline-flex items-center justify-center gap-1.5 w-full sm:w-40 px-4 py-2.5 text-xs font-semibold text-slate-700 bg-white border border-slate-200 rounded-xl transition-all duration-200 cursor-pointer hover:bg-slate-50 hover:border-slate-300">
+                                <i class="bi bi-pencil-square text-[11px]"></i> Edit Posko
+                            </button>
+                        @else
+                            <button type="button"
+                               onclick="window.open('https://api.whatsapp.com/send?phone={{ $shelter['contact_phone'] ?? '6285934415914' }}&text={{ urlencode('Halo, saya ingin mengirimkan bantuan logistik ke ' . $shelter['name'] . ' berupa: ' . implode(', ', $shelter['logistics'] ?? [])) }}', '_blank')"
+                               class="inline-flex items-center justify-center gap-1.5 w-full sm:w-40 px-4 py-2.5 text-xs font-semibold text-white rounded-xl transition-all duration-200 cursor-pointer"
+                               style="background: #25D366; box-shadow: 0 2px 8px rgba(37,211,102,0.2);">
+                                <i class="bi bi-whatsapp text-[11px]"></i> Hubungi WA
+                            </button>
+                        @endif
                     </div>
+                </div>
+                </div>
                 </div>
             </div>
         @endforeach
     </div>
+
+    {{-- Pagination --}}
+    @if($shelters->hasPages())
+        <div class="mt-6">
+            {{ $shelters->links() }}
+        </div>
+    @endif
 
     {{-- Empty State --}}
     <div id="emptyState" class="hidden bg-white border border-slate-200/80 rounded-2xl p-12 text-center mt-4" style="box-shadow: 0 1px 3px rgba(10,15,30,0.06);">
@@ -233,44 +274,25 @@
         navigator.geolocation.getCurrentPosition(p => updateDistances(p.coords.latitude, p.coords.longitude), () => updateDistances(-7.5755, 110.8243));
     } else { updateDistances(-7.5755, 110.8243); }
 
-    // Search & Filter
-    const searchInput = document.getElementById('searchPosko');
-    const shelterCards = document.querySelectorAll('.shelter-card');
-    const emptyState = document.getElementById('emptyState');
+    // Search & Filter - now server-side, keep only distance + terdekat sort
+    document.getElementById('btnTerdekat')?.addEventListener('click', function() {
+        if (!navigator.geolocation) { alert('Browser tidak mendukung geolokasi.'); return; }
 
-    function filterCards() {
-        const query = (searchInput.value || '').toLowerCase().trim();
-        const activeFilter = document.querySelector('.filter-chip.active')?.dataset.filter || 'all';
-        let visibleCount = 0;
-        shelterCards.forEach(card => {
-            const name = (card.dataset.name || '').toLowerCase();
-            const matchSearch = !query || name.includes(query);
-            let matchFilter = true;
-            if (activeFilter === 'tersedia') matchFilter = card.dataset.status === 'tersedia';
-            else if (activeFilter === 'penuh') matchFilter = card.dataset.status === 'penuh';
-            card.style.display = (matchSearch && matchFilter) ? '' : 'none';
-            if (matchSearch && matchFilter) visibleCount++;
-        });
-        emptyState.classList.toggle('hidden', visibleCount > 0);
-    }
+        // Remove active from all filter chips
+        document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
+        this.classList.add('active');
 
-    searchInput?.addEventListener('input', filterCards);
-    searchInput?.addEventListener('keydown', (e) => {
-        if (e.key === 'Enter') e.preventDefault();
-    });
-
-    document.querySelectorAll('.filter-chip').forEach(chip => {
-        chip.addEventListener('click', () => {
-            document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
-            chip.classList.add('active');
-            if (chip.dataset.filter === 'terdekat') {
-                const list = document.getElementById('shelterList');
-                const cards = Array.from(list.querySelectorAll('.shelter-card'));
-                cards.sort((a, b) => parseFloat(a.dataset.distance || 999) - parseFloat(b.dataset.distance || 999));
-                cards.forEach(card => list.appendChild(card));
-            }
-            filterCards();
-        });
+        navigator.geolocation.getCurrentPosition((pos) => {
+            const userLat = pos.coords.latitude, userLng = pos.coords.longitude;
+            const list = document.getElementById('shelterList');
+            const cards = Array.from(list.querySelectorAll('.shelter-card'));
+            cards.sort((a, b) => {
+                const distA = getDistance(userLat, userLng, parseFloat(a.dataset.lat), parseFloat(a.dataset.lng));
+                const distB = getDistance(userLat, userLng, parseFloat(b.dataset.lat), parseFloat(b.dataset.lng));
+                return distA - distB;
+            });
+            cards.forEach(card => list.appendChild(card));
+        }, () => alert('Gagal mendapatkan lokasi.'));
     });
 </script>
 <style>

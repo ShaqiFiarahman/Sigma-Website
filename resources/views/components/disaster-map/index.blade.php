@@ -171,7 +171,7 @@
                         <div style="flex:1;min-width:0;">
                             <p style="font-weight:600;font-size:12.5px;color:#0F172A;margin:0;line-height:1.35;">${s.name}</p>
                             <div style="display:flex;align-items:center;gap:5px;margin-top:3px;">
-                                <span style="width:6px;height:6px;border-radius:50%;background:${statusDot};"></span>
+                                ${(s.status !== 'Penuh' && s.status !== 'Tersedia') ? `<span style="width:6px;height:6px;border-radius:50%;background:${statusDot};"></span>` : ''}
                                 <span style="font-size:9.5px;font-weight:600;color:${statusColor};">${s.status}</span>
                                 <span style="font-size:9.5px;color:#94A3B8;">·</span>
                                 <span style="font-size:9.5px;color:#64748B;">${s.capacity} orang</span>

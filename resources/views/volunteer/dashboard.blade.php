@@ -47,12 +47,9 @@
         <div class="bg-white rounded-2xl border border-slate-100 overflow-hidden">
             <div class="p-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div class="flex items-center gap-4">
-                    {{-- Avatar with skill color ring --}}
-                    <div class="relative">
-                        <div class="w-12 h-12 rounded-xl flex items-center justify-center text-white text-base font-bold"
-                             style="background: linear-gradient(135deg, {{ $skillColor['from'] }}, {{ $skillColor['to'] }});">
-                            <i class="bi {{ $skillColor['icon'] }}"></i>
-                        </div>
+                    <div class="w-12 h-12 rounded-xl flex items-center justify-center text-white text-base font-bold"
+                         style="background: linear-gradient(135deg, {{ $skillColor['from'] }}, {{ $skillColor['to'] }});">
+                        <i class="bi {{ $skillColor['icon'] }}"></i>
                     </div>
                     <div>
                         <div class="flex items-center gap-2.5">
@@ -61,10 +58,9 @@
                                 {{ $volunteer->skill }}
                             </span>
                         </div>
-                        <p class="text-xs text-slate-400 mt-0.5">REL-{{ str_pad($volunteer->id, 5, '0', STR_PAD_LEFT) }} · Bergabung {{ $volunteer->created_at->format('M Y') }}</p>
+                        <p class="text-xs text-slate-400 mt-0.5">{{ $volunteer->volunteer_code ?? 'REL-' . str_pad($volunteer->id, 5, '0', STR_PAD_LEFT) }} · Bergabung {{ $volunteer->created_at->format('M Y') }}</p>
                     </div>
                 </div>
-                {{-- Availability Toggle --}}
                 <form action="{{ route('volunteer.toggle_availability') }}" method="POST" class="flex gap-1.5">
                     @csrf
                     <button type="submit" name="availability" value="available"
@@ -83,7 +79,7 @@
 
             {{-- Stats --}}
             <div class="grid grid-cols-3 gap-4">
-                <div class="group bg-white rounded-2xl border border-slate-100 p-5 hover:border-blue-200 hover:shadow-lg hover:shadow-blue-50 transition-all duration-300">
+                <div class="bg-white rounded-2xl border border-slate-100 p-5 hover:border-blue-200 hover:shadow-lg hover:shadow-blue-50 transition-all duration-300">
                     <div class="flex items-end justify-between">
                         <div>
                             <p class="text-3xl font-extrabold text-slate-900 tabular-nums leading-none">{{ $totalReports }}</p>
@@ -94,26 +90,20 @@
                         @endif
                     </div>
                 </div>
-                <div class="group bg-white rounded-2xl border border-slate-100 p-5 hover:border-blue-200 hover:shadow-lg hover:shadow-blue-50 transition-all duration-300">
-                    <div>
-                        <p class="text-3xl font-extrabold text-slate-900 tabular-nums leading-none">{{ $volunteer->assignment ? '1' : '0' }}</p>
-                        <p class="text-[12px] text-slate-500 mt-2">Penugasan aktif</p>
-                    </div>
+                <div class="bg-white rounded-2xl border border-slate-100 p-5 hover:border-blue-200 hover:shadow-lg hover:shadow-blue-50 transition-all duration-300">
+                    <p class="text-3xl font-extrabold text-slate-900 tabular-nums leading-none">{{ $volunteer->assignment ? '1' : '0' }}</p>
+                    <p class="text-[12px] text-slate-500 mt-2">Penugasan aktif</p>
                 </div>
-                <div class="group bg-white rounded-2xl border border-slate-100 p-5 hover:border-blue-200 hover:shadow-lg hover:shadow-blue-50 transition-all duration-300">
-                    <div>
-                        <p class="text-3xl font-extrabold text-slate-900 tabular-nums leading-none">{{ $teamMembers->count() }}</p>
-                        <p class="text-[12px] text-slate-500 mt-2">Anggota tim</p>
-                    </div>
+                <div class="bg-white rounded-2xl border border-slate-100 p-5 hover:border-blue-200 hover:shadow-lg hover:shadow-blue-50 transition-all duration-300">
+                    <p class="text-3xl font-extrabold text-slate-900 tabular-nums leading-none">{{ $teamMembers->count() }}</p>
+                    <p class="text-[12px] text-slate-500 mt-2">Anggota tim</p>
                 </div>
             </div>
 
             {{-- Main Grid --}}
             <div class="grid grid-cols-1 lg:grid-cols-5 gap-6">
-
-                {{-- Left Column (3/5) --}}
+                {{-- Left (3/5) --}}
                 <div class="lg:col-span-3 space-y-6">
-
                     {{-- Penugasan --}}
                     <div class="bg-white rounded-2xl border border-slate-100 overflow-hidden">
                         <div class="px-6 py-4 flex items-center justify-between">
@@ -135,7 +125,7 @@
                                         <p class="text-[15px] font-bold text-slate-900">{{ $volunteer->assignment }}</p>
                                         <p class="text-xs text-slate-500 mt-1">{{ $volunteer->skill }} · Ditugaskan oleh Admin</p>
                                         <button type="button"
-                                            onclick="window.open('https://api.whatsapp.com/send?phone=6285934415914&text={{ urlencode('Halo Admin, saya relawan ' . $volunteer->name . ' (REL-' . str_pad($volunteer->id, 5, '0', STR_PAD_LEFT) . ') ingin bertanya mengenai penugasan di ' . $volunteer->assignment) }}', '_blank')"
+                                            onclick="window.open('https://api.whatsapp.com/send?phone=6285934415914&text={{ urlencode('Halo Admin, saya relawan ' . $volunteer->name . ' (' . ($volunteer->volunteer_code ?? 'REL-' . str_pad($volunteer->id, 5, '0', STR_PAD_LEFT)) . ') ingin bertanya mengenai penugasan di ' . $volunteer->assignment) }}', '_blank')"
                                             class="mt-3 inline-flex items-center gap-1.5 px-4 py-2 text-xs font-semibold text-white rounded-xl cursor-pointer transition-all hover:shadow-md"
                                             style="background: #25D366;">
                                             <i class="bi bi-whatsapp text-[10px]"></i> Hubungi Admin
@@ -155,9 +145,7 @@
                     <div class="bg-white rounded-2xl border border-slate-100 overflow-hidden">
                         <div class="px-6 py-4 flex items-center justify-between">
                             <p class="text-[12px] font-semibold text-slate-500 uppercase tracking-wider">Riwayat Laporan</p>
-                            <a href="{{ route('volunteer.reports') }}" class="text-[11px] font-semibold text-blue-600 hover:text-blue-800 transition-colors">
-                                Semua →
-                            </a>
+                            <a href="{{ route('volunteer.reports') }}" class="text-[11px] font-semibold text-blue-600 hover:text-blue-800 transition-colors">Semua →</a>
                         </div>
                         @if($recentReports->count() > 0)
                             <div class="divide-y divide-slate-100/80">
@@ -186,10 +174,9 @@
                             </div>
                         @endif
                     </div>
-
                 </div>
 
-                {{-- Right Column (2/5): Tim --}}
+                {{-- Right (2/5): Tim --}}
                 <div class="lg:col-span-2">
                     <div class="bg-white rounded-2xl border border-slate-100 overflow-hidden h-full">
                         <div class="px-5 py-4 flex items-center justify-between">
@@ -200,9 +187,7 @@
                         </div>
                         @if($volunteer->assignment)
                             <div class="px-5 pb-2">
-                                <p class="text-xs text-slate-400 flex items-center gap-1.5">
-                                    <i class="bi bi-geo-alt text-[10px]"></i> {{ $volunteer->assignment }}
-                                </p>
+                                <p class="text-xs text-slate-400 flex items-center gap-1.5"><i class="bi bi-geo-alt text-[10px]"></i> {{ $volunteer->assignment }}</p>
                             </div>
                         @endif
                         <div class="px-3 pb-4">
@@ -211,17 +196,12 @@
                                     @foreach($teamMembers as $member)
                                         @php
                                             $memberColor = match($member->skill) {
-                                                'MEDIS' => '#dc2626',
-                                                'SAR' => '#1d4ed8',
-                                                'LOGISTIK' => '#d97706',
-                                                'KONSUMSI' => '#059669',
-                                                'PSIKOSOSIAL' => '#7c3aed',
-                                                default => '#475569',
+                                                'MEDIS' => '#dc2626', 'SAR' => '#1d4ed8', 'LOGISTIK' => '#d97706',
+                                                'KONSUMSI' => '#059669', 'PSIKOSOSIAL' => '#7c3aed', default => '#475569',
                                             };
                                         @endphp
                                         <div class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-slate-50 transition-colors">
-                                            <div class="w-8 h-8 rounded-lg flex items-center justify-center text-[10px] font-bold text-white shrink-0"
-                                                style="background: {{ $memberColor }};">
+                                            <div class="w-8 h-8 rounded-lg flex items-center justify-center text-[10px] font-bold text-white shrink-0" style="background: {{ $memberColor }};">
                                                 {{ substr($member->name, 0, 1) }}
                                             </div>
                                             <div class="flex-1 min-w-0">
@@ -238,18 +218,14 @@
                                         <i class="bi bi-people text-slate-400"></i>
                                     </div>
                                     <p class="text-xs text-slate-400">
-                                        @if($volunteer->assignment)
-                                            Belum ada relawan lain di lokasi ini.
-                                        @else
-                                            Muncul setelah ada penugasan.
-                                        @endif
+                                        @if($volunteer->assignment) Belum ada relawan lain di lokasi ini.
+                                        @else Muncul setelah ada penugasan. @endif
                                     </p>
                                 </div>
                             @endif
                         </div>
                     </div>
                 </div>
-
             </div>
         @endif
 
@@ -261,7 +237,6 @@
 
         {{-- Peta Bencana --}}
         <x-disaster-map />
-
     </div>
 
 @section('footer')

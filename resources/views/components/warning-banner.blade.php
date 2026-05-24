@@ -1,7 +1,7 @@
 {{-- Warning Banner: checks nearby disasters via geolocation --}}
 <div id="warningBanner" class="warning-banner animate-fade-up banner-danger">
-    <div class="w-12 h-12 rounded-full bg-red-100 flex items-center justify-center shrink-0" id="warningIconBg">
-        <i class="bi bi-exclamation-triangle-fill text-xl text-red-600" id="warningIcon"></i>
+    <div class="flex items-center justify-center shrink-0 pl-1.5 pr-2" id="warningIconBg">
+        <i class="bi bi-exclamation-triangle-fill text-2xl text-red-600" id="warningIcon"></i>
     </div>
     <div class="flex-1 min-w-0">
         <p class="text-xs font-extrabold tracking-wider text-red-700 mb-0.5" id="warningTitle">PERINGATAN DARURAT</p>
@@ -35,8 +35,8 @@
 
         if (count > 0) {
             banner.className = 'warning-banner animate-fade-up banner-danger';
-            iconBg.className = 'w-12 h-12 rounded-full bg-red-100 flex items-center justify-center shrink-0';
-            icon.className = 'bi bi-bell-fill text-xl text-red-600';
+            iconBg.className = 'flex items-center justify-center shrink-0 pl-1.5 pr-2';
+            icon.className = 'bi bi-bell-fill text-2xl text-red-600';
             title.className = 'text-xs font-extrabold tracking-wider text-red-700 mb-0.5';
             title.textContent = 'PERINGATAN DARURAT';
             text.className = 'text-sm font-medium text-red-900';
@@ -61,8 +61,8 @@
             if (dismissBtn) dismissBtn.className = 'shrink-0 p-2.5 rounded-full hover:bg-red-200/80 transition-colors text-red-700';
         } else {
             banner.className = 'warning-banner animate-fade-up banner-safe';
-            iconBg.className = 'w-12 h-12 rounded-full bg-emerald-100 flex items-center justify-center shrink-0';
-            icon.className = 'bi bi-check2-circle text-xl text-emerald-600';
+            iconBg.className = 'flex items-center justify-center shrink-0 pl-1.5 pr-2';
+            icon.className = 'bi bi-check2-circle text-2xl text-emerald-600';
             title.className = 'text-xs font-extrabold tracking-wider text-emerald-700 mb-0.5';
             title.textContent = 'AMAN';
             text.className = 'text-sm font-medium text-emerald-900';

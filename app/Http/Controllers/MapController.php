@@ -52,7 +52,20 @@ class MapController extends Controller
      */
     public function shelterPage()
     {
-        $shelters = Shelter::all()->map(fn($s) => $this->shelterToArray($s))->toArray();
+        $query = Shelter::query();
+
+        // Server-side filter
+        if (request('status')) {
+            $query->where('status', request('status'));
+        }
+        if (request('q')) {
+            $query->where('name', 'like', '%' . request('q') . '%');
+        }
+        if (request('sort') === 'terdekat') {
+            // Default order, client will sort
+        }
+
+        $shelters = $query->paginate(6)->through(fn($s) => $this->shelterToArray($s));
         return view('shelter.index', compact('shelters'));
     }
 
@@ -99,6 +112,96 @@ class MapController extends Controller
     {
         $shelters = Shelter::all()->map(fn($s) => $this->shelterToArray($s))->toArray();
         return response()->json($shelters);
+    }
+
+    /**
+     * Show edit shelter form (admin)
+     */
+    public function editShelter($id)
+    {
+        $shelter = Shelter::findOrFail($id);
+        $assignedVolunteers = \App\Models\Volunteer::where('status', 'APPROVED')
+            ->where('assignment', $shelter->name)
+            ->get();
+        return view('admin.shelter-edit', compact('shelter', 'assignedVolunteers'));
+    }
+
+    /**
+     * Update shelter (admin)
+     */
+    public function updateShelter(Request $request, $id)
+    {
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'address' => 'nullable|string|max:500',
+            'capacity_current' => 'required|integer|min:0',
+            'capacity_max' => 'required|integer|min:1',
+            'status' => 'required|in:Tersedia,Penuh',
+            'logistics' => 'nullable|string',
+            'contact_phone' => 'nullable|string|max:20',
+            'photo' => 'nullable|image|max:5120',
+            'latitude' => 'nullable|numeric',
+            'longitude' => 'nullable|numeric',
+        ]);
+
+        $shelter = Shelter::findOrFail($id);
+
+        $data = [
+            'name' => $request->name,
+            'address' => $request->address,
+            'capacity_current' => $request->capacity_current,
+            'capacity_max' => $request->capacity_max,
+            'status' => $request->status,
+            'logistics' => $request->logistics ? array_map('trim', explode(',', $request->logistics)) : [],
+            'contact_phone' => $request->contact_phone,
+            'latitude' => $request->latitude,
+            'longitude' => $request->longitude,
+        ];
+
+        // Upload foto ke Supabase jika ada
+        if ($request->hasFile('photo')) {
+            $file = $request->file('photo');
+            $filename = 'shelter-' . $shelter->id . '-' . time() . '.' . $file->getClientOriginalExtension();
+
+            $supabaseUrl = rtrim(config('services.supabase.url'), '/');
+            $supabaseKey = config('services.supabase.key');
+            $bucketName = 'shelters';
+
+            if ($supabaseUrl && $supabaseKey) {
+                try {
+                    $response = \Illuminate\Support\Facades\Http::withHeaders([
+                        'Authorization' => 'Bearer ' . $supabaseKey,
+                        'Content-Type' => $file->getMimeType(),
+                    ])->withBody(file_get_contents($file->getRealPath()), $file->getMimeType())
+                      ->post($supabaseUrl . "/storage/v1/object/" . $bucketName . "/" . $filename);
+
+                    if ($response->successful()) {
+                        $data['photo_url'] = $supabaseUrl . "/storage/v1/object/public/" . $bucketName . "/" . $filename;
+                    }
+                } catch (\Exception $e) {
+                    // Fallback: simpan lokal
+                    $path = $file->store('shelters', 'public');
+                    $data['photo_url'] = \Illuminate\Support\Facades\Storage::url($path);
+                }
+            } else {
+                $path = $file->store('shelters', 'public');
+                $data['photo_url'] = \Illuminate\Support\Facades\Storage::url($path);
+            }
+        }
+
+        $shelter->update($data);
+
+        return redirect()->route('shelter')->with('msg', 'Posko berhasil diperbarui.');
+    }
+
+    /**
+     * Delete shelter (admin)
+     */
+    public function deleteShelter($id)
+    {
+        $shelter = Shelter::findOrFail($id);
+        $shelter->delete();
+        return redirect()->route('shelter')->with('msg', 'Posko berhasil dihapus.');
     }
 
     /**

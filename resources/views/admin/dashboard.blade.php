@@ -32,7 +32,7 @@
         </a>
         <a href="{{ route('shelter') }}" class="menu-card group">
             <div class="menu-icon-wrap"><i class="bi bi-house-heart-fill"></i></div>
-            <p class="font-bold text-sm mb-1 text-slate-900">Data Posko</p>
+            <p class="font-bold text-sm mb-1 text-slate-900">Kelola Posko</p>
             <p class="text-xs text-slate-500 leading-relaxed">Titik pengungsian & shelter</p>
         </a>
         <a href="{{ route('search') }}" class="menu-card group">
