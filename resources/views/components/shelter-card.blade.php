@@ -49,7 +49,10 @@
                     </div>
                 </div>
                 <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-bold border shrink-0 {{ $statusBg }} {{ $statusText }}">
-                    <span class="w-1.5 h-1.5 rounded-full {{ $statusDot }}"></span> {{ $statusLabel }}
+                    @if($statusLabel !== 'Tersedia' && $statusLabel !== 'Penuh')
+                        <span class="w-1.5 h-1.5 rounded-full {{ $statusDot }}"></span>
+                    @endif
+                    {{ $statusLabel }}
                 </span>
             </div>
 

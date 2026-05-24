@@ -29,6 +29,11 @@ Route::middleware('auth')->group(function () {
         Route::get('/api/laporan/{id}', [LaporanController::class, 'adminLaporanDetail'])->name('admin.laporan.detail');
         Route::post('/laporan/update-status/{id}', [LaporanController::class, 'updateStatus'])->name('laporan.update_status');
         Route::post('/laporan/update-type/{id}', [LaporanController::class, 'updateType'])->name('laporan.update_type');
+
+        // Shelter Management
+        Route::get('/posko/{id}/edit', [MapController::class, 'editShelter'])->name('admin.shelter.edit');
+        Route::post('/posko/{id}/update', [MapController::class, 'updateShelter'])->name('admin.shelter.update');
+        Route::delete('/posko/{id}', [MapController::class, 'deleteShelter'])->name('admin.shelter.delete');
         
         // Volunteer Management
         Route::get('/relawan', [VolunteerController::class, 'index'])->name('volunteer.index');

@@ -1,4 +1,4 @@
-@extends('layouts.app')
+﻿@extends('layouts.app')
 @section('title', 'Pendaftaran Relawan')
 @section('subtitle', 'Bergabung sebagai relawan tanggap bencana SIGMA.')
 
@@ -19,241 +19,8 @@
 @if($existing)
     {{-- STATUS PENDAFTARAN --}}
     <div class="grid grid-cols-1 lg:grid-cols-5 gap-6">
-        <div class="lg:col-span-3">
-            <div class="bg-white border border-slate-200/80 rounded-2xl overflow-hidden"
-                 style="box-shadow: 0 1px 3px rgba(10,15,30,0.06), 0 4px 16px rgba(10,15,30,0.04);">
-
-                <div class="p-6 sm:p-8">
-
-                    @if($existing->status === 'PENDING')
-                        {{-- PENDING: Tampilan simpel --}}
-                        <div class="mb-6">
-                            <div class="w-12 h-12 rounded-full bg-amber-100 flex items-center justify-center mb-4">
-                                <i class="bi bi-clock-history text-xl text-amber-600"></i>
-                            </div>
-                            <h2 class="text-lg font-bold text-slate-900">Menunggu Verifikasi</h2>
-                            <p class="text-sm text-slate-500 mt-1">Pendaftaran Anda sedang ditinjau oleh tim Admin.</p>
-                        </div>
-
-                        {{-- Progress Bar --}}
-                        <div class="flex items-center gap-1.5 mb-2">
-                            <div class="flex-1 h-2 rounded-full bg-blue-500"></div>
-                            <div class="flex-1 h-2 rounded-full bg-amber-400"></div>
-                            <div class="flex-1 h-2 rounded-full bg-slate-200"></div>
-                        </div>
-                        <div class="flex justify-between text-[11px] text-slate-500 mb-6">
-                            <span>Terdaftar</span>
-                            <span>Verifikasi</span>
-                            <span>Penugasan</span>
-                        </div>
-
-                        {{-- Estimasi --}}
-                        <div class="flex items-center gap-3 p-3 rounded-lg bg-slate-50 border border-slate-100 mb-5">
-                            <i class="bi bi-clock text-slate-400"></i>
-                            <div>
-                                <p class="text-xs font-medium text-slate-700">Estimasi waktu verifikasi</p>
-                                <p class="text-[11px] text-slate-500">1 – 3 hari kerja sejak pendaftaran</p>
-                            </div>
-                        </div>
-
-                        {{-- Data --}}
-                        <div class="border border-slate-100 rounded-xl divide-y divide-slate-100 mb-5">
-                            <div class="flex justify-between px-4 py-3 text-xs">
-                                <span class="text-slate-500">No. Pendaftaran</span>
-                                <span class="font-mono font-medium text-slate-800">REL-{{ str_pad($existing->id, 5, '0', STR_PAD_LEFT) }}</span>
-                            </div>
-                            <div class="flex justify-between px-4 py-3 text-xs">
-                                <span class="text-slate-500">Nama</span>
-                                <span class="font-medium text-slate-800">{{ $existing->name }}</span>
-                            </div>
-                            <div class="flex justify-between px-4 py-3 text-xs">
-                                <span class="text-slate-500">Keahlian</span>
-                                <span class="font-medium text-slate-800">{{ $existing->skill }}</span>
-                            </div>
-                            <div class="flex justify-between px-4 py-3 text-xs">
-                                <span class="text-slate-500">Telepon</span>
-                                <span class="font-medium text-slate-800">{{ $existing->phone_number }}</span>
-                            </div>
-                            <div class="flex justify-between px-4 py-3 text-xs">
-                                <span class="text-slate-500">Alamat</span>
-                                <span class="font-medium text-slate-800 text-right max-w-[55%]">{{ $existing->address }}</span>
-                            </div>
-                            <div class="flex justify-between px-4 py-3 text-xs">
-                                <span class="text-slate-500">Tanggal Daftar</span>
-                                <span class="font-medium text-slate-800">{{ $existing->created_at->format('d M Y, H:i') }}</span>
-                            </div>
-                        </div>
-
-                    @else
-                        {{-- APPROVED / REJECTED: Tampilan SNBP --}}
-
-                        @if($existing->status === 'APPROVED')
-                            {{-- LULUS --}}
-                            <div class="rounded-2xl overflow-hidden border border-slate-200" style="background: linear-gradient(180deg, #0A0F1E 0%, #1e3a8a 40%, #ffffff 40%);">
-                                {{-- Header gelap --}}
-                                <div class="px-6 pt-6 pb-8 text-center">
-                                    <div class="flex items-center justify-center gap-2 mb-4">
-                                        <div class="w-8 h-8 rounded-lg flex items-center justify-center" style="background: rgba(255,255,255,0.15);">
-                                            <i class="bi bi-shield-check text-white text-sm"></i>
-                                        </div>
-                                        <span class="text-xs font-bold text-white/70 uppercase tracking-widest">SIGMA</span>
-                                    </div>
-                                    <p class="text-sm font-bold text-emerald-400 uppercase tracking-wide">Selamat! Anda Dinyatakan</p>
-                                    <p class="text-2xl font-extrabold text-white mt-1">LULUS SELEKSI RELAWAN</p>
-                                </div>
-
-                                {{-- Body putih --}}
-                                <div class="bg-white px-6 pb-6 pt-4">
-                                    <div class="text-center mb-5 pb-4 border-b border-slate-100">
-                                        <p class="text-[10px] text-slate-400 uppercase tracking-wider">REL-{{ str_pad($existing->id, 5, '0', STR_PAD_LEFT) }}</p>
-                                        <p class="text-xl font-extrabold text-slate-900 mt-1">{{ $existing->name }}</p>
-                                        <p class="text-xs text-slate-500 mt-0.5">{{ $existing->skill }}</p>
-                                    </div>
-
-                                    <div class="space-y-2.5 text-xs mb-5">
-                                        <div>
-                                            <p class="text-[10px] text-slate-400 uppercase tracking-wider">Telepon</p>
-                                            <p class="font-semibold text-slate-800">{{ $existing->phone_number }}</p>
-                                        </div>
-                                        <div>
-                                            <p class="text-[10px] text-slate-400 uppercase tracking-wider">Alamat</p>
-                                            <p class="font-semibold text-slate-800">{{ $existing->address }}</p>
-                                        </div>
-                                    </div>
-
-                                    @if($existing->assignment)
-                                        <div class="p-3 rounded-xl bg-blue-50 border border-blue-100 mb-4">
-                                            <p class="text-[10px] text-blue-500 uppercase tracking-wider font-bold">Penugasan</p>
-                                            <p class="text-sm font-bold text-blue-800 mt-0.5">{{ $existing->assignment }}</p>
-                                        </div>
-                                    @else
-                                        <div class="p-3 rounded-xl bg-slate-50 border border-slate-100 mb-4">
-                                            <p class="text-xs text-slate-600">Silakan menunggu informasi penugasan dari Admin.</p>
-                                        </div>
-                                    @endif
-                                </div>
-                            </div>
-
-                        @else
-                            {{-- TIDAK LULUS --}}
-                            <div class="rounded-2xl overflow-hidden border border-slate-200" style="background: linear-gradient(180deg, #7f1d1d 0%, #dc2626 40%, #ffffff 40%);">
-                                {{-- Header merah --}}
-                                <div class="px-6 pt-6 pb-8 text-center">
-                                    <div class="flex items-center justify-center gap-2 mb-4">
-                                        <div class="w-8 h-8 rounded-lg flex items-center justify-center" style="background: rgba(255,255,255,0.15);">
-                                            <i class="bi bi-shield-check text-white text-sm"></i>
-                                        </div>
-                                        <span class="text-xs font-bold text-white/70 uppercase tracking-widest">SIGMA</span>
-                                    </div>
-                                    <p class="text-sm font-bold text-white/90 uppercase tracking-wide">Anda Dinyatakan Tidak Lulus</p>
-                                    <p class="text-2xl font-extrabold text-white mt-1">SELEKSI RELAWAN</p>
-                                    <p class="text-xs text-white/60 mt-2">Masih ada kesempatan di periode selanjutnya.</p>
-                                </div>
-
-                                {{-- Body putih --}}
-                                <div class="bg-white px-6 pb-6 pt-4">
-                                    <div class="text-center mb-5 pb-4 border-b border-slate-100">
-                                        <p class="text-[10px] text-slate-400 uppercase tracking-wider">REL-{{ str_pad($existing->id, 5, '0', STR_PAD_LEFT) }}</p>
-                                        <p class="text-xl font-extrabold text-slate-900 mt-1">{{ $existing->name }}</p>
-                                        <p class="text-xs text-slate-500 mt-0.5">{{ $existing->skill }}</p>
-                                    </div>
-
-                                    <div class="space-y-2.5 text-xs mb-5">
-                                        <div>
-                                            <p class="text-[10px] text-slate-400 uppercase tracking-wider">Telepon</p>
-                                            <p class="font-semibold text-slate-800">{{ $existing->phone_number }}</p>
-                                        </div>
-                                        <div>
-                                            <p class="text-[10px] text-slate-400 uppercase tracking-wider">Alamat</p>
-                                            <p class="font-semibold text-slate-800">{{ $existing->address }}</p>
-                                        </div>
-                                    </div>
-
-                                    <div class="p-3 rounded-xl bg-slate-50 border border-slate-100 mb-4">
-                                        <p class="text-xs text-slate-600">Hubungi Admin untuk informasi lebih lanjut atau coba daftar kembali di periode berikutnya.</p>
-                                    </div>
-                                </div>
-                            </div>
-                        @endif
-
-                    @endif
-
-                    {{-- Actions --}}
-                    <div class="flex flex-col sm:flex-row gap-2 mt-6 pt-5 border-t border-slate-100">
-                        <button type="button" onclick="window.location.href='{{ route('dashboard') }}'"
-                                class="flex-1 px-4 py-2.5 text-sm font-medium text-slate-700 bg-white border border-slate-200 rounded-xl hover:bg-slate-100 hover:border-slate-300 hover:-translate-y-0.5 hover:shadow-sm transition-all duration-200 cursor-pointer text-center">
-                            Kembali
-                        </button>
-                        <button type="button"
-                                onclick="window.open('https://api.whatsapp.com/send?phone=6285934415914&text={{ urlencode('Halo Admin SIGMA, saya ingin menanyakan status pendaftaran relawan atas nama ' . $existing->name . ' (REL-' . str_pad($existing->id, 5, '0', STR_PAD_LEFT) . ').') }}', '_blank')"
-                                class="flex-1 px-4 py-2.5 text-sm font-medium text-white rounded-xl hover:-translate-y-0.5 hover:shadow-md transition-all duration-200 cursor-pointer text-center flex items-center justify-center gap-2"
-                                style="background: #25D366; box-shadow: 0 2px 8px rgba(37,211,102,0.2);">
-                            <i class="bi bi-whatsapp text-xs"></i> Hubungi Admin
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        {{-- KOLOM KANAN: Info Tambahan --}}
-        <div class="lg:col-span-2 space-y-5">
-
-            {{-- Apa itu Relawan SIGMA --}}
-            <div class="bg-white border border-slate-200/80 rounded-2xl overflow-hidden"
-                 style="box-shadow: 0 1px 3px rgba(10,15,30,0.06);">
-                <div class="px-5 py-4 border-b border-slate-100 bg-slate-50">
-                    <h3 class="font-bold text-slate-800 flex items-center gap-2 text-sm">
-                        <i class="bi bi-people-fill" style="color: #3B6FE8;"></i>
-                        Tentang Relawan SIGMA
-                    </h3>
-                </div>
-                <div class="p-5 space-y-3">
-                    <p class="text-xs text-slate-600 leading-relaxed">
-                        Relawan SIGMA adalah individu yang secara sukarela membantu penanganan bencana di lapangan, mulai dari evakuasi hingga distribusi logistik.
-                    </p>
-                    <div class="space-y-2">
-                        <div class="flex items-center gap-2 text-xs text-slate-700">
-                            <i class="bi bi-check-circle-fill text-emerald-500 text-[11px]"></i>
-                            <span>Mendapat penugasan resmi dari Admin</span>
-                        </div>
-                        <div class="flex items-center gap-2 text-xs text-slate-700">
-                            <i class="bi bi-check-circle-fill text-emerald-500 text-[11px]"></i>
-                            <span>Berkoordinasi dengan tim tanggap darurat</span>
-                        </div>
-                        <div class="flex items-center gap-2 text-xs text-slate-700">
-                            <i class="bi bi-check-circle-fill text-emerald-500 text-[11px]"></i>
-                            <span>Berkontribusi langsung di lokasi bencana</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            {{-- FAQ Singkat --}}
-            <div class="bg-white border border-slate-200/80 rounded-2xl overflow-hidden"
-                 style="box-shadow: 0 1px 3px rgba(10,15,30,0.06);">
-                <div class="px-5 py-4 border-b border-slate-100 bg-slate-50">
-                    <h3 class="font-bold text-slate-800 flex items-center gap-2 text-sm">
-                        <i class="bi bi-question-circle-fill text-amber-500"></i>
-                        Pertanyaan Umum
-                    </h3>
-                </div>
-                <div class="p-5 space-y-4">
-                    <div>
-                        <p class="text-xs font-bold text-slate-800 mb-1">Berapa lama proses verifikasi?</p>
-                        <p class="text-[11px] text-slate-500">Biasanya 1–3 hari kerja. Admin akan meninjau kelengkapan data Anda.</p>
-                    </div>
-                    <div>
-                        <p class="text-xs font-bold text-slate-800 mb-1">Bagaimana jika ditolak?</p>
-                        <p class="text-[11px] text-slate-500">Anda bisa menghubungi Admin via WhatsApp untuk mengetahui alasan penolakan.</p>
-                    </div>
-                    <div>
-                        <p class="text-xs font-bold text-slate-800 mb-1">Kapan saya ditugaskan?</p>
-                        <p class="text-[11px] text-slate-500">Penugasan diberikan saat ada kejadian bencana yang membutuhkan relawan sesuai keahlian Anda.</p>
-                    </div>
-                </div>
-            </div>
-
-        </div>
+        <x-volunteer.status :existing="$existing" />
+        <x-volunteer.info />
     </div>
 
 @else
@@ -423,19 +190,19 @@
                         <div class="bg-slate-50 rounded-xl border border-slate-100 p-5 space-y-3">
                             <div class="flex justify-between text-xs">
                                 <span class="text-slate-500">Nama</span>
-                                <span class="font-semibold text-slate-800" id="confirmName">—</span>
+                                <span class="font-semibold text-slate-800" id="confirmName">â€”</span>
                             </div>
                             <div class="flex justify-between text-xs">
                                 <span class="text-slate-500">Alamat</span>
-                                <span class="font-semibold text-slate-800 text-right max-w-[60%]" id="confirmAddress">—</span>
+                                <span class="font-semibold text-slate-800 text-right max-w-[60%]" id="confirmAddress">â€”</span>
                             </div>
                             <div class="flex justify-between text-xs">
                                 <span class="text-slate-500">Telepon</span>
-                                <span class="font-semibold text-slate-800" id="confirmPhone">—</span>
+                                <span class="font-semibold text-slate-800" id="confirmPhone">â€”</span>
                             </div>
                             <div class="flex justify-between text-xs">
                                 <span class="text-slate-500">Keahlian</span>
-                                <span class="font-semibold text-slate-800" id="confirmSkill">—</span>
+                                <span class="font-semibold text-slate-800" id="confirmSkill">â€”</span>
                             </div>
                         </div>
 
@@ -588,11 +355,11 @@
 
         // Populate confirmation on step 3
         if (step === 3) {
-            document.getElementById('confirmName').textContent = document.getElementById('name').value || '—';
-            document.getElementById('confirmAddress').textContent = document.getElementById('address').value || '—';
-            document.getElementById('confirmPhone').textContent = document.getElementById('phone_number').value || '—';
+            document.getElementById('confirmName').textContent = document.getElementById('name').value || 'â€”';
+            document.getElementById('confirmAddress').textContent = document.getElementById('address').value || 'â€”';
+            document.getElementById('confirmPhone').textContent = document.getElementById('phone_number').value || 'â€”';
             const selectedSkill = document.querySelector('input[name="skill"]:checked');
-            document.getElementById('confirmSkill').textContent = selectedSkill ? selectedSkill.closest('.skill-card').querySelector('.text-sm').textContent : '—';
+            document.getElementById('confirmSkill').textContent = selectedSkill ? selectedSkill.closest('.skill-card').querySelector('.text-sm').textContent : 'â€”';
         }
     }
 
