@@ -1,20 +1,19 @@
 @extends('layouts.app')
 @section('title', 'Detail Relawan')
+@section('subtitle', 'Tinjau profil relawan, kelola status keaktifan, dan atur penugasan lokasi tugas.')
 
 @section('page-actions')
-    <a href="{{ route('volunteer.index') }}" class="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-slate-600 bg-white border border-slate-200 rounded-lg hover:bg-slate-50 hover:border-slate-300 transition-all shadow-sm">
-        <i class="bi bi-arrow-left text-xs"></i> Kembali
+    <a href="{{ route('volunteer.index') }}" class="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-slate-600 bg-white border border-slate-200 rounded-lg hover:bg-slate-50 hover:border-slate-300 transition-all shadow-sm group">
+        <svg class="w-3.5 h-3.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M19 12H5M12 19l-7-7 7-7" />
+        </svg>
+        <span>Kembali</span>
     </a>
 @endsection
 
 @section('content')
 
-@if(session('msg'))
-    <div class="mb-5 p-4 rounded-xl flex items-center gap-3 text-sm font-medium bg-emerald-50 text-emerald-800 border border-emerald-200">
-        <i class="bi bi-check-circle-fill text-emerald-500"></i> {{ session('msg') }}
-        <button onclick="this.parentElement.remove()" class="ml-auto opacity-60 hover:opacity-100"><i class="bi bi-x-lg"></i></button>
-    </div>
-@endif
+
 
 <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
 
@@ -25,26 +24,21 @@
              style="box-shadow: 0 1px 3px rgba(10,15,30,0.06), 0 4px 16px rgba(10,15,30,0.04);">
 
             {{-- Header --}}
-            <div class="px-8 py-6 border-b border-slate-100"
-                 style="background: linear-gradient(135deg, #3B6FE8 0%, #1e3a8a 100%);">
+            <div class="pl-6 pr-8 py-5 border-l-4 border-l-[#3B6FE8] border-b border-slate-100 bg-white">
                 <div class="flex items-start justify-between gap-4">
                     <div>
-                        <h2 class="text-2xl font-bold text-white">{{ $volunteer->name }}</h2>
-                        <p class="text-white/70 text-sm mt-1">{{ $volunteer->phone_number }}</p>
+                        <h2 class="text-2xl font-bold text-slate-800">{{ $volunteer->name }}</h2>
+                        <p class="text-slate-500 text-xs font-bold mt-1 uppercase tracking-wide bg-slate-100 text-slate-600 px-2 py-0.5 rounded inline-block">ID Relawan: {{ $volunteer->volunteer_code }}</p>
                     </div>
                     <div>
                         @if($volunteer->status === 'PENDING')
-                            <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold bg-amber-400/20 text-amber-300 border border-amber-400/30">
-                                <span class="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse"></span> Pending
-                            </span>
+                            <span class="text-sm font-bold text-amber-600">Pending</span>
                         @elseif($volunteer->status === 'APPROVED')
-                            <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold bg-emerald-400/20 text-emerald-300 border border-emerald-400/30">
-                                <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span> Approved
-                            </span>
+                            <span class="text-sm font-bold text-emerald-600">Approved</span>
+                        @elseif($volunteer->status === 'FIRED')
+                            <span class="text-sm font-bold text-rose-600">Nonaktif</span>
                         @else
-                            <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold bg-red-400/20 text-red-300 border border-red-400/30">
-                                <span class="w-1.5 h-1.5 rounded-full bg-red-400"></span> Rejected
-                            </span>
+                            <span class="text-sm font-bold text-slate-500">Rejected</span>
                         @endif
                     </div>
                 </div>
@@ -70,10 +64,20 @@
                             <span class="text-sm text-slate-600">Alamat Domisili</span>
                             <span class="text-sm font-medium text-slate-900 text-right max-w-xs">{{ $volunteer->address }}</span>
                         </div>
-                        <div class="flex justify-between py-2">
+                        <div class="flex justify-between py-2 border-b border-slate-100">
                             <span class="text-sm text-slate-600">Terdaftar</span>
                             <span class="text-sm font-medium text-slate-900">{{ $volunteer->created_at->format('d M Y H:i') }}</span>
                         </div>
+                        @if($volunteer->status === 'APPROVED')
+                            <div class="flex justify-between py-2 border-b border-slate-100">
+                                <span class="text-sm text-slate-600">Bencana Tugas</span>
+                                <span class="text-sm font-medium text-slate-900">{{ $volunteer->disaster->title ?? 'Belum ditugaskan' }}</span>
+                            </div>
+                            <div class="flex justify-between py-2">
+                                <span class="text-sm text-slate-600">Posko Evakuasi</span>
+                                <span class="text-sm font-medium text-slate-900">{{ $volunteer->assignment ?? 'Belum ditugaskan' }}</span>
+                            </div>
+                        @endif
                     </div>
                 </div>
 
@@ -99,13 +103,13 @@
     @if(strtolower(auth()->user()->role) === 'admin')
         <div class="lg:col-span-1 space-y-6">
 
-            <div class="bg-white border border-slate-200/80 rounded-2xl shadow-sm overflow-hidden"
+            <div class="bg-white border border-slate-200/80 rounded-2xl shadow-sm overflow-visible"
                  style="box-shadow: 0 1px 3px rgba(10,15,30,0.06), 0 4px 16px rgba(10,15,30,0.04);">
 
                 <div class="px-5 py-4 border-b border-slate-100 flex items-center gap-2">
-                    <div class="w-7 h-7 rounded-lg flex items-center justify-center" style="background: #E4F0F6;">
-                        <i class="bi bi-shield-check text-xs" style="color: #3B6FE8;"></i>
-                    </div>
+                    <svg class="w-5 h-5 text-[#3B6FE8] shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                        <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
+                    </svg>
                     <h3 class="text-sm font-semibold text-slate-900">Tindakan</h3>
                 </div>
 
@@ -118,7 +122,7 @@
                             @csrf
                             <input type="hidden" name="status" value="APPROVED">
                             <button type="submit"
-                                    class="w-full flex items-center justify-center gap-2 px-4 py-2.5 text-sm font-semibold text-white rounded-xl transition-all duration-200 hover:-translate-y-0.5"
+                                    class="w-full flex items-center justify-center gap-2 px-4 py-2.5 text-sm font-semibold text-white rounded-xl transition-all duration-200 hover:-translate-y-0.5 cursor-pointer"
                                     style="background: linear-gradient(135deg, #059669 0%, #10b981 100%); box-shadow: 0 2px 8px rgba(16,185,129,0.25);">
                                 <i class="bi bi-check-circle"></i> Setujui
                             </button>
@@ -128,22 +132,87 @@
                             @csrf
                             <input type="hidden" name="status" value="REJECTED">
                             <button type="submit"
-                                    class="w-full flex items-center justify-center gap-2 px-4 py-2.5 text-sm font-semibold text-red-600 bg-white border border-red-200 rounded-xl hover:bg-red-50 transition-all">
+                                    class="w-full flex items-center justify-center gap-2 px-4 py-2.5 text-sm font-semibold text-red-600 bg-white border border-red-200 rounded-xl hover:bg-red-50 transition-all cursor-pointer">
                                 <i class="bi bi-x-circle"></i> Tolak
                             </button>
                         </form>
-                    @else
-                        <div class="p-3 rounded-xl text-xs font-medium text-center"
-                             style="{{ $volunteer->status === 'APPROVED' ? 'background: #E8F5E9; color: #1B5E20; border: 1px solid #C8E6C9;' : 'background: #FCE4EC; color: #880E4F; border: 1px solid #F8BBD0;' }}">
-                            Status: <span class="font-bold">{{ $volunteer->status_label }}</span>
+                    @elseif($volunteer->status === 'FIRED')
+                        <div class="p-3 rounded-xl text-xs font-semibold text-center bg-rose-50 text-rose-700 border border-rose-100 mb-3">
+                            Status: Nonaktif
                         </div>
 
-                        {{-- Reset to Pending --}}
-                        <form action="{{ route('volunteer.update_status', $volunteer->id) }}" method="POST" class="mt-3">
+                        {{-- Aktifkan Kembali --}}
+                        <form action="{{ route('volunteer.update_status', $volunteer->id) }}" method="POST" class="mb-2">
+                            @csrf
+                            <input type="hidden" name="status" value="APPROVED">
+                            <button type="submit"
+                                    class="w-full flex items-center justify-center gap-2 px-4 py-2.5 text-sm font-semibold text-white rounded-xl transition-all duration-200 hover:-translate-y-0.5 cursor-pointer"
+                                    style="background: linear-gradient(135deg, #059669 0%, #10b981 100%); box-shadow: 0 2px 8px rgba(16,185,129,0.25);">
+                                <i class="bi bi-check-circle"></i> Aktifkan Kembali
+                            </button>
+                        </form>
+
+                        {{-- Reset ke Pending --}}
+                        <form action="{{ route('volunteer.update_status', $volunteer->id) }}" method="POST">
                             @csrf
                             <input type="hidden" name="status" value="PENDING">
                             <button type="submit"
-                                    class="w-full flex items-center justify-center gap-2 px-4 py-2 text-xs font-semibold text-slate-600 bg-white border border-slate-200 rounded-lg hover:bg-slate-50 transition-all">
+                                    class="w-full flex items-center justify-center gap-2 px-4 py-2 text-xs font-semibold text-slate-600 bg-white border border-slate-200 rounded-lg hover:bg-slate-50 transition-all cursor-pointer">
+                                <i class="bi bi-arrow-counterclockwise"></i> Reset ke Pending
+                            </button>
+                        </form>
+                    @elseif($volunteer->status === 'APPROVED')
+                        <div class="p-3 rounded-xl text-xs font-semibold text-center bg-emerald-50 text-emerald-700 border border-emerald-100 mb-3">
+                            Status: Approved
+                        </div>
+
+                        {{-- Reset to Pending --}}
+                        <form action="{{ route('volunteer.update_status', $volunteer->id) }}" method="POST">
+                            @csrf
+                            <input type="hidden" name="status" value="PENDING">
+                            <button type="submit"
+                                    class="w-full flex items-center justify-center gap-2 px-4 py-2 text-xs font-semibold text-slate-600 bg-white border border-slate-200 rounded-lg hover:bg-slate-50 transition-all cursor-pointer">
+                                <i class="bi bi-arrow-counterclockwise"></i> Reset ke Pending
+                            </button>
+                        </form>
+
+                        {{-- Nonaktifkan Relawan --}}
+                        <form id="formNonaktifkan" action="{{ route('volunteer.update_status', $volunteer->id) }}" method="POST" class="mt-2">
+                            @csrf
+                            <input type="hidden" name="status" value="FIRED">
+                            <button type="button" id="btnNonaktifkan"
+                                    class="w-full flex items-center justify-center gap-2 px-4 py-2 text-xs font-semibold text-rose-600 bg-rose-50/50 hover:bg-rose-50 border border-rose-100 rounded-lg transition-all cursor-pointer"
+                                    onclick="openModal('nonaktifkan', '{{ addslashes($volunteer->name) }}')">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="w-3.5 h-3.5 shrink-0"><circle cx="10" cy="7" r="4"/><path d="M10 11c-4.42 0-8 1.79-8 4v1h9"/><line x1="15" y1="17" x2="21" y2="17"/></svg>
+                                Nonaktifkan Relawan
+                            </button>
+                        </form>
+
+                        @if($volunteer->disaster_id || $volunteer->assignment)
+                            {{-- Hapus Penugasan --}}
+                            <form id="formHapusPenugasan" action="{{ route('volunteer.assign', $volunteer->id) }}" method="POST" class="mt-2">
+                                @csrf
+                                <input type="hidden" name="disaster_id" value="">
+                                <input type="hidden" name="assignment" value="">
+                                <button type="button" id="btnHapusPenugasan"
+                                        class="w-full flex items-center justify-center gap-2 px-4 py-2 text-xs font-semibold text-rose-600 bg-rose-50/50 hover:bg-rose-50 border border-rose-100 rounded-lg transition-all cursor-pointer"
+                                        onclick="openModal('hapus', '{{ addslashes($volunteer->name) }}')">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="w-3.5 h-3.5 shrink-0"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/><line x1="9.5" y1="14.5" x2="14.5" y2="19.5"/><line x1="14.5" y1="14.5" x2="9.5" y2="19.5"/></svg>
+                                    Hapus Penugasan
+                                </button>
+                            </form>
+                        @endif
+                    @elseif($volunteer->status === 'REJECTED')
+                        <div class="p-3 rounded-xl text-xs font-semibold text-center bg-slate-50 text-slate-600 border border-slate-200 mb-3">
+                            Status: Rejected
+                        </div>
+
+                        {{-- Reset to Pending --}}
+                        <form action="{{ route('volunteer.update_status', $volunteer->id) }}" method="POST">
+                            @csrf
+                            <input type="hidden" name="status" value="PENDING">
+                            <button type="submit"
+                                    class="w-full flex items-center justify-center gap-2 px-4 py-2 text-xs font-semibold text-slate-600 bg-white border border-slate-200 rounded-lg hover:bg-slate-50 transition-all cursor-pointer">
                                 <i class="bi bi-arrow-counterclockwise"></i> Reset ke Pending
                             </button>
                         </form>
@@ -151,37 +220,117 @@
 
                     {{-- Penugasan --}}
                     @if($volunteer->status === 'APPROVED')
-                        <div class="border-t border-slate-100 pt-3 mt-3">
-                            <form action="{{ route('volunteer.assign', $volunteer->id) }}" method="POST">
+                        <div class="border-t border-slate-100 pt-4.5 mt-4.5">
+                            <form action="{{ route('volunteer.assign', $volunteer->id) }}" method="POST" class="space-y-4">
                                 @csrf
-                                <label class="block text-xs font-bold text-slate-700 mb-2 uppercase tracking-wider">
-                                    Penugasan Lokasi
+                                <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider">
+                                    Penugasan Relawan
                                 </label>
 
-                                {{-- Pilih dari bencana aktif --}}
-                                <select id="disasterSelect" onchange="document.getElementById('assignmentInput').value = this.options[this.selectedIndex].dataset.location || ''"
-                                    class="w-full px-3 py-2 text-xs border border-slate-200 rounded-lg focus:outline-none focus:border-blue-400 focus:ring-2 focus:ring-blue-500/20 transition-all mb-2 bg-white text-slate-700">
-                                    <option value="">— Pilih bencana aktif —</option>
-                                    @foreach(\App\Models\Disaster::whereNotIn('status', ['PENDING', 'DECLINE', 'RESOLVED'])->latest()->get() as $disaster)
-                                        <option data-location="{{ $disaster->location ?? $disaster->title }}">
-                                            {{ $disaster->title }} — {{ $disaster->location ?? 'Lokasi tidak diketahui' }}
-                                        </option>
-                                    @endforeach
-                                </select>
-
-                                {{-- Atau ketik manual --}}
-                                <div class="flex gap-2">
-                                    <input type="text" name="assignment" id="assignmentInput"
-                                           placeholder="Atau ketik manual..."
-                                           value="{{ $volunteer->assignment }}"
-                                           class="flex-1 px-3 py-2 text-xs border border-slate-200 rounded-lg focus:outline-none focus:border-blue-400 focus:ring-2 focus:ring-blue-500/20 transition-all">
-                                    <button type="submit"
-                                            class="px-3 py-2 text-xs font-semibold text-white rounded-lg transition-all hover:opacity-90"
-                                            style="background: #3B6FE8;">
-                                        <i class="bi bi-check"></i>
-                                    </button>
+                                <div class="space-y-3.5">
+                                    {{-- Custom Searchable Disaster Select --}}
+                                    <div class="relative" id="customDisasterSelect">
+                                        <label class="block text-[10px] font-extrabold text-slate-400 uppercase tracking-wider mb-1">Bencana Aktif</label>
+                                        <button type="button" class="select-trigger w-full px-3 py-2 text-xs border border-slate-200 rounded-xl bg-slate-50/50 focus:bg-white text-slate-750 text-left flex items-center justify-between cursor-pointer transition-all duration-200 focus:outline-none focus:border-blue-400 focus:ring-1 focus:ring-blue-500/20">
+                                            <span class="selected-text truncate {{ !$volunteer->disaster ? 'text-slate-400' : '' }}">
+                                                @if($volunteer->disaster)
+                                                    @php
+                                                        $vCount = \App\Models\Volunteer::where('status', 'APPROVED')->where('disaster_id', $volunteer->disaster->id)->count();
+                                                    @endphp
+                                                    {{ $volunteer->disaster->title }} — {{ $volunteer->disaster->status_label }} ({{ $vCount }} relawan aktif)
+                                                @else
+                                                    — Pilih Bencana —
+                                                @endif
+                                            </span>
+                                            <i class="bi bi-chevron-down text-[10px] text-slate-400"></i>
+                                        </button>
+                                        <input type="hidden" name="disaster_id" id="hiddenDisasterId" value="{{ $volunteer->disaster_id }}">
+                                        
+                                        <div class="select-dropdown absolute left-0 right-0 mt-1 bg-white border border-slate-200 rounded-xl shadow-lg z-50 p-2.5 space-y-2 hidden">
+                                            <div class="relative">
+                                                <i class="bi bi-search absolute left-2.5 top-1/2 -translate-y-1/2 text-slate-400 text-[10px]"></i>
+                                                <input type="text" class="select-search w-full pl-7 pr-3 py-1.5 text-[11px] border border-slate-150 rounded-lg focus:outline-none focus:border-blue-400 bg-slate-50/30" placeholder="Cari bencana...">
+                                            </div>
+                                            <div class="select-options max-h-40 overflow-y-auto space-y-0.5 text-xs text-slate-700">
+                                                <div class="option-item px-2.5 py-1.75 rounded-lg hover:bg-slate-50 cursor-pointer transition-colors flex items-center justify-between" data-value="">
+                                                    <span class="font-medium text-slate-400">— Kosongkan Bencana —</span>
+                                                </div>
+                                                @foreach(\App\Models\Disaster::whereNotIn('status', ['PENDING', 'DECLINE', 'RESOLVED'])->latest()->get() as $disaster)
+                                                    @php
+                                                        $volunteerCount = \App\Models\Volunteer::where('status', 'APPROVED')->where('disaster_id', $disaster->id)->count();
+                                                    @endphp
+                                                    <div class="option-item px-2.5 py-1.75 rounded-lg hover:bg-blue-50 hover:text-blue-700 cursor-pointer transition-colors flex items-center justify-between" 
+                                                         data-value="{{ $disaster->id }}" 
+                                                         data-search="{{ strtolower($disaster->title . ' ' . $disaster->status_label) }}">
+                                                        <div class="min-w-0 flex-1 pr-2">
+                                                            <p class="font-semibold text-slate-800 truncate">{{ $disaster->title }} — {{ $disaster->status_label }}</p>
+                                                            <p class="text-[10px] text-slate-400 mt-0.5 truncate">{{ $disaster->location ?? 'Lokasi tidak diketahui' }}</p>
+                                                        </div>
+                                                        <span class="text-[10px] font-bold px-1.75 py-0.5 rounded-full bg-blue-50 text-blue-700 shrink-0 border border-blue-100/50">
+                                                            {{ $volunteerCount }} relawan aktif
+                                                        </span>
+                                                    </div>
+                                                @endforeach
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    {{-- Custom Searchable Posko Select --}}
+                                    <div class="relative" id="customShelterSelect">
+                                        <label class="block text-[10px] font-extrabold text-slate-400 uppercase tracking-wider mb-1">Posko Evakuasi</label>
+                                        <button type="button" class="select-trigger w-full px-3 py-2 text-xs border border-slate-200 rounded-xl bg-slate-50/50 focus:bg-white text-slate-750 text-left flex items-center justify-between cursor-pointer transition-all duration-200 focus:outline-none focus:border-blue-400 focus:ring-1 focus:ring-blue-500/20">
+                                            <span class="selected-text truncate {{ !$volunteer->assignment ? 'text-slate-400' : '' }}">
+                                                @if($volunteer->assignment)
+                                                    @php
+                                                        $sCount = \App\Models\Volunteer::where('status', 'APPROVED')->where('assignment', $volunteer->assignment)->count();
+                                                    @endphp
+                                                    {{ $volunteer->assignment }} ({{ $sCount }} relawan aktif)
+                                                @else
+                                                    — Pilih Posko —
+                                                @endif
+                                            </span>
+                                            <i class="bi bi-chevron-down text-[10px] text-slate-400"></i>
+                                        </button>
+                                        <input type="hidden" name="assignment" id="hiddenAssignment" value="{{ $volunteer->assignment }}">
+                                        
+                                        <div class="select-dropdown absolute left-0 right-0 bottom-full mb-1 bg-white border border-slate-200 rounded-xl shadow-lg z-50 p-2.5 space-y-2 hidden">
+                                            <div class="relative">
+                                                <i class="bi bi-search absolute left-2.5 top-1/2 -translate-y-1/2 text-slate-400 text-[10px]"></i>
+                                                <input type="text" class="select-search w-full pl-7 pr-3 py-1.5 text-[11px] border border-slate-150 rounded-lg focus:outline-none focus:border-blue-400 bg-slate-50/30" placeholder="Cari posko...">
+                                            </div>
+                                            <div class="select-options max-h-40 overflow-y-auto space-y-0.5 text-xs text-slate-700">
+                                                <div class="option-item px-2.5 py-1.75 rounded-lg hover:bg-slate-50 cursor-pointer transition-colors flex items-center justify-between" data-value="">
+                                                    <span class="font-medium text-slate-400">— Kosongkan Posko —</span>
+                                                </div>
+                                                @foreach(\App\Models\Shelter::all() as $shelter)
+                                                    @php
+                                                        $shelterCount = \App\Models\Volunteer::where('status', 'APPROVED')->where('assignment', $shelter->name)->count();
+                                                    @endphp
+                                                    <div class="option-item px-2.5 py-1.75 rounded-lg hover:bg-purple-50 hover:text-purple-700 cursor-pointer transition-colors flex items-center justify-between" 
+                                                         data-value="{{ $shelter->name }}" 
+                                                         data-search="{{ strtolower($shelter->name) }}">
+                                                        <div class="min-w-0 flex-1 pr-2">
+                                                            <p class="font-semibold text-slate-800 truncate">{{ $shelter->name }}</p>
+                                                            <p class="text-[10px] text-slate-405 mt-0.5 truncate">Kapasitas: {{ $shelter->capacity }}</p>
+                                                        </div>
+                                                        <span class="text-[10px] font-bold px-1.75 py-0.5 rounded-full bg-purple-50 text-purple-700 shrink-0 border border-purple-100/50">
+                                                            {{ $shelterCount }} relawan aktif
+                                                        </span>
+                                                    </div>
+                                                @endforeach
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="pt-1.5">
+                                        <button type="submit"
+                                                class="w-full py-2.5 text-xs font-semibold text-white rounded-xl transition-all hover:opacity-95 flex items-center justify-center gap-1.5 cursor-pointer shadow-md shadow-blue-500/10 animate-fade-in"
+                                                style="background: linear-gradient(135deg, #3B6FE8 0%, #1e3a8a 100%);">
+                                            <i class="bi bi-save text-xs"></i> Simpan Penugasan
+                                        </button>
+                                    </div>
                                 </div>
-                                <p class="text-[10px] text-slate-400 mt-1.5">Pilih bencana atau ketik lokasi manual.</p>
+                                <p class="text-[10px] text-slate-400 leading-normal">Pilih bencana aktif dan posko evakuasi tempat relawan akan ditugaskan.</p>
                             </form>
                         </div>
                     @endif
@@ -194,4 +343,209 @@
 
 </div>
 
+{{-- ═══ CUSTOM CONFIRMATION MODAL ═══ --}}
+<div id="confirmModal" class="absolute inset-x-0 top-0 z-[999] flex items-start sm:items-center justify-center min-h-full hidden">
+    {{-- Backdrop --}}
+    <div class="absolute inset-0 bg-slate-900/50 backdrop-blur-sm" onclick="closeModal()"></div>
+
+    {{-- Modal Panel --}}
+    <div class="relative bg-white w-full sm:max-w-[380px] sm:mx-4 sm:rounded-3xl rounded-t-3xl px-7 pt-8 pb-7 sm:my-auto mt-[15vh]"
+         style="box-shadow: 0 -4px 40px rgba(10,15,30,0.10), 0 16px 50px rgba(10,15,30,0.15);">
+
+        {{-- Close pill (mobile) --}}
+        <div class="sm:hidden w-10 h-1 bg-slate-200 rounded-full mx-auto mb-6"></div>
+
+        {{-- Icon --}}
+        <div id="modalIconWrap" class="mb-5 text-rose-500">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"
+                 stroke-linecap="round" stroke-linejoin="round" class="w-9 h-9">
+                <circle cx="10" cy="7" r="4"/>
+                <path d="M10 11c-4.42 0-8 1.79-8 4v1h9"/>
+                <line x1="15" y1="17" x2="21" y2="17"/>
+            </svg>
+        </div>
+
+        {{-- Title + Desc --}}
+        <h4 id="modalTitle" class="text-[17px] font-bold text-slate-900 leading-snug mb-1.5">Nonaktifkan Relawan</h4>
+        <p id="modalDesc" class="text-sm text-slate-500 leading-relaxed mb-5">Relawan tidak akan bisa bertugas sampai diaktifkan kembali oleh admin.</p>
+
+        {{-- Warning note --}}
+        <div class="border-l-[3px] border-rose-400 pl-3.5 pr-3 py-2.5 mb-7 bg-rose-50/50 rounded-r-xl">
+            <p id="modalWarningText" class="text-[12px] text-rose-700 leading-relaxed"></p>
+        </div>
+
+        {{-- Buttons --}}
+        <div class="flex gap-3">
+            <button type="button" onclick="closeModal()"
+                    class="flex-1 py-3 text-sm font-medium text-slate-600 bg-slate-100 hover:bg-slate-150 rounded-2xl transition-colors duration-150 cursor-pointer">
+                Batal
+            </button>
+            <button type="button" id="modalConfirmBtn"
+                    class="flex-1 py-3 text-sm font-semibold text-white rounded-2xl transition-all duration-150 cursor-pointer active:scale-[0.98] hover:brightness-105"
+                    style="background: linear-gradient(135deg, #f43f5e 0%, #be123c 100%);">
+                <span id="modalConfirmLabel">Ya, Nonaktifkan</span>
+            </button>
+        </div>
+    </div>
+</div>
+
+@endsection
+
+
+@section('scripts')
+<script>
+    // ─── Modal Logic ───────────────────────────────────────────
+    let pendingFormId = null;
+
+    const iconSvgs = {
+        nonaktifkan: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" class="w-9 h-9">
+            <circle cx="10" cy="7" r="4"/>
+            <path d="M10 11c-4.42 0-8 1.79-8 4v1h9"/>
+            <line x1="15" y1="17" x2="21" y2="17"/>
+        </svg>`,
+        hapus: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" class="w-9 h-9">
+            <rect x="3" y="4" width="18" height="18" rx="2"/>
+            <line x1="16" y1="2" x2="16" y2="6"/>
+            <line x1="8" y1="2" x2="8" y2="6"/>
+            <line x1="3" y1="10" x2="21" y2="10"/>
+            <line x1="9.5" y1="14.5" x2="14.5" y2="19.5"/>
+            <line x1="14.5" y1="14.5" x2="9.5" y2="19.5"/>
+        </svg>`,
+    };
+
+    const modalConfig = {
+        nonaktifkan: {
+            title: 'Nonaktifkan Relawan',
+            desc: 'Relawan tidak akan bisa bertugas sampai diaktifkan kembali oleh admin.',
+            warning: 'Status relawan berubah menjadi <strong>Nonaktif</strong>. Tindakan ini dapat dibatalkan kapan saja.',
+            iconKey: 'nonaktifkan',
+            confirmLabel: 'Ya, Nonaktifkan',
+            formId: 'formNonaktifkan',
+        },
+        hapus: {
+            title: 'Hapus Penugasan',
+            desc: 'Relawan akan dikeluarkan dari bencana dan posko yang sedang ditangani.',
+            warning: 'Penugasan bencana dan posko akan <strong>dihapus</strong>. Status relawan tetap aktif, namun perlu ditugaskan ulang.',
+            iconKey: 'hapus',
+            confirmLabel: 'Ya, Hapus Penugasan',
+            formId: 'formHapusPenugasan',
+        },
+    };
+
+    function openModal(type, name) {
+        const cfg = modalConfig[type];
+        if (!cfg) return;
+
+        pendingFormId = cfg.formId;
+
+        const displayName = name ? `“${name}”` : 'relawan ini';
+        const desc = type === 'nonaktifkan'
+            ? `Relawan ${displayName} tidak akan bisa bertugas sampai diaktifkan kembali oleh admin.`
+            : `Relawan ${displayName} akan dikeluarkan dari bencana dan posko yang sedang ditangani.`;
+
+        document.getElementById('modalTitle').textContent      = cfg.title;
+        document.getElementById('modalDesc').textContent       = desc;
+        document.getElementById('modalWarningText').innerHTML  = cfg.warning;
+        document.getElementById('modalConfirmLabel').textContent = cfg.confirmLabel;
+        document.getElementById('modalIconWrap').innerHTML     = iconSvgs[cfg.iconKey];
+
+        document.getElementById('confirmModal').classList.remove('hidden');
+    }
+
+    function closeModal() {
+        document.getElementById('confirmModal').classList.add('hidden');
+        pendingFormId = null;
+    }
+
+    document.getElementById('modalConfirmBtn')?.addEventListener('click', () => {
+        if (pendingFormId) {
+            document.getElementById(pendingFormId)?.submit();
+        }
+        closeModal();
+    });
+
+    // Close on Escape key
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') closeModal();
+    });
+
+    // ─── Custom select dropdown logic ──────────────────────────
+    document.addEventListener('DOMContentLoaded', () => {
+        document.querySelectorAll('.select-trigger').forEach(trigger => {
+            trigger.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const wrapper = trigger.parentElement;
+                const dropdown = wrapper.querySelector('.select-dropdown');
+                const searchInput = wrapper.querySelector('.select-search');
+                
+                // Close other custom selects
+                document.querySelectorAll('.select-dropdown').forEach(d => {
+                    if (d !== dropdown) d.classList.add('hidden');
+                });
+
+                dropdown.classList.toggle('hidden');
+                if (!dropdown.classList.contains('hidden')) {
+                    searchInput?.focus();
+                }
+            });
+        });
+
+        document.querySelectorAll('.select-search').forEach(search => {
+            search.addEventListener('input', (e) => {
+                const query = e.target.value.toLowerCase().trim();
+                const optionsList = search.parentElement.nextElementSibling;
+                const options = optionsList.querySelectorAll('.option-item');
+
+                options.forEach(opt => {
+                    const searchStr = opt.getAttribute('data-search') || '';
+                    if (!query || searchStr.includes(query) || opt.getAttribute('data-value') === '') {
+                        opt.style.display = '';
+                    } else {
+                        opt.style.display = 'none';
+                    }
+                });
+            });
+
+            search.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter') e.preventDefault();
+            });
+        });
+
+        document.querySelectorAll('.option-item').forEach(item => {
+            item.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const wrapper = item.closest('.relative');
+                const hiddenInput = wrapper.querySelector('input[type="hidden"]');
+                const selectedText = wrapper.querySelector('.selected-text');
+                const dropdown = wrapper.querySelector('.select-dropdown');
+                const searchInput = wrapper.querySelector('.select-search');
+
+                const val = item.getAttribute('data-value');
+                hiddenInput.value = val;
+
+                // Update visible trigger text
+                if (val === '') {
+                    selectedText.textContent = wrapper.id === 'customDisasterSelect' ? '— Pilih Bencana —' : '— Pilih Posko —';
+                    selectedText.classList.add('text-slate-400');
+                } else {
+                    const mainText = item.querySelector('p')?.textContent?.trim() || '';
+                    const countText = item.querySelector('span')?.textContent?.trim() || '';
+                    selectedText.textContent = countText ? mainText + ' (' + countText + ')' : mainText;
+                    selectedText.classList.remove('text-slate-400');
+                }
+
+                dropdown.classList.add('hidden');
+                if (searchInput) searchInput.value = '';
+                
+                // Reset search display
+                item.parentElement.querySelectorAll('.option-item').forEach(opt => opt.style.display = '');
+            });
+        });
+
+        // Close on click outside
+        document.addEventListener('click', () => {
+            document.querySelectorAll('.select-dropdown').forEach(d => d.classList.add('hidden'));
+        });
+    });
+</script>
 @endsection

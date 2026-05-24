@@ -3,8 +3,11 @@
 @section('subtitle', 'Temukan laporan berdasarkan lokasi atau jenis bencana.')
 
 @section('page-actions')
-    <button type="button" onclick="history.back()" class="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-slate-600 bg-white border border-slate-200 rounded-lg hover:bg-slate-50 hover:border-slate-300 transition-all duration-200 shadow-sm cursor-pointer">
-        <i class="bi bi-arrow-left text-xs"></i> Kembali
+    <button type="button" onclick="history.back()" class="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-slate-600 bg-white border border-slate-200 rounded-lg hover:bg-slate-50 hover:border-slate-300 transition-all duration-200 shadow-sm cursor-pointer group">
+        <svg class="w-3.5 h-3.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M19 12H5M12 19l-7-7 7-7" />
+        </svg>
+        <span>Kembali</span>
     </button>
 @endsection
 
@@ -118,8 +121,8 @@
             <div class="disaster-card bg-white border border-slate-200/80 border-l-4 {{ $borderColor }} rounded-xl p-4 sm:p-5"
                  style="box-shadow: 0 1px 3px rgba(10,15,30,0.04);"
                  data-status="{{ $d->status }}"
-                 data-title="{{ strtolower($d->title) }}"
-                 data-reporter="{{ strtolower($d->reporter_name) }}"
+                 data-title="{{ $d->title }}"
+                 data-reporter="{{ $d->reporter_name }}"
                  data-lat="{{ $d->latitude }}"
                  data-lng="{{ $d->longitude }}">
 
@@ -213,15 +216,18 @@
         });
     });
 
-    searchInput.addEventListener('input', filterCards);
+    searchInput?.addEventListener('input', filterCards);
+    searchInput?.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') e.preventDefault();
+    });
 
     function filterCards() {
-        const query = searchInput.value.toLowerCase().trim();
+        const query = (searchInput.value || '').toLowerCase().trim();
         let visibleCount = 0;
 
         cards.forEach(card => {
-            const title = card.dataset.title || '';
-            const reporter = card.dataset.reporter || '';
+            const title = (card.dataset.title || '').toLowerCase();
+            const reporter = (card.dataset.reporter || '').toLowerCase();
             const status = card.dataset.status || '';
 
             const matchSearch = !query || title.includes(query) || reporter.includes(query);

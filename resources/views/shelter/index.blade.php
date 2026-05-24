@@ -3,8 +3,11 @@
 @section('subtitle', 'Temukan lokasi posko evakuasi terdekat dan informasi kapasitas terkini.')
 
 @section('page-actions')
-    <button type="button" onclick="window.location.href='{{ route('dashboard') }}'" class="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-slate-600 bg-white border border-slate-200 rounded-lg hover:bg-slate-50 hover:border-slate-300 transition-all duration-200 shadow-sm cursor-pointer">
-        <i class="bi bi-arrow-left text-xs"></i> Kembali
+    <button type="button" onclick="window.location.href='{{ route('dashboard') }}'" class="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-slate-600 bg-white border border-slate-200 rounded-lg hover:bg-slate-50 hover:border-slate-300 transition-all duration-200 shadow-sm cursor-pointer group">
+        <svg class="w-3.5 h-3.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M19 12H5M12 19l-7-7 7-7" />
+        </svg>
+        <span>Kembali</span>
     </button>
 @endsection
 
@@ -70,17 +73,17 @@
                 }
 
                 if ($shelter['status'] === 'Penuh') {
-                    $statusBg = 'bg-red-50 border-red-100'; $statusText = 'text-red-700'; $statusDot = 'bg-red-500'; $statusLabel = 'Penuh';
+                    $statusText = 'text-red-600'; $statusDot = 'bg-red-500'; $statusLabel = 'Penuh';
                 } elseif ($capPercent > 85) {
-                    $statusBg = 'bg-amber-50 border-amber-100'; $statusText = 'text-amber-700'; $statusDot = 'bg-amber-500'; $statusLabel = 'Hampir Penuh';
+                    $statusText = 'text-amber-600'; $statusDot = 'bg-amber-500'; $statusLabel = 'Hampir Penuh';
                 } else {
-                    $statusBg = 'bg-emerald-50 border-emerald-100'; $statusText = 'text-emerald-700'; $statusDot = 'bg-emerald-500'; $statusLabel = 'Tersedia';
+                    $statusText = 'text-emerald-600'; $statusDot = 'bg-emerald-500'; $statusLabel = 'Tersedia';
                 }
             @endphp
 
             <div class="shelter-card bg-white border border-slate-200/80 rounded-2xl p-5 sm:p-6"
                  style="box-shadow: 0 1px 3px rgba(10,15,30,0.06), 0 4px 16px rgba(10,15,30,0.04);"
-                 data-name="{{ strtolower($shelter['name']) }}"
+                 data-name="{{ $shelter['name'] }}"
                  data-status="{{ strtolower($shelter['status']) }}"
                  data-lat="{{ $shelter['lat'] }}"
                  data-lng="{{ $shelter['lng'] }}">
@@ -103,7 +106,7 @@
                                     <span class="flex items-center gap-1"><i class="bi bi-geo-alt text-slate-400"></i> <span class="distance-km">—</span></span>
                                 </div>
                             </div>
-                            <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-bold border shrink-0 {{ $statusBg }} {{ $statusText }}">
+                            <span class="inline-flex items-center gap-1.5 text-[11px] font-bold shrink-0 {{ $statusText }}">
                                 <span class="w-1.5 h-1.5 rounded-full {{ $statusDot }}"></span> {{ $statusLabel }}
                             </span>
                         </div>
@@ -170,9 +173,9 @@
 {{-- Logistics Modal --}}
 <div id="logisticsModal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4" style="background: rgba(10,15,30,0.5);">
     <div class="bg-white rounded-2xl max-w-sm w-full overflow-hidden shadow-2xl" style="box-shadow: 0 25px 50px rgba(10,15,30,0.25);">
-        <div class="px-6 py-5 border-b border-slate-100" style="background: linear-gradient(135deg, #0A0F1E 0%, #1e3a8a 100%);">
-            <h3 class="text-base font-bold text-white">Kebutuhan Logistik</h3>
-            <p id="modalShelterName" class="text-sm font-medium mt-0.5" style="color: rgba(228,240,246,0.7);"></p>
+        <div class="px-6 py-5 border-b border-slate-100 bg-white border-l-4 border-l-[#3B6FE8]">
+            <h3 class="text-base font-bold text-slate-800">Kebutuhan Logistik</h3>
+            <p id="modalShelterName" class="text-xs font-medium mt-0.5 text-slate-500"></p>
         </div>
         <div class="p-6">
             <p class="text-sm text-slate-600 mb-4">Masyarakat dapat mengirimkan bantuan mendesak berikut:</p>
@@ -236,11 +239,12 @@
     const emptyState = document.getElementById('emptyState');
 
     function filterCards() {
-        const query = searchInput.value.toLowerCase().trim();
+        const query = (searchInput.value || '').toLowerCase().trim();
         const activeFilter = document.querySelector('.filter-chip.active')?.dataset.filter || 'all';
         let visibleCount = 0;
         shelterCards.forEach(card => {
-            const matchSearch = !query || card.dataset.name.includes(query);
+            const name = (card.dataset.name || '').toLowerCase();
+            const matchSearch = !query || name.includes(query);
             let matchFilter = true;
             if (activeFilter === 'tersedia') matchFilter = card.dataset.status === 'tersedia';
             else if (activeFilter === 'penuh') matchFilter = card.dataset.status === 'penuh';
@@ -251,6 +255,9 @@
     }
 
     searchInput?.addEventListener('input', filterCards);
+    searchInput?.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') e.preventDefault();
+    });
 
     document.querySelectorAll('.filter-chip').forEach(chip => {
         chip.addEventListener('click', () => {

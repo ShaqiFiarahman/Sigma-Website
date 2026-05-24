@@ -86,7 +86,7 @@
                     };
 
                     // If not initial load, this is a new real-time disaster!
-                    if (!initialLoad) {
+                    if (!initialLoad && window.userRole !== 'admin') {
                         showDisasterToast(d);
                     }
                 } else {

@@ -55,10 +55,7 @@ class VolunteerController extends Controller
      */
     public function index()
     {
-        $volunteers = Volunteer::with('user')
-            ->latest()
-            ->paginate(15);
-
+        $volunteers = Volunteer::with(['user', 'disaster'])->latest()->get();
         return view('admin.volunteer.index', compact('volunteers'));
     }
 
@@ -84,7 +81,7 @@ class VolunteerController extends Controller
             $query->where('volunteer_id', $request->volunteer_id);
         }
 
-        $reports = $query->paginate(20)->withQueryString();
+        $reports = $query->get();
 
         // Data for filters
         $skills = Volunteer::getSkillOptions();
@@ -113,17 +110,17 @@ class VolunteerController extends Controller
     public function updateStatus(Request $request, $id)
     {
         $request->validate([
-            'status' => 'required|in:PENDING,APPROVED,REJECTED',
+            'status' => 'required|in:PENDING,APPROVED,REJECTED,FIRED',
         ]);
 
         $volunteer = Volunteer::findOrFail($id);
         $volunteer->update(['status' => $request->status]);
 
-        // Update role di profiles saat approved/rejected
+        // Update role di profiles saat approved/rejected/fired
         if ($request->status === Volunteer::STATUS_APPROVED) {
             \App\Models\User::where('id', $volunteer->user_id)
                 ->update(['role' => 'Relawan']);
-        } elseif ($request->status === Volunteer::STATUS_REJECTED || $request->status === Volunteer::STATUS_PENDING) {
+        } elseif ($request->status === Volunteer::STATUS_REJECTED || $request->status === Volunteer::STATUS_PENDING || $request->status === Volunteer::STATUS_FIRED) {
             \App\Models\User::where('id', $volunteer->user_id)
                 ->update(['role' => 'Masyarakat']);
         }
@@ -138,12 +135,14 @@ class VolunteerController extends Controller
     public function assign(Request $request, $id)
     {
         $request->validate([
-            'assignment' => 'required|string|max:255',
+            'assignment' => 'nullable|string|max:255',
+            'disaster_id' => 'nullable|exists:disasters,id',
         ]);
 
         $volunteer = Volunteer::findOrFail($id);
         $volunteer->update([
             'assignment' => $request->assignment,
+            'disaster_id' => $request->disaster_id,
             'assignment_notified_at' => null, // Reset notifikasi agar relawan lihat banner baru
         ]);
 

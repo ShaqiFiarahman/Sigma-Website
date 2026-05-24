@@ -2,8 +2,11 @@
 @section('title', 'Kirim Laporan Tugas')
 
 @section('page-actions')
-    <a href="{{ route('volunteer.reports') }}" class="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-slate-600 bg-white border border-slate-200 rounded-lg hover:bg-slate-50 transition-all shadow-sm">
-        <i class="bi bi-arrow-left text-xs"></i> Riwayat
+    <a href="{{ route('volunteer.reports') }}" class="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-slate-600 bg-white border border-slate-200 rounded-lg hover:bg-slate-50 transition-all shadow-sm group">
+        <svg class="w-3.5 h-3.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M19 12H5M12 19l-7-7 7-7" />
+        </svg>
+        <span>Riwayat</span>
     </a>
 @endsection
 
@@ -24,11 +27,9 @@
     <div class="bg-white border border-slate-200/60 rounded-2xl overflow-hidden" style="box-shadow: 0 2px 8px rgba(10,15,30,0.04);">
         
         {{-- Header --}}
-        <div class="px-6 py-5 border-b border-slate-100"
-            style="background: linear-gradient(135deg, #0A0F1E 0%, #0f1f4a 100%);">
+        <div class="pl-5 pr-6 py-4 border-l-4 border-l-[#3B6FE8] border-b border-slate-100 bg-white">
             <div class="flex items-center gap-3">
-                <div class="w-10 h-10 rounded-xl flex items-center justify-center"
-                    style="background: rgba(228,240,246,0.15); border: 1px solid rgba(228,240,246,0.2);">
+                <div class="w-8 h-8 rounded-lg flex items-center justify-center bg-blue-50 text-blue-600 border border-blue-100/50 shrink-0">
                     @php
                         $skillIcon = match($volunteer->skill) {
                             'MEDIS' => 'bi-heart-pulse',
@@ -39,11 +40,11 @@
                             default => 'bi-clipboard-data',
                         };
                     @endphp
-                    <i class="bi {{ $skillIcon }} text-white"></i>
+                    <i class="bi {{ $skillIcon }}"></i>
                 </div>
                 <div>
-                    <h2 class="text-base font-bold text-white">Laporan {{ ucfirst(strtolower($volunteer->skill)) }}</h2>
-                    <p class="text-[11px] text-white/50">{{ $volunteer->name }} · {{ $volunteer->assignment ?? 'Belum ada penugasan' }}</p>
+                    <h2 class="text-base font-bold text-slate-800">Laporan {{ ucfirst(strtolower($volunteer->skill)) }}</h2>
+                    <p class="text-[11px] text-slate-500 mt-0.5">{{ $volunteer->name }} · {{ $volunteer->assignment ?? 'Belum ada penugasan' }}</p>
                 </div>
             </div>
         </div>

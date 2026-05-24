@@ -3,8 +3,11 @@
 @section('subtitle', 'Pelajari panduan mitigasi dan kesiapsiagaan bencana.')
 
 @section('page-actions')
-    <button type="button" onclick="window.location.href='{{ route('dashboard') }}'" class="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-slate-600 bg-white border border-slate-200 rounded-lg hover:bg-slate-50 hover:border-slate-300 transition-all duration-200 shadow-sm cursor-pointer">
-        <i class="bi bi-arrow-left text-xs"></i> Kembali
+    <button type="button" onclick="window.location.href='{{ route('dashboard') }}'" class="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-slate-600 bg-white border border-slate-200 rounded-lg hover:bg-slate-50 hover:border-slate-300 transition-all duration-200 shadow-sm cursor-pointer group">
+        <svg class="w-3.5 h-3.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M19 12H5M12 19l-7-7 7-7" />
+        </svg>
+        <span>Kembali</span>
     </button>
 @endsection
 
@@ -21,22 +24,20 @@
                  style="box-shadow: 0 1px 3px rgba(10,15,30,0.06), 0 4px 16px rgba(10,15,30,0.04);">
 
                 {{-- Header --}}
-                <div class="px-6 py-5 border-b border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-4"
-                     style="background: linear-gradient(135deg, #0A0F1E 0%, #1e3a8a 100%);">
+                <div class="pl-5 pr-6 py-4 border-l-4 border-l-[#3B6FE8] border-b border-slate-100 bg-white flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                     <div class="flex items-center gap-3">
-                        <div class="w-11 h-11 rounded-xl flex items-center justify-center shrink-0"
-                             style="background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.2);">
-                            <i class="bi bi-book-fill text-white text-lg"></i>
+                        <div class="w-8 h-8 rounded-lg flex items-center justify-center bg-blue-50 text-blue-600 border border-blue-100/50 shrink-0">
+                            <i class="bi bi-book-fill"></i>
                         </div>
                         <div>
-                            <h2 class="text-base font-bold text-white leading-tight">Buku Saku Siaga Bencana</h2>
-                            <p class="text-xs mt-0.5" style="color: rgba(228,240,246,0.6);">BNPB 2019 &middot; Panduan Mitigasi Bencana</p>
+                            <h2 class="text-base font-bold text-slate-800 leading-tight">Buku Saku Siaga Bencana</h2>
+                            <p class="text-xs text-slate-500 mt-0.5">BNPB 2019 &middot; Panduan Mitigasi Bencana</p>
                         </div>
                     </div>
                     <button type="button"
                             onclick="window.open('/panduan-bencana.pdf', '_blank')"
-                            class="inline-flex items-center gap-2 px-4 py-2.5 text-xs font-semibold text-white rounded-xl transition-all duration-200 hover:-translate-y-0.5 cursor-pointer shrink-0"
-                            style="background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.25); box-shadow: 0 2px 6px rgba(0,0,0,0.1);">
+                            class="inline-flex items-center gap-2 px-4 py-2.5 text-xs font-semibold text-white rounded-xl shadow-sm transition-all duration-200 shrink-0 hover:-translate-y-0.5"
+                            style="background: linear-gradient(135deg, #1e3a8a 0%, #3B6FE8 100%); box-shadow: 0 2px 8px rgba(59, 111, 232, 0.25);">
                         <i class="bi bi-download text-[11px]"></i> Unduh PDF &middot; 86 Halaman
                     </button>
                 </div>

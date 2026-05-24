@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Disaster;
+use App\Models\Volunteer;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Http;
@@ -21,9 +22,9 @@ class LaporanController extends Controller
         $siaga2  = Disaster::where('status', 'SIAGA_2')->count();
 
         // ─── Volunteer Stats ─────────────────────────────
-        $totalVolunteers    = \App\Models\Volunteer::count();
-        $approvedVolunteers = \App\Models\Volunteer::where('status', \App\Models\Volunteer::STATUS_APPROVED)->count();
-        $pendingVolunteers  = \App\Models\Volunteer::where('status', \App\Models\Volunteer::STATUS_PENDING)->count();
+        $totalVolunteers    = Volunteer::count();
+        $approvedVolunteers = Volunteer::where('status', Volunteer::STATUS_APPROVED)->count();
+        $pendingVolunteers  = Volunteer::where('status', Volunteer::STATUS_PENDING)->count();
 
         // ─── Chart: 7 hari terakhir ─────────────────────
         $chartLabels = [];
@@ -97,11 +98,11 @@ class LaporanController extends Controller
         $menu = $this->getDashboardMenu($role);
 
         // Data relawan (pending/rejected/approved)
-        $volunteerData = \App\Models\Volunteer::where('user_id', $user->id)->first();
+        $volunteerData = Volunteer::where('user_id', $user->id)->first();
 
         // Data tambahan khusus relawan approved (untuk section dashboard relawan)
         $volunteerDashboard = null;
-        if ($volunteerData && $volunteerData->status === \App\Models\Volunteer::STATUS_APPROVED) {
+        if ($volunteerData && $volunteerData->status === Volunteer::STATUS_APPROVED) {
             // Redirect ke dashboard relawan terpisah
             return view('volunteer.dashboard', [
                 'user' => $user,
@@ -245,6 +246,17 @@ class LaporanController extends Controller
             'status'        => $request->status,
         ]);
 
+        // Jika bencana selesai (RESOLVED) atau ditolak (DECLINE),
+        // otomatis hapus penugasan semua relawan yang ditugaskan pada bencana ini
+        if (in_array($request->status, ['RESOLVED', 'DECLINE'])) {
+            Volunteer::where('disaster_id', $disaster->id)
+                ->update([
+                    'disaster_id'            => null,
+                    'assignment'             => null,
+                    'assignment_notified_at' => null,
+                ]);
+        }
+
         $msg = $request->status === 'DECLINE' ? 'rejected' : 'approved';
 
         return redirect()->route('laporan.show', $id)->with('msg', $msg);
@@ -272,7 +284,7 @@ class LaporanController extends Controller
         // Exclude RESOLVED and DECLINE by default, paginate 20 per page
         $disasters = Disaster::whereNotIn('status', [Disaster::STATUS_RESOLVED, Disaster::STATUS_DECLINE])
             ->latest()
-            ->paginate(20);
+            ->get();
 
         return view('admin.laporan', compact('stats', 'disasters'));
     }

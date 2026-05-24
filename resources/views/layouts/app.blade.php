@@ -202,6 +202,69 @@
     <x-disaster-toast />
 
     <script>
+        window.userRole = "{{ strtolower(auth()->user()->role ?? '') }}";
+
+        window.showDisasterToast = function(d) {
+            const container = document.getElementById('disaster-toast-container');
+            const template  = document.getElementById('disaster-toast-template');
+            if (!container || !template) return;
+
+            const clone = template.content.cloneNode(true);
+            const toast = clone.querySelector('.toast-slide-in');
+            
+            const statusColors = {
+                'AWAS': '#D32F2F',
+                'SIAGA_1': '#EA580C',
+                'SIAGA_2': '#7C3AED',
+                'PENDING': '#FFA000',
+                'RESOLVED': '#10B981',
+                'DECLINE': '#64748B'
+            };
+            const color = statusColors[d.status] || '#FFA000';
+
+            clone.querySelector('.toast-icon-container').style.background = `${color}15`;
+            clone.querySelector('.toast-icon-container').style.color = color;
+            
+            let iconClass = 'toast-icon bi bi-bell-fill text-lg animate-pulse';
+            if (d.status === 'PENDING') {
+                iconClass = 'toast-icon bi bi-exclamation-circle-fill text-lg animate-pulse';
+            }
+            clone.querySelector('.toast-icon').className = iconClass;
+            
+            const statusEl = clone.querySelector('.toast-status');
+            statusEl.style.color = color;
+            statusEl.textContent = d.statusLabel || d.status;
+            
+            clone.querySelector('.toast-title').textContent  = d.title;
+            clone.querySelector('.toast-desc').textContent   = d.description;
+
+            const actionBtn = clone.querySelector('.toast-action');
+            actionBtn.style.background = color;
+            
+            if (d.status === 'PENDING') {
+                actionBtn.classList.add('hidden');
+            } else {
+                actionBtn.classList.remove('hidden');
+                actionBtn.onclick = () => {
+                    if (typeof focusOnDisaster === 'function') {
+                        focusOnDisaster(d.id);
+                    } else {
+                        window.location.href = `/laporan/detail/${d.id}`;
+                    }
+                };
+            }
+
+            container.appendChild(clone);
+
+            setTimeout(() => {
+                if (toast && toast.parentNode) {
+                    toast.classList.remove('toast-slide-in');
+                    toast.classList.add('toast-fade-out');
+                    setTimeout(() => { if (toast && toast.parentNode) toast.remove(); }, 300);
+                }
+            }, 10000);
+        };
+
         const toggle = document.getElementById('mobileToggle');
         const menu = document.getElementById('mobileMenu');
         const icon = document.getElementById('mobileIcon');

@@ -3,8 +3,11 @@
 @section('subtitle', 'Verifikasi, tinjau, dan kelola seluruh laporan bencana.')
 
 @section('page-actions')
-    <button type="button" onclick="window.location.href='{{ route('admin.dashboard') }}'" class="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-slate-600 bg-white border border-slate-200 rounded-lg hover:bg-slate-50 hover:border-slate-300 transition-all duration-200 shadow-sm cursor-pointer">
-        <i class="bi bi-arrow-left text-xs"></i> Kembali
+    <button type="button" onclick="window.location.href='{{ route('admin.dashboard') }}'" class="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-slate-600 bg-white border border-slate-200 rounded-lg hover:bg-slate-50 hover:border-slate-300 transition-all duration-200 shadow-sm cursor-pointer group">
+        <svg class="w-3.5 h-3.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M19 12H5M12 19l-7-7 7-7" />
+        </svg>
+        <span>Kembali</span>
     </button>
 @endsection
 
@@ -53,12 +56,12 @@
                             'RESOLVED' => '#10B981', 'DECLINE' => '#94A3B8', default => '#F59E0B',
                         };
                     @endphp
-                    <div class="laporan-item px-3 py-2.5 cursor-pointer hover:bg-blue-50/50 transition-colors border-b border-slate-50"
-                         data-id="{{ $d->id }}"
-                         data-status="{{ $d->status }}"
-                         data-title="{{ strtolower($d->title) }}"
-                         data-reporter="{{ strtolower($d->reporter_name) }}"
-                         style="border-left: 3px solid {{ $borderColor }};">
+                     <div class="laporan-item px-3 py-2.5 cursor-pointer hover:bg-blue-50/50 transition-colors border-b border-slate-50"
+                          data-id="{{ $d->id }}"
+                          data-status="{{ $d->status }}"
+                          data-title="{{ $d->title }}"
+                          data-reporter="{{ $d->reporter_name }}"
+                          style="border-left: 3px solid {{ $borderColor }};">
                         <div class="flex items-center justify-between gap-2 mb-0.5">
                             <p class="text-[11px] font-semibold text-slate-900 line-clamp-1">{{ $d->title }}</p>
                             <span class="text-[9px] font-bold px-1.5 py-0.5 rounded shrink-0
@@ -79,20 +82,7 @@
                 @endforeach
             </div>
 
-            {{-- Pagination --}}
-            @if($disasters->hasPages())
-                <div class="p-3 border-t border-slate-100 flex items-center justify-between">
-                    <span class="text-[10px] text-slate-400">{{ $disasters->firstItem() }}–{{ $disasters->lastItem() }} dari {{ $disasters->total() }}</span>
-                    <div class="flex gap-1">
-                        @if($disasters->previousPageUrl())
-                            <a href="{{ $disasters->previousPageUrl() }}" class="px-2 py-1 text-[10px] font-medium text-slate-600 bg-slate-100 rounded hover:bg-slate-200">←</a>
-                        @endif
-                        @if($disasters->nextPageUrl())
-                            <a href="{{ $disasters->nextPageUrl() }}" class="px-2 py-1 text-[10px] font-medium text-slate-600 bg-slate-100 rounded hover:bg-slate-200">→</a>
-                        @endif
-                    </div>
-                </div>
-            @endif
+            {{-- No pagination since we load all and filter client-side --}}
         </div>
 
         {{-- RIGHT: Detail --}}
@@ -238,14 +228,21 @@
     });
 
     document.getElementById('adminSearch').addEventListener('input', filterList);
+    document.getElementById('adminSearch').addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') e.preventDefault();
+    });
 
     function filterList() {
-        const query = document.getElementById('adminSearch').value.toLowerCase();
+        const query = document.getElementById('adminSearch').value.toLowerCase().trim();
         const activeTab = document.querySelector('.tab-btn.active');
         const tab = activeTab ? activeTab.dataset.tab : null;
         document.querySelectorAll('.laporan-item').forEach(item => {
-            const matchTab = !tab || item.dataset.status === tab;
-            const matchSearch = !query || item.dataset.title.includes(query) || item.dataset.reporter.includes(query);
+            const title = (item.dataset.title || '').toLowerCase();
+            const reporter = (item.dataset.reporter || '').toLowerCase();
+            const status = item.dataset.status;
+
+            const matchTab = !tab || status === tab;
+            const matchSearch = !query || title.includes(query) || reporter.includes(query);
             item.style.display = (matchTab && matchSearch) ? '' : 'none';
         });
     }

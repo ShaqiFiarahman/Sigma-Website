@@ -203,35 +203,9 @@
     }
 
     function showDisasterToast(d) {
-        const container = document.getElementById('disaster-toast-container');
-        const template  = document.getElementById('disaster-toast-template');
-        if (!container || !template) return;
-
-        const clone = template.content.cloneNode(true);
-        const toast = clone.querySelector('.toast-slide-in');
-        const color = statusColors[d.status] || '#FFA000';
-
-        clone.querySelector('.toast-icon-container').style.background = `${color}15`;
-        clone.querySelector('.toast-icon-container').style.color = color;
-        clone.querySelector('.toast-icon').className = `toast-icon bi bi-bell-fill text-lg animate-pulse`;
-        clone.querySelector('.toast-status').style.color = color;
-        clone.querySelector('.toast-status').textContent = d.statusLabel;
-        clone.querySelector('.toast-title').textContent  = d.title;
-        clone.querySelector('.toast-desc').textContent   = d.description;
-
-        const actionBtn = clone.querySelector('.toast-action');
-        actionBtn.style.background = color;
-        actionBtn.onclick = () => focusOnDisaster(d.id);
-
-        container.appendChild(clone);
-
-        setTimeout(() => {
-            if (toast && toast.parentNode) {
-                toast.classList.remove('toast-slide-in');
-                toast.classList.add('toast-fade-out');
-                setTimeout(() => { if (toast && toast.parentNode) toast.remove(); }, 300);
-            }
-        }, 10000);
+        if (typeof window.showDisasterToast === 'function') {
+            window.showDisasterToast(d);
+        }
     }
 
     function focusOnDisaster(id) {

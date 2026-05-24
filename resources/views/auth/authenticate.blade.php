@@ -136,21 +136,27 @@
             transform: translateY(-50%);
             color: #94a3b8;
         }
+
         .input-group input {
             width: 100%;
             padding: 12px 15px 12px 45px;
             border-radius: 12px;
             border: 1px solid #e2e8f0;
-            background: #f8fafc;
+            background: #f1f4f9;
             font-size: 14px;
-            transition: all 0.3s;
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            color: #1e293b;
+        }
+        .input-group input::placeholder {
+            color: #94a3b8;
         }
         .input-group input:focus {
             border-color: var(--accent);
             background: #fff;
-            box-shadow: 0 0 0 4px rgba(59, 111, 232, 0.1);
+            box-shadow: 0 0 0 3px rgba(10, 15, 30, 0.08);
             outline: none;
         }
+
         .submit-btn {
             background: linear-gradient(135deg, var(--abyss) 0%, #1e3a8a 100%);
             color: #fff;
@@ -227,7 +233,7 @@
                     </div>
                 </div>
 
-                <button type="submit" class="submit-btn">DAFTAR SEKARANG</button>
+                <button type="submit" class="submit-btn">Mulai Sekarang</button>
                 
                 <p class="mobile-toggle hidden mt-6 text-center text-sm text-slate-500">
                     Sudah punya akun? <button type="button" class="text-accent font-bold" onclick="togglePanel()">Masuk</button>
@@ -270,14 +276,21 @@
                 </div>
 
                 <div class="flex items-center justify-between mt-4 mb-6">
-                    <label class="flex items-center gap-2 cursor-pointer">
-                        <input type="checkbox" name="remember" class="w-4 h-4 rounded text-accent">
-                        <span class="text-xs text-slate-500">Ingat saya</span>
+                    <label class="flex items-center gap-2.5 cursor-pointer group select-none">
+                        <div class="relative w-4 h-4 flex items-center justify-center">
+                            <input type="checkbox" name="remember" class="peer sr-only">
+                            <div class="absolute inset-0 rounded-md border border-slate-200 bg-slate-50 transition-all duration-200 peer-checked:bg-blue-600 peer-checked:border-blue-600 group-hover:border-slate-300 shadow-sm"></div>
+                            <i class="bi bi-check text-white text-[14px] leading-none z-10 scale-0 peer-checked:scale-100 transition-transform duration-200"></i>
+                        </div>
+                        <span class="text-xs text-slate-500 font-medium group-hover:text-slate-600 transition-colors">Ingat saya</span>
                     </label>
                     <a href="#" class="text-xs text-accent font-semibold hover:underline">Lupa Password?</a>
                 </div>
 
-                <button type="submit" class="submit-btn">MASUK SEKARANG</button>
+                <button type="submit" class="submit-btn">Masuk Sekarang</button>
+
+
+
 
                 <p class="mobile-toggle hidden mt-6 text-center text-sm text-slate-500">
                     Belum punya akun? <button type="button" class="text-accent font-bold" onclick="togglePanel()">Daftar</button>
@@ -288,21 +301,45 @@
         {{-- Overlay --}}
         <div class="overlay-container">
             <div class="overlay">
-                <div class="overlay-panel overlay-left">
-                    <div class="w-16 h-16 bg-white/10 rounded-2xl flex items-center justify-center mb-6">
-                        <i class="bi bi-shield-check text-white text-3xl"></i>
+                <!-- Premium Background Patterns -->
+                <div class="absolute inset-0 opacity-[0.03] pointer-events-none" style="background-image: radial-gradient(white 1.5px, transparent 1.5px); background-size: 24px 24px;"></div>
+                <svg class="absolute inset-0 w-full h-full opacity-[0.05] pointer-events-none" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" preserveAspectRatio="none">
+                    <path d="M-100,100 C200,50 300,250 500,100 C700,0 800,200 900,100" fill="none" stroke="white" stroke-width="2" />
+                    <path d="M-100,150 C200,100 300,300 500,150 C700,50 800,250 900,150" fill="none" stroke="white" stroke-width="1.8" />
+                    <path d="M-100,200 C200,150 300,350 500,200 C700,100 800,300 900,200" fill="none" stroke="white" stroke-width="1.5" />
+                    <path d="M-100,250 C200,200 300,400 500,250 C700,150 800,350 900,250" fill="none" stroke="white" stroke-width="1.2" />
+                    <path d="M-100,300 C200,250 300,450 500,300 C700,200 800,400 900,300" fill="none" stroke="white" stroke-width="0.9" />
+                    <path d="M-100,350 C200,300 300,500 500,350 C700,250 800,450 900,350" fill="none" stroke="white" stroke-width="0.6" />
+                </svg>
+
+                <div class="overlay-panel overlay-left px-12">
+                    <div class="flex flex-col items-center justify-center -mt-8">
+                        <div class="text-white mb-5 transition-transform duration-300 hover:scale-105">
+                            <svg class="w-10 h-10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4" />
+                                <polyline points="10 17 15 12 10 7" />
+                                <line x1="15" y1="12" x2="3" y2="12" />
+                            </svg>
+                        </div>
+                        <h1 class="text-3xl font-bold tracking-tight text-white mb-2">Sudah Punya Akun?</h1>
+                        <p class="text-xs text-white/60 mb-5 max-w-xs leading-relaxed">Masuk ke akun Anda untuk melanjutkan pemantauan bencana secara real-time.</p>
+                        <button class="ghost-btn" id="signIn">Masuk</button>
                     </div>
-                    <h1 class="text-3xl font-bold mb-4">Sudah Punya Akun?</h1>
-                    <p class="text-sm text-white/70 mb-8 leading-relaxed">Masuk ke akun Anda untuk melanjutkan pemantauan bencana secara real-time.</p>
-                    <button class="ghost-btn" id="signIn">MASUK</button>
                 </div>
-                <div class="overlay-panel overlay-right">
-                    <div class="w-16 h-16 bg-white/10 rounded-2xl flex items-center justify-center mb-6">
-                        <i class="bi bi-person-plus text-white text-3xl"></i>
+                <div class="overlay-panel overlay-right px-12">
+                    <div class="flex flex-col items-center justify-center -mt-8">
+                        <div class="text-white mb-5 transition-transform duration-300 hover:scale-105">
+                            <svg class="w-10 h-10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
+                                <circle cx="9" cy="7" r="4" />
+                                <line x1="19" y1="8" x2="19" y2="14" />
+                                <line x1="16" y1="11" x2="22" y2="11" />
+                            </svg>
+                        </div>
+                        <h1 class="text-3xl font-bold tracking-tight text-white mb-2">Belum Bergabung?</h1>
+                        <p class="text-xs text-white/60 mb-5 max-w-xs leading-relaxed">Daftarkan diri Anda sekarang untuk menjadi bagian dari sistem informasi tanggap bencana SIGMA.</p>
+                        <button class="ghost-btn" id="signUp">Mulai Sekarang</button>
                     </div>
-                    <h1 class="text-3xl font-bold mb-4">Belum Bergabung?</h1>
-                    <p class="text-sm text-white/70 mb-8 leading-relaxed">Daftarkan diri Anda sekarang untuk menjadi bagian dari sistem informasi tanggap bencana SIGMA.</p>
-                    <button class="ghost-btn" id="signUp">DAFTAR</button>
                 </div>
             </div>
         </div>

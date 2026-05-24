@@ -19,11 +19,16 @@
         <h2 class="section-title">Akses Cepat Administrator</h2>
         <p class="text-xs text-slate-500 mt-0.5">Menu kelola fitur dan layanan utama SIGMA</p>
     </div>
-    <div class="grid grid-cols-2 md:grid-cols-3 gap-4 mb-8">
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
         <a href="{{ route('volunteer.index') }}" class="menu-card group">
             <div class="menu-icon-wrap"><i class="bi bi-people-fill"></i></div>
             <p class="font-bold text-sm mb-1 text-slate-900">Data Relawan</p>
             <p class="text-xs text-slate-500 leading-relaxed">{{ $totalVolunteers }} terdaftar</p>
+        </a>
+        <a href="{{ route('admin.volunteer.reports') }}" class="menu-card group">
+            <div class="menu-icon-wrap"><i class="bi bi-file-earmark-text-fill"></i></div>
+            <p class="font-bold text-sm mb-1 text-slate-900">Laporan Tugas</p>
+            <p class="text-xs text-slate-500 leading-relaxed">Aktivitas relawan lapangan</p>
         </a>
         <a href="{{ route('shelter') }}" class="menu-card group">
             <div class="menu-icon-wrap"><i class="bi bi-house-heart-fill"></i></div>

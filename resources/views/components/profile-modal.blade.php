@@ -43,13 +43,24 @@
                 style="background: rgba(228,240,246,0.15); border: 1px solid rgba(228,240,246,0.2);">
                 @php
                     $role = auth()->user()->role;
-                    $roleIcon = match(strtolower($role)) {
-                        'admin' => 'bi-shield-check',
-                        'relawan' => 'bi-person-badge',
-                        default => 'bi-person',
-                    };
                 @endphp
-                <i class="{{ $roleIcon }} text-[10px] text-blue-200"></i>
+                @if(strtolower($role) === 'admin')
+                    {{-- Elegant custom outline diagonal key icon --}}
+                    <svg class="w-2.5 h-2.5 text-blue-200 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="m21 2-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0 3 3L22 7l-3-3m-3.5 3.5L19 4" />
+                    </svg>
+                @elseif(strtolower($role) === 'relawan')
+                    {{-- Elegant outline badge icon --}}
+                    <svg class="w-2.5 h-2.5 text-blue-200 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+                    </svg>
+                @else
+                    {{-- Elegant outline user icon --}}
+                    <svg class="w-2.5 h-2.5 text-blue-200 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                        <circle cx="12" cy="7" r="4" />
+                    </svg>
+                @endif
                 <span class="text-[10px] font-bold text-blue-200 uppercase tracking-wider">{{ $role }}</span>
             </div>
         </div>

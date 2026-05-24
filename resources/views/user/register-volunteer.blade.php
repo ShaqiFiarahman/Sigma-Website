@@ -4,8 +4,11 @@
 
 @section('page-actions')
     @if(!$existing)
-        <button type="button" onclick="window.location.href='{{ route('dashboard') }}'" class="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-slate-600 bg-white border border-slate-200 rounded-lg hover:bg-slate-50 hover:border-slate-300 transition-all duration-200 shadow-sm cursor-pointer">
-            <i class="bi bi-arrow-left text-xs"></i> Kembali
+        <button type="button" onclick="window.location.href='{{ route('dashboard') }}'" class="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-slate-600 bg-white border border-slate-200 rounded-lg hover:bg-slate-50 hover:border-slate-300 transition-all duration-200 shadow-sm cursor-pointer group">
+            <svg class="w-3.5 h-3.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M19 12H5M12 19l-7-7 7-7" />
+            </svg>
+            <span>Kembali</span>
         </button>
     @endif
 @endsection
@@ -263,16 +266,14 @@
                  style="box-shadow: 0 1px 3px rgba(10,15,30,0.06), 0 4px 16px rgba(10,15,30,0.04);">
 
                 {{-- Form Header --}}
-                <div class="px-8 py-6 border-b border-slate-100"
-                     style="background: linear-gradient(135deg, #0A0F1E 0%, #1e3a8a 100%);">
+                <div class="pl-6 pr-8 py-5 border-l-4 border-l-[#3B6FE8] border-b border-slate-100 bg-white">
                     <div class="flex items-center gap-3">
-                        <div class="w-10 h-10 rounded-xl flex items-center justify-center"
-                             style="background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.2);">
-                            <i class="bi bi-person-plus-fill text-white"></i>
+                        <div class="w-8 h-8 rounded-lg flex items-center justify-center bg-blue-50 text-blue-600 border border-blue-100/50 shrink-0">
+                            <i class="bi bi-person-plus-fill"></i>
                         </div>
                         <div>
-                            <h2 class="text-base font-bold text-white">Formulir Pendaftaran Relawan</h2>
-                            <p class="text-xs mt-0.5" style="color: rgba(255,255,255,0.6);">Lengkapi data diri Anda untuk bergabung</p>
+                            <h2 class="text-base font-bold text-slate-800">Formulir Pendaftaran Relawan</h2>
+                            <p class="text-xs text-slate-500 mt-0.5">Lengkapi data diri Anda untuk bergabung</p>
                         </div>
                     </div>
                 </div>
@@ -451,8 +452,11 @@
                     <div class="px-7 py-5 border-t border-slate-100 flex items-center justify-between rounded-b-2xl"
                          style="background: #FAFBFD;">
                         <button type="button" id="prevBtn"
-                                class="px-5 py-2.5 text-sm font-medium text-slate-600 bg-white border border-slate-200 rounded-xl hover:bg-slate-50 transition-all duration-200 cursor-pointer hidden">
-                            <i class="bi bi-arrow-left text-xs mr-1"></i> Sebelumnya
+                                class="px-5 py-2.5 text-sm font-medium text-slate-600 bg-white border border-slate-200 rounded-xl hover:bg-slate-50 transition-all duration-200 cursor-pointer hidden group flex items-center gap-1.5">
+                            <svg class="w-3.5 h-3.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M19 12H5M12 19l-7-7 7-7" />
+                            </svg>
+                            <span>Sebelumnya</span>
                         </button>
                         <div class="flex-1"></div>
                         <button type="button" id="nextBtn"

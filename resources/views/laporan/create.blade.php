@@ -3,8 +3,10 @@
 @section('subtitle', 'Kirim laporan kejadian bencana di sekitar Anda.')
 
 @section('page-actions')
-    <a href="{{ route('dashboard') }}" class="inline-flex items-center gap-2 px-4 py-2 text-sm font-semibold text-slate-700 bg-white border border-slate-200 rounded-xl shadow-sm hover:bg-slate-50 transition-all duration-200">
-        <i class="bi bi-arrow-left"></i>
+    <a href="{{ route('dashboard') }}" class="inline-flex items-center gap-2 px-4 py-2 text-sm font-semibold text-slate-700 bg-white border border-slate-200 rounded-xl shadow-sm hover:bg-slate-50 transition-all duration-200 group">
+        <svg class="w-3.5 h-3.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M19 12H5M12 19l-7-7 7-7" />
+        </svg>
         <span>Kembali</span>
     </a>
 @endsection
@@ -22,17 +24,14 @@
                     style="box-shadow: 0 1px 3px rgba(10,15,30,0.06), 0 4px 16px rgba(10,15,30,0.04);">
 
                     {{-- Form header --}}
-                    <div class="px-8 py-6 border-b border-slate-100"
-                        style="background: linear-gradient(135deg, #3B6FE8 0%, #1e3a8a 55%, #0f1f4a 100%);">
+                    <div class="pl-6 pr-8 py-5 border-l-4 border-l-[#3B6FE8] border-b border-slate-100 bg-white">
                         <div class="flex items-center gap-3">
-                            <div class="w-9 h-9 rounded-xl flex items-center justify-center"
-                                style="background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.2);">
-                                <i class="bi bi-megaphone-fill text-white"></i>
+                            <div class="w-8 h-8 rounded-lg flex items-center justify-center bg-blue-50 text-blue-600 border border-blue-100/50 shrink-0">
+                                <i class="bi bi-megaphone-fill"></i>
                             </div>
                             <div>
-                                <h2 class="text-base font-bold text-white">Formulir Laporan Baru</h2>
-                                <p class="text-xs mt-0.5" style="color: rgba(255,255,255,0.6);">Lengkapi semua kolom yang
-                                    diperlukan</p>
+                                <h2 class="text-base font-bold text-slate-800">Formulir Laporan Baru</h2>
+                                <p class="text-xs text-slate-500 mt-0.5">Lengkapi semua kolom yang diperlukan</p>
                             </div>
                         </div>
                     </div>
