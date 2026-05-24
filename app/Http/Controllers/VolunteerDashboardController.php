@@ -8,11 +8,12 @@ use Illuminate\Http\Request;
 class VolunteerDashboardController extends Controller
 {
     /**
-     * Redirect ke dashboard utama (fitur relawan sudah inline di sana)
+     * Volunteer Dashboard — render langsung tanpa redirect
      */
     public function index()
     {
-        return redirect()->route('dashboard');
+        // Langsung arahkan ke route dashboard yang akan render volunteer.dashboard view
+        return app(\App\Http\Controllers\LaporanController::class)->userDashboard();
     }
 
     /**

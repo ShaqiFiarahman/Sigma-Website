@@ -76,6 +76,16 @@
                     <p class="text-xs text-slate-600 leading-relaxed">{{ $report->notes }}</p>
                 </div>
             @endif
+
+            @if($report->photo_urls && count($report->photo_urls) > 0)
+                <div class="mt-3 flex gap-2 flex-wrap">
+                    @foreach($report->photo_urls as $photo)
+                        <a href="{{ $photo }}" target="_blank" class="block w-16 h-16 rounded-lg overflow-hidden border border-slate-200 hover:border-blue-300 transition-colors">
+                            <img src="{{ $photo }}" alt="Foto laporan" class="w-full h-full object-cover">
+                        </a>
+                    @endforeach
+                </div>
+            @endif
         </div>
     @empty
         <div class="bg-white border border-slate-200/60 rounded-2xl p-12 text-center" style="box-shadow: 0 2px 8px rgba(10,15,30,0.04);">

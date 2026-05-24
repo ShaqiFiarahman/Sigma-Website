@@ -13,10 +13,12 @@ class VolunteerReport extends Model
         'skill_type',
         'report_data',
         'notes',
+        'photo_urls',
     ];
 
     protected $casts = [
         'report_data' => 'array',
+        'photo_urls'  => 'array',
         'created_at'  => 'datetime',
         'updated_at'  => 'datetime',
     ];

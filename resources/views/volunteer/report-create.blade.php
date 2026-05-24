@@ -50,7 +50,7 @@
         </div>
 
         {{-- Form --}}
-        <form action="{{ route('volunteer.report.store') }}" method="POST" class="p-6 space-y-5">
+        <form action="{{ route('volunteer.report.store') }}" method="POST" enctype="multipart/form-data" class="p-6 space-y-5">
             @csrf
 
             {{-- Pilih Bencana (opsional) --}}
@@ -117,6 +117,23 @@
                     placeholder="Catatan atau informasi tambahan...">{{ old('notes') }}</textarea>
             </div>
 
+            {{-- Foto Lapangan --}}
+            <div class="border-t border-slate-100 pt-5">
+                <label class="block text-xs font-bold text-slate-700 mb-2 uppercase tracking-wider">
+                    Foto Lapangan <span class="text-slate-400 font-normal normal-case">(opsional, maks 3 foto)</span>
+                </label>
+                <div class="relative">
+                    <input type="file" name="photos[]" id="photoInput" multiple accept="image/*"
+                        class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10">
+                    <div class="border-2 border-dashed border-slate-200 rounded-xl p-6 text-center hover:border-blue-300 hover:bg-blue-50/30 transition-all" id="dropZone">
+                        <i class="bi bi-camera text-2xl text-slate-400"></i>
+                        <p class="text-xs text-slate-500 mt-2">Klik atau drag foto ke sini</p>
+                        <p class="text-[10px] text-slate-400 mt-1">JPG, PNG, WebP · Maks 10MB per foto</p>
+                    </div>
+                </div>
+                <div id="photoPreview" class="flex gap-2 mt-3 flex-wrap"></div>
+            </div>
+
             {{-- Submit --}}
             <button type="submit"
                 class="w-full flex items-center justify-center gap-2 px-4 py-3 text-sm font-bold text-white rounded-xl transition-all hover:-translate-y-0.5"
@@ -127,4 +144,28 @@
     </div>
 </div>
 
+@endsection
+
+@section('scripts')
+<script>
+    const photoInput = document.getElementById('photoInput');
+    const photoPreview = document.getElementById('photoPreview');
+
+    if (photoInput) {
+        photoInput.addEventListener('change', function() {
+            photoPreview.innerHTML = '';
+            const files = Array.from(this.files).slice(0, 3);
+            files.forEach((file, i) => {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const div = document.createElement('div');
+                    div.className = 'relative w-20 h-20 rounded-lg overflow-hidden border border-slate-200';
+                    div.innerHTML = `<img src="${e.target.result}" class="w-full h-full object-cover" alt="Preview ${i+1}">`;
+                    photoPreview.appendChild(div);
+                };
+                reader.readAsDataURL(file);
+            });
+        });
+    }
+</script>
 @endsection

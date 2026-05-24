@@ -103,11 +103,36 @@ class LaporanController extends Controller
         // Data tambahan khusus relawan approved (untuk section dashboard relawan)
         $volunteerDashboard = null;
         if ($volunteerData && $volunteerData->status === Volunteer::STATUS_APPROVED) {
-            // Redirect ke dashboard relawan terpisah
+            $totalReports = \App\Models\VolunteerReport::where('volunteer_id', $volunteerData->id)->count();
+            $reportsThisMonth = \App\Models\VolunteerReport::where('volunteer_id', $volunteerData->id)
+                ->whereMonth('created_at', now()->month)
+                ->whereYear('created_at', now()->year)
+                ->count();
+
+            $recentReports = \App\Models\VolunteerReport::where('volunteer_id', $volunteerData->id)
+                ->with('disaster')
+                ->latest()
+                ->limit(3)
+                ->get();
+
+            $teamMembers = collect();
+            if ($volunteerData->assignment) {
+                $teamMembers = Volunteer::where('status', Volunteer::STATUS_APPROVED)
+                    ->where('assignment', $volunteerData->assignment)
+                    ->where('id', '!=', $volunteerData->id)
+                    ->limit(5)
+                    ->get();
+            }
+
             return view('volunteer.dashboard', [
                 'user' => $user,
                 'volunteer' => $volunteerData,
                 'news' => $news,
+                'menu' => $menu,
+                'totalReports' => $totalReports,
+                'reportsThisMonth' => $reportsThisMonth,
+                'recentReports' => $recentReports,
+                'teamMembers' => $teamMembers,
             ]);
         }
 

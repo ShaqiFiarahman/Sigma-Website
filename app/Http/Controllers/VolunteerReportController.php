@@ -45,8 +45,12 @@ class VolunteerReportController extends Controller
         $fields = VolunteerReport::getFieldsForSkill($volunteer->skill);
 
         // Build validation rules dynamically
-        $rules = ['notes' => 'nullable|string|max:1000'];
-        $rules['disaster_id'] = 'nullable|exists:disasters,id';
+        $rules = [
+            'notes' => 'nullable|string|max:1000',
+            'disaster_id' => 'nullable|exists:disasters,id',
+            'photos' => 'nullable|array|max:3',
+            'photos.*' => 'image|max:10240', // max 10MB per file
+        ];
         foreach ($fields as $field) {
             $key = 'data.' . $field['name'];
             if ($field['type'] === 'number') {
@@ -58,7 +62,42 @@ class VolunteerReportController extends Controller
             }
         }
 
-        $validated = $request->validate($rules);
+        $request->validate($rules);
+
+        // Handle photo uploads
+        $photoUrls = [];
+        if ($request->hasFile('photos')) {
+            $supabaseUrl = rtrim(config('services.supabase.url'), '/');
+            $supabaseKey = config('services.supabase.key');
+            $bucketName = config('services.supabase.bucket', 'laporan');
+
+            foreach ($request->file('photos') as $file) {
+                $path = $file->store('volunteer-reports', 'public');
+                $absolutePath = storage_path('app/public/' . $path);
+                $filename = 'vr_' . time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
+
+                if ($supabaseUrl && $supabaseKey) {
+                    try {
+                        $response = \Illuminate\Support\Facades\Http::withHeaders([
+                            'Authorization' => 'Bearer ' . $supabaseKey,
+                            'Content-Type' => $file->getMimeType(),
+                        ])->withBody(file_get_contents($absolutePath), $file->getMimeType())
+                          ->post($supabaseUrl . "/storage/v1/object/" . $bucketName . "/" . $filename);
+
+                        if ($response->successful()) {
+                            $photoUrls[] = $supabaseUrl . "/storage/v1/object/public/" . $bucketName . "/" . $filename;
+                            @unlink($absolutePath);
+                        } else {
+                            $photoUrls[] = \Illuminate\Support\Facades\Storage::url($path);
+                        }
+                    } catch (\Exception $e) {
+                        $photoUrls[] = \Illuminate\Support\Facades\Storage::url($path);
+                    }
+                } else {
+                    $photoUrls[] = \Illuminate\Support\Facades\Storage::url($path);
+                }
+            }
+        }
 
         VolunteerReport::create([
             'volunteer_id' => $volunteer->id,
@@ -66,6 +105,7 @@ class VolunteerReportController extends Controller
             'skill_type'   => $volunteer->skill,
             'report_data'  => $request->data,
             'notes'        => $request->notes,
+            'photo_urls'   => !empty($photoUrls) ? $photoUrls : null,
         ]);
 
         return redirect()->route('volunteer.reports')

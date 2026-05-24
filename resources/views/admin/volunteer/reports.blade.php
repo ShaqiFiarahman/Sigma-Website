@@ -113,6 +113,16 @@
                     </div>
                 @endif
 
+                @if($report->photo_urls && count($report->photo_urls) > 0)
+                    <div class="mt-3 flex gap-2 flex-wrap">
+                        @foreach($report->photo_urls as $photo)
+                            <a href="{{ $photo }}" target="_blank" class="block w-16 h-16 rounded-lg overflow-hidden border border-slate-200 hover:border-blue-300 transition-colors">
+                                <img src="{{ $photo }}" alt="Foto laporan" class="w-full h-full object-cover">
+                            </a>
+                        @endforeach
+                    </div>
+                @endif
+
                 @if($report->disaster)
                     <p class="text-[11px] text-slate-400 mt-3 sm:hidden">
                         <i class="bi bi-geo-alt"></i> {{ $report->disaster->title }}
