@@ -34,6 +34,17 @@
     {{-- Stats Summary --}}
     {{-- Stats (admin only) --}}
     @if(strtolower(auth()->user()->role ?? '') === 'admin')
+    <div class="flex items-center justify-between mb-4">
+        <div>
+            <h3 class="text-sm font-bold text-slate-800">Statistik Posko</h3>
+            <p class="text-[11px] text-slate-500 mt-0.5">Ringkasan data posko pengungsian</p>
+        </div>
+        <a href="{{ route('admin.shelter.create') }}"
+           class="inline-flex items-center gap-1.5 px-4 py-2 text-xs font-semibold text-white rounded-lg transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg"
+           style="background: linear-gradient(135deg, #3B6FE8 0%, #1e3a8a 100%); box-shadow: 0 2px 8px rgba(30,58,138,0.25);">
+            <i class="bi bi-plus-lg text-[10px]"></i> Tambah Posko
+        </a>
+    </div>
     <div class="grid grid-cols-3 gap-3 mb-5">
         @php
             $totalPosko = \App\Models\Shelter::count();

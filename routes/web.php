@@ -33,6 +33,8 @@ Route::middleware('auth')->group(function () {
         Route::post('/laporan/update-type/{id}', [\App\Http\Controllers\Admin\LaporanController::class, 'updateType'])->name('laporan.update_type');
 
         // Shelter Management
+        Route::get('/posko/create', [\App\Http\Controllers\Admin\ShelterController::class, 'create'])->name('admin.shelter.create');
+        Route::post('/posko/store', [\App\Http\Controllers\Admin\ShelterController::class, 'store'])->name('admin.shelter.store');
         Route::get('/posko/{id}/edit', [\App\Http\Controllers\Admin\ShelterController::class, 'edit'])->name('admin.shelter.edit');
         Route::post('/posko/{id}/update', [\App\Http\Controllers\Admin\ShelterController::class, 'update'])->name('admin.shelter.update');
         Route::delete('/posko/{id}', [\App\Http\Controllers\Admin\ShelterController::class, 'destroy'])->name('admin.shelter.delete');
