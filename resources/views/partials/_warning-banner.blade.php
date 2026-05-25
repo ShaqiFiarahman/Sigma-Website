@@ -25,24 +25,20 @@
 
     window.updateWarningBanner = function(count) {
         const banner = document.getElementById('warningBanner');
-        const iconBg = document.getElementById('warningIconBg');
         const icon = document.getElementById('warningIcon');
         const title = document.getElementById('warningTitle');
         const text = document.getElementById('warningText');
         const dismissBtn = document.getElementById('dismissWarning');
-
         if (!banner) return;
 
         if (count > 0) {
             banner.className = 'warning-banner animate-fade-up banner-danger';
-            iconBg.className = 'flex items-center justify-center shrink-0 pl-1.5 pr-2';
             icon.className = 'bi bi-bell-fill text-2xl text-red-600';
             title.className = 'text-xs font-extrabold tracking-wider text-red-700 mb-0.5';
             title.textContent = 'PERINGATAN DARURAT';
             text.className = 'text-sm font-medium text-red-900';
 
             let message = `Ada <strong>${count}</strong> laporan baru di sekitar ${window.userCityName || 'Anda'}`;
-
             if (count === 1 && window.firstNearbyDisasterTitle) {
                 const dTitle = window.firstNearbyDisasterTitle.toLowerCase();
                 let type = "laporan";
@@ -52,16 +48,10 @@
                 message = `Ada 1 <strong>${type}</strong> baru di sekitar ${window.userCityName || 'Anda'}`;
             }
 
-            text.innerHTML = `${message}.
-                <div class="mt-2.5">
-                    <a href="/cari-bencana" class="inline-flex items-center gap-1.5 text-xs font-bold bg-red-600 text-white px-3 py-1.25 rounded-full hover:bg-red-700 transition-colors shadow-sm hover:shadow-md">
-                        Lihat Detail
-                    </a>
-                </div>`;
+            text.innerHTML = `${message}.<div class="mt-2.5"><a href="/cari-bencana" class="inline-flex items-center gap-1.5 text-xs font-bold bg-red-600 text-white px-3 py-1.25 rounded-full hover:bg-red-700 transition-colors shadow-sm hover:shadow-md">Lihat Detail</a></div>`;
             if (dismissBtn) dismissBtn.className = 'shrink-0 p-2.5 rounded-full hover:bg-red-200/80 transition-colors text-red-700';
         } else {
             banner.className = 'warning-banner animate-fade-up banner-safe';
-            iconBg.className = 'flex items-center justify-center shrink-0 pl-1.5 pr-2';
             icon.className = 'bi bi-check2-circle text-2xl text-emerald-600';
             title.className = 'text-xs font-extrabold tracking-wider text-emerald-700 mb-0.5';
             title.textContent = 'AMAN';

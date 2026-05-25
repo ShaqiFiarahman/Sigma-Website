@@ -3,12 +3,7 @@
 @section('subtitle', 'Kirim laporan kejadian bencana di sekitar Anda.')
 
 @section('page-actions')
-    <a href="{{ strtolower(auth()->user()->role ?? '') === 'admin' ? route('admin.dashboard') : route('dashboard') }}" class="inline-flex items-center gap-2 px-4 py-2 text-sm font-semibold text-slate-700 bg-white border border-slate-200 rounded-xl shadow-sm hover:bg-slate-50 transition-all duration-200 group">
-        <svg class="w-3.5 h-3.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M19 12H5M12 19l-7-7 7-7" />
-        </svg>
-        <span>Kembali</span>
-    </a>
+    <x-ui.back-button :route="strtolower(auth()->user()->role ?? '') === 'admin' ? route('admin.dashboard') : route('dashboard')" />
 @endsection
 
 @section('content')
@@ -159,10 +154,10 @@
                 </div>
 
 
-                <x-laporan.riwayat :riwayat="$riwayat" />
+                @include('laporan._riwayat')
             </div>
 
-            <x-laporan.tips />
+            @include('laporan._tips')
             </div>
         </div>
     </div>

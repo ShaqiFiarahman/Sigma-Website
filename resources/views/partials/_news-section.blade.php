@@ -1,5 +1,3 @@
-@props(['news' => []])
-
 <section class="animate-fade-up" style="animation-delay: 0.1s;">
     <div class="flex items-center justify-between mb-4 px-1">
         <div>

@@ -1,17 +1,36 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Volunteer;
 
+use App\Http\Controllers\Controller;
 use App\Models\Disaster;
 use App\Models\Volunteer;
 use App\Models\VolunteerReport;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Storage;
 
-class VolunteerReportController extends Controller
+class ReportController extends Controller
 {
-    /**
-     * Show form to create a new volunteer report
-     */
+    public function index()
+    {
+        $user = auth()->user();
+        $volunteer = Volunteer::where('user_id', $user->id)->first();
+
+        if (!$volunteer) {
+            return redirect()->route('dashboard');
+        }
+
+        $reports = VolunteerReport::where('volunteer_id', $volunteer->id)
+            ->with('disaster')
+            ->latest()
+            ->paginate(10);
+
+        $fields = VolunteerReport::getFieldsForSkill($volunteer->skill);
+
+        return view('volunteer.reports.index', compact('volunteer', 'reports', 'fields'));
+    }
+
     public function create()
     {
         $user = auth()->user();
@@ -29,12 +48,9 @@ class VolunteerReportController extends Controller
             ->latest()
             ->get(['id', 'title', 'location']);
 
-        return view('volunteer.report-create', compact('volunteer', 'fields', 'disasters'));
+        return view('volunteer.reports.create', compact('volunteer', 'fields', 'disasters'));
     }
 
-    /**
-     * Store a new volunteer report
-     */
     public function store(Request $request)
     {
         $user = auth()->user();
@@ -49,7 +65,7 @@ class VolunteerReportController extends Controller
             'notes' => 'nullable|string|max:1000',
             'disaster_id' => 'nullable|exists:disasters,id',
             'photos' => 'nullable|array|max:3',
-            'photos.*' => 'image|max:10240', // max 10MB per file
+            'photos.*' => 'image|max:10240',
         ];
         foreach ($fields as $field) {
             $key = 'data.' . $field['name'];
@@ -78,7 +94,7 @@ class VolunteerReportController extends Controller
 
                 if ($supabaseUrl && $supabaseKey) {
                     try {
-                        $response = \Illuminate\Support\Facades\Http::withHeaders([
+                        $response = Http::withHeaders([
                             'Authorization' => 'Bearer ' . $supabaseKey,
                             'Content-Type' => $file->getMimeType(),
                         ])->withBody(file_get_contents($absolutePath), $file->getMimeType())
@@ -88,13 +104,13 @@ class VolunteerReportController extends Controller
                             $photoUrls[] = $supabaseUrl . "/storage/v1/object/public/" . $bucketName . "/" . $filename;
                             @unlink($absolutePath);
                         } else {
-                            $photoUrls[] = \Illuminate\Support\Facades\Storage::url($path);
+                            $photoUrls[] = Storage::url($path);
                         }
                     } catch (\Exception $e) {
-                        $photoUrls[] = \Illuminate\Support\Facades\Storage::url($path);
+                        $photoUrls[] = Storage::url($path);
                     }
                 } else {
-                    $photoUrls[] = \Illuminate\Support\Facades\Storage::url($path);
+                    $photoUrls[] = Storage::url($path);
                 }
             }
         }
@@ -110,27 +126,5 @@ class VolunteerReportController extends Controller
 
         return redirect()->route('volunteer.reports')
             ->with('msg', 'Laporan tugas berhasil dikirim.');
-    }
-
-    /**
-     * Show volunteer's report history
-     */
-    public function index()
-    {
-        $user = auth()->user();
-        $volunteer = Volunteer::where('user_id', $user->id)->first();
-
-        if (!$volunteer) {
-            return redirect()->route('dashboard');
-        }
-
-        $reports = VolunteerReport::where('volunteer_id', $volunteer->id)
-            ->with('disaster')
-            ->latest()
-            ->paginate(10);
-
-        $fields = VolunteerReport::getFieldsForSkill($volunteer->skill);
-
-        return view('volunteer.report-history', compact('volunteer', 'reports', 'fields'));
     }
 }

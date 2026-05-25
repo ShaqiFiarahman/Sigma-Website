@@ -1,5 +1,3 @@
-@props(['chartLabels', 'chartData', 'chartVerified', 'chartPending', 'allDisasters', 'pending'])
-
 <div class="grid grid-cols-1 lg:grid-cols-5 gap-6 mb-8">
     {{-- Chart --}}
     <div class="lg:col-span-3 bg-white border border-slate-200/60 rounded-2xl p-6" style="box-shadow: 0 2px 8px rgba(10,15,30,0.04);">
@@ -116,13 +114,6 @@
         if (!items||items.length===0) { c.innerHTML = '<div class="flex flex-col items-center justify-center py-8 text-center"><div class="w-12 h-12 rounded-2xl flex items-center justify-center mb-3 bg-emerald-50"><i class="bi bi-check-all text-xl text-emerald-600"></i></div><p class="text-sm font-bold text-slate-700">Semua terverifikasi</p></div>'; return; }
         c.innerHTML = items.map(item => `<div class="pending-item" id="pending-item-${item.id}"><div class="flex items-start justify-between gap-2 mb-2"><h4 class="text-[13px] font-bold text-slate-900 leading-tight line-clamp-1">${item.judul}</h4><span class="shrink-0 text-[10px] text-slate-400">${item.tanggal}</span></div><p class="text-[11px] text-slate-500 mb-3"><i class="bi bi-geo-alt text-slate-300 text-[10px]"></i> ${(item.lokasi||'').substring(0,40)}</p><div class="flex items-center"><a href="/laporan/detail/${item.id}" class="px-4 py-1.5 text-[10px] font-bold text-white rounded-lg transition-all duration-200 hover:opacity-90 shadow-sm cursor-pointer" style="background: linear-gradient(135deg, #1e3a8a 0%, #3B6FE8 100%); box-shadow: 0 2px 6px rgba(59, 111, 232, 0.15);">Detail</a></div></div>`).join('');
     }
-
-    window.adminUpdateStatus = function(id, status, btn) {
-        btn.disabled = true; btn.innerHTML = '<span class="inline-block w-3 h-3 border border-current border-t-transparent rounded-full animate-spin"></span>';
-        fetch(`${UPDATE_STATUS_BASE}/${id}`, { method:'POST', headers:{'Content-Type':'application/json','X-CSRF-TOKEN':CSRF_TOKEN,'Accept':'application/json'}, body:JSON.stringify({status, disaster_type:'unknown'}) })
-        .then(r => { if(!r.ok) throw new Error(); const card = document.getElementById(`pending-item-${id}`); if(card){card.style.transition='all 0.3s';card.style.opacity='0';setTimeout(()=>{card.remove();if(!document.getElementById('pending-list').children.length)renderPendingList([]);},300);} fetchAdminStats(); })
-        .catch(() => { btn.disabled=false; btn.textContent = status==='SIAGA_2'?'Verifikasi':'Tolak'; });
-    };
 
     function fetchAdminStats() {
         fetch('/api/pending-reports').then(r=>r.json()).then(data => {

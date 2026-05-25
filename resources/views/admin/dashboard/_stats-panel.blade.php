@@ -1,5 +1,3 @@
-@props(['total', 'pending', 'selesai', 'decline', 'awas', 'siaga1', 'siaga2', 'approvedVolunteers', 'totalVolunteers'])
-
 {{-- Period Selector --}}
 <div class="flex items-center justify-between mb-4 px-1">
     <div>

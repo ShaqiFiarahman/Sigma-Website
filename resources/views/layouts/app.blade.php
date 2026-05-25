@@ -110,7 +110,7 @@
                 {{-- Tombol CTA berdasarkan role --}}
                 @if(strtolower(auth()->user()->role ?? '') === 'admin')
                     {{-- Notifikasi --}}
-                    <x-admin.notification />
+                    @include('admin.dashboard._notification')
                     <button type="button" onclick="window.location.href='{{ route('admin.laporan') }}'"
                         class="btn-primary hidden md:inline-flex items-center justify-center px-4 py-2 text-sm font-medium text-white rounded-lg transition-all duration-200 cursor-pointer">
                         <i class="bi bi-file-earmark-text mr-1.5 text-xs"></i> Kelola Laporan

@@ -9,6 +9,7 @@ class Disaster extends Model
 {
     protected $fillable = [
         'user_id',
+        'verified_by',
         'title',
         'description',
         'photo_url',
@@ -38,6 +39,11 @@ class Disaster extends Model
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function verifiedBy(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'verified_by');
     }
 
     /**

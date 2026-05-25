@@ -3,12 +3,12 @@
 
 @section('content')
 
-    <x-welcome-banner />
+    @include('partials._welcome-banner')
 
     <div class="space-y-6 pb-6">
 
         {{-- Warning Banner --}}
-        <x-warning-banner />
+        @include('partials._warning-banner')
 
         {{-- Notifikasi Penugasan Baru --}}
         @if($volunteer->assignment && !$volunteer->assignment_notified_at)
@@ -230,10 +230,10 @@
         @endif
 
         {{-- Menu Layanan --}}
-        <x-menu-section :menu="$menu ?? []" />
+        @include('partials._menu-section')
 
         {{-- Berita --}}
-        <x-news-section :news="$news" />
+        @include('partials._news-section')
 
         {{-- Peta Bencana --}}
         <x-disaster-map />

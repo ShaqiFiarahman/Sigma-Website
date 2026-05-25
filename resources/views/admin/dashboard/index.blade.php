@@ -2,17 +2,9 @@
 @section('title', 'Dashboard')
 
 @section('content')
-    <x-welcome-banner />
-    <x-admin.stats-panel
-        :total="$total" :pending="$pending" :selesai="$selesai" :decline="$decline"
-        :awas="$awas" :siaga1="$siaga1" :siaga2="$siaga2"
-        :approvedVolunteers="$approvedVolunteers" :totalVolunteers="$totalVolunteers"
-    />
-    <x-admin.chart-panel
-        :chartLabels="$chartLabels" :chartData="$chartData"
-        :chartVerified="$chartVerified" :chartPending="$chartPending"
-        :allDisasters="$allDisasters" :pending="$pending"
-    />
+    @include('partials._welcome-banner')
+    @include('admin.dashboard._stats-panel')
+    @include('admin.dashboard._chart-panel')
 
     {{-- Quick Access --}}
     <div class="mb-4 px-1">

@@ -1,24 +1,13 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Volunteer;
 
+use App\Http\Controllers\Controller;
 use App\Models\Volunteer;
 use Illuminate\Http\Request;
 
-class VolunteerDashboardController extends Controller
+class DashboardController extends Controller
 {
-    /**
-     * Volunteer Dashboard — render langsung tanpa redirect
-     */
-    public function index()
-    {
-        // Langsung arahkan ke route dashboard yang akan render volunteer.dashboard view
-        return app(\App\Http\Controllers\LaporanController::class)->userDashboard();
-    }
-
-    /**
-     * Toggle ketersediaan relawan
-     */
     public function toggleAvailability(Request $request)
     {
         $user = auth()->user();
@@ -36,9 +25,6 @@ class VolunteerDashboardController extends Controller
             ->with('msg', 'Status ketersediaan berhasil diperbarui.');
     }
 
-    /**
-     * Dismiss assignment notification
-     */
     public function dismissNotification()
     {
         $user = auth()->user();

@@ -49,13 +49,11 @@
         setInterval(updateClock, 1000);
         updateClock();
 
-        // Geolocation
         if (navigator.geolocation) {
             navigator.geolocation.getCurrentPosition(successCallback, errorCallback);
         } else {
             const cityEl = document.getElementById('userCity');
             if (cityEl) cityEl.textContent = 'Geolocation tidak didukung';
-            
             const weatherEl = document.getElementById('userWeather');
             if (weatherEl) weatherEl.textContent = 'Cuaca tidak tersedia';
         }
@@ -64,76 +62,42 @@
             const lat = position.coords.latitude;
             const lng = position.coords.longitude;
 
-            // Reverse geocoding using Nominatim (free)
             fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&zoom=14&addressdetails=1`)
                 .then(response => response.json())
                 .then(data => {
                     const city = data.address.city || data.address.town || data.address.municipality || data.address.suburb || data.address.village || data.address.state || 'Lokasi tidak diketahui';
                     const cityEl = document.getElementById('userCity');
                     if (cityEl) cityEl.textContent = city;
-
                     window.userCityName = city;
                 })
-                .catch(error => {
-                    console.error('Error fetching location:', error);
+                .catch(() => {
                     const cityEl = document.getElementById('userCity');
                     if (cityEl) cityEl.textContent = 'Gagal memuat lokasi';
                 });
 
-            // Check nearby disasters if defined on user dashboard
             if (typeof checkNearbyDisasters === 'function') {
                 checkNearbyDisasters(lat, lng);
             }
 
-            // Fetch weather
             fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lng}&current_weather=true`)
                 .then(response => response.json())
                 .then(data => {
                     const weather = data.current_weather;
                     const temp = Math.round(weather.temperature);
                     const code = weather.weathercode;
-                    
                     const weatherEl = document.getElementById('userWeather');
                     const iconEl = document.getElementById('weatherIcon');
-                    
-                    if (weatherEl) {
-                        weatherEl.textContent = `${temp}°C · ${getWeatherDesc(code)}`;
-                    }
-                    if (iconEl) {
-                        iconEl.className = `bi ${getWeatherIcon(code)} text-[10px]`;
-                    }
+                    if (weatherEl) weatherEl.textContent = `${temp}°C · ${getWeatherDesc(code)}`;
+                    if (iconEl) iconEl.className = `bi ${getWeatherIcon(code)} text-[10px]`;
                 })
-                .catch(error => {
-                    console.error('Error fetching weather:', error);
+                .catch(() => {
                     const weatherEl = document.getElementById('userWeather');
                     if (weatherEl) weatherEl.textContent = 'Gagal memuat cuaca';
                 });
         }
 
         function getWeatherDesc(code) {
-            const descriptions = {
-                0: 'Cerah',
-                1: 'Cerah Berawan',
-                2: 'Berawan',
-                3: 'Mendung',
-                45: 'Berkabut',
-                48: 'Berkabut',
-                51: 'Gerimis Ringan',
-                53: 'Gerimis',
-                55: 'Gerimis Lebat',
-                61: 'Hujan Ringan',
-                63: 'Hujan',
-                65: 'Hujan Lebat',
-                71: 'Salju Ringan',
-                73: 'Salju',
-                75: 'Salju Lebat',
-                80: 'Hujan Deras Ringan',
-                81: 'Hujan Deras',
-                82: 'Hujan Deras Sangat Lebat',
-                95: 'Badai Petir',
-                96: 'Badai Petir dengan Hujan Es',
-                99: 'Badai Petir dengan Hujan Es Lebat'
-            };
+            const descriptions = {0:'Cerah',1:'Cerah Berawan',2:'Berawan',3:'Mendung',45:'Berkabut',48:'Berkabut',51:'Gerimis Ringan',53:'Gerimis',55:'Gerimis Lebat',61:'Hujan Ringan',63:'Hujan',65:'Hujan Lebat',71:'Salju Ringan',73:'Salju',75:'Salju Lebat',80:'Hujan Deras Ringan',81:'Hujan Deras',82:'Hujan Deras Sangat Lebat',95:'Badai Petir',96:'Badai Petir dengan Hujan Es',99:'Badai Petir dengan Hujan Es Lebat'};
             return descriptions[code] || 'Unknown';
         }
 
@@ -149,17 +113,12 @@
             return 'bi-cloud';
         }
 
-        function errorCallback(error) {
-            console.error('Geolocation error:', error);
+        function errorCallback() {
             const cityEl = document.getElementById('userCity');
             if (cityEl) cityEl.textContent = 'Akses lokasi ditolak';
-            
             const weatherEl = document.getElementById('userWeather');
             if (weatherEl) weatherEl.textContent = 'Cuaca tidak tersedia';
-
-            if (typeof updateWarningBanner === 'function') {
-                updateWarningBanner(0);
-            }
+            if (typeof updateWarningBanner === 'function') updateWarningBanner(0);
         }
     })();
 </script>

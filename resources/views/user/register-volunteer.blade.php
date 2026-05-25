@@ -4,12 +4,7 @@
 
 @section('page-actions')
     @if(!$existing)
-        <button type="button" onclick="window.location.href='{{ route('dashboard') }}'" class="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-slate-600 bg-white border border-slate-200 rounded-lg hover:bg-slate-50 hover:border-slate-300 transition-all duration-200 shadow-sm cursor-pointer group">
-            <svg class="w-3.5 h-3.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M19 12H5M12 19l-7-7 7-7" />
-            </svg>
-            <span>Kembali</span>
-        </button>
+        <x-ui.back-button :route="route('dashboard')" />
     @endif
 @endsection
 
@@ -19,8 +14,8 @@
 @if($existing)
     {{-- STATUS PENDAFTARAN --}}
     <div class="grid grid-cols-1 lg:grid-cols-5 gap-6">
-        <x-volunteer.status :existing="$existing" />
-        <x-volunteer.info />
+        @include('user._volunteer-status')
+        @include('user._volunteer-info')
     </div>
 
 @else

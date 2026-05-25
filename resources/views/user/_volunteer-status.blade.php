@@ -1,5 +1,3 @@
-@props(['existing'])
-
 <div class="lg:col-span-3">
     <div class="bg-white border border-slate-200/80 rounded-2xl overflow-hidden"
          style="box-shadow: 0 1px 3px rgba(10,15,30,0.06), 0 4px 16px rgba(10,15,30,0.04);">

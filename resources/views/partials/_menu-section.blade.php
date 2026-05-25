@@ -1,5 +1,3 @@
-@props(['menu' => []])
-
 <section class="animate-fade-up mb-8" style="animation-delay: 0.15s;">
     <div class="mb-4 px-1">
         <h2 class="text-lg font-bold text-slate-900">Menu Layanan</h2>

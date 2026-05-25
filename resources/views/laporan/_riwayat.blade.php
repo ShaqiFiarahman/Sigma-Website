@@ -1,5 +1,3 @@
-@props(['riwayat'])
-
 <div class="mt-8">
     <h2 class="flex items-center gap-2 text-lg font-bold mb-4" style="color: #0A0F1E;">
         <i class="bi bi-clock-history" style="color: #3B6FE8;"></i> Riwayat Laporan Anda

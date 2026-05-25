@@ -84,8 +84,8 @@
                 @php
                     $roleType = strtolower(auth()->user()->role ?? '');
                     if ($roleType === 'admin') {
-                        $laporanLabel = 'Laporan Anda';
-                        $laporanCount = \App\Models\Disaster::where('user_id', auth()->id())->count() . ' Laporan';
+                        $laporanLabel = 'Laporan Diverifikasi';
+                        $laporanCount = \App\Models\Disaster::where('verified_by', auth()->id())->count() . ' Laporan';
                     } else {
                         $laporanLabel = 'Total Laporan Anda';
                         $laporanCount = \App\Models\Disaster::where('user_id', auth()->id())->count() . ' Laporan';

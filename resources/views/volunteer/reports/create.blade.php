@@ -2,12 +2,7 @@
 @section('title', 'Kirim Laporan Tugas')
 
 @section('page-actions')
-    <a href="{{ route('volunteer.reports') }}" class="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-slate-600 bg-white border border-slate-200 rounded-lg hover:bg-slate-50 transition-all shadow-sm group">
-        <svg class="w-3.5 h-3.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M19 12H5M12 19l-7-7 7-7" />
-        </svg>
-        <span>Riwayat</span>
-    </a>
+    <x-ui.back-button :route="route('volunteer.reports')" label="Riwayat" />
 @endsection
 
 @section('content')
@@ -25,7 +20,7 @@
 
 <div class="max-w-2xl mx-auto">
     <div class="bg-white border border-slate-200/60 rounded-2xl overflow-hidden" style="box-shadow: 0 2px 8px rgba(10,15,30,0.04);">
-        
+
         {{-- Header --}}
         <div class="pl-5 pr-6 py-4 border-l-4 border-l-[#3B6FE8] border-b border-slate-100 bg-white">
             <div class="flex items-center gap-3">
@@ -53,7 +48,7 @@
         <form action="{{ route('volunteer.report.store') }}" method="POST" enctype="multipart/form-data" class="p-6 space-y-5">
             @csrf
 
-            {{-- Pilih Bencana (opsional) --}}
+            {{-- Pilih Bencana --}}
             <div>
                 <label class="block text-xs font-bold text-slate-700 mb-2 uppercase tracking-wider">
                     Terkait Bencana <span class="text-slate-400 font-normal normal-case">(opsional)</span>
@@ -70,7 +65,7 @@
             {{-- Dynamic Fields per Skill --}}
             <div class="border-t border-slate-100 pt-5">
                 <p class="text-xs font-bold text-slate-500 uppercase tracking-wider mb-4">Data Laporan</p>
-                
+
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     @foreach($fields as $field)
                         @if($field['type'] === 'textarea')
