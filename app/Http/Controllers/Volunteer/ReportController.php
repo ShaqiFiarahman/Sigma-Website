@@ -44,11 +44,17 @@ class ReportController extends Controller
         }
 
         $fields = VolunteerReport::getFieldsForSkill($volunteer->skill);
-        $disasters = Disaster::whereNotIn('status', ['DECLINE', 'RESOLVED'])
+        $disasters = Disaster::whereNotIn('status', ['PENDING', 'DECLINE', 'RESOLVED'])
             ->latest()
             ->get(['id', 'title', 'location']);
 
-        return view('volunteer.reports.create', compact('volunteer', 'fields', 'disasters'));
+        $recentReports = VolunteerReport::where('volunteer_id', $volunteer->id)
+            ->with('disaster')
+            ->latest()
+            ->limit(5)
+            ->get();
+
+        return view('volunteer.reports.create', compact('volunteer', 'fields', 'disasters', 'recentReports'));
     }
 
     public function store(Request $request)
@@ -63,66 +69,64 @@ class ReportController extends Controller
         // Build validation rules dynamically
         $rules = [
             'notes' => 'nullable|string|max:1000',
-            'disaster_id' => 'nullable|exists:disasters,id',
-            'photos' => 'nullable|array|max:3',
-            'photos.*' => 'image|max:10240',
+            'disaster_id' => 'required|exists:disasters,id',
         ];
         foreach ($fields as $field) {
             $key = 'data.' . $field['name'];
+            $isOptional = isset($field['optional']) && $field['optional'];
+            $rulePrefix = $isOptional ? 'nullable' : 'required';
+
             if ($field['type'] === 'number') {
-                $rules[$key] = 'required|integer|min:0';
+                $rules[$key] = "$rulePrefix|integer|min:0";
             } elseif ($field['type'] === 'textarea') {
-                $rules[$key] = 'required|string|max:500';
+                $rules[$key] = "$rulePrefix|string|max:500";
             } else {
-                $rules[$key] = 'required|string|max:255';
+                $rules[$key] = "$rulePrefix|string|max:255";
             }
         }
 
         $request->validate($rules);
 
-        // Handle photo uploads
-        $photoUrls = [];
-        if ($request->hasFile('photos')) {
-            $supabaseUrl = rtrim(config('services.supabase.url'), '/');
-            $supabaseKey = config('services.supabase.key');
-            $bucketName = config('services.supabase.bucket', 'laporan');
-
-            foreach ($request->file('photos') as $file) {
-                $path = $file->store('volunteer-reports', 'public');
-                $absolutePath = storage_path('app/public/' . $path);
-                $filename = 'vr_' . time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
-
-                if ($supabaseUrl && $supabaseKey) {
-                    try {
-                        $response = Http::withHeaders([
-                            'Authorization' => 'Bearer ' . $supabaseKey,
-                            'Content-Type' => $file->getMimeType(),
-                        ])->withBody(file_get_contents($absolutePath), $file->getMimeType())
-                          ->post($supabaseUrl . "/storage/v1/object/" . $bucketName . "/" . $filename);
-
-                        if ($response->successful()) {
-                            $photoUrls[] = $supabaseUrl . "/storage/v1/object/public/" . $bucketName . "/" . $filename;
-                            @unlink($absolutePath);
-                        } else {
-                            $photoUrls[] = Storage::url($path);
-                        }
-                    } catch (\Exception $e) {
-                        $photoUrls[] = Storage::url($path);
-                    }
-                } else {
-                    $photoUrls[] = Storage::url($path);
-                }
-            }
-        }
-
         VolunteerReport::create([
             'volunteer_id' => $volunteer->id,
-            'disaster_id'  => $request->disaster_id ?: null,
+            'disaster_id'  => $request->disaster_id,
             'skill_type'   => $volunteer->skill,
             'report_data'  => $request->data,
             'notes'        => $request->notes,
-            'photo_urls'   => !empty($photoUrls) ? $photoUrls : null,
+            'photo_urls'   => null,
         ]);
+
+        // Sync needs to the assigned shelter's logistics list
+        if (!empty($volunteer->assignment)) {
+            $shelter = \App\Models\Shelter::where('name', $volunteer->assignment)->first();
+            if ($shelter) {
+                $needsInput = '';
+                if ($volunteer->skill === 'MEDIS' && !empty($request->data['kebutuhan_medis'])) {
+                    $needsInput = $request->data['kebutuhan_medis'];
+                } elseif ($volunteer->skill === 'LOGISTIK' && !empty($request->data['kebutuhan_mendesak'])) {
+                    $needsInput = $request->data['kebutuhan_mendesak'];
+                }
+
+                if (!empty($needsInput)) {
+                    // Split the comma-separated, semicolon-separated, or newline-separated needs
+                    $splitNeeds = preg_split('/[,;\n\r]+/', $needsInput);
+                    $currentLogistics = $shelter->logistics ?? [];
+                    if (!is_array($currentLogistics)) {
+                        $currentLogistics = [];
+                    }
+
+                    foreach ($splitNeeds as $needItem) {
+                        $trimmed = trim($needItem);
+                        if (!empty($trimmed) && !in_array($trimmed, $currentLogistics)) {
+                            $currentLogistics[] = $trimmed;
+                        }
+                    }
+
+                    $shelter->logistics = $currentLogistics;
+                    $shelter->save();
+                }
+            }
+        }
 
         return redirect()->route('volunteer.reports')
             ->with('msg', 'Laporan tugas berhasil dikirim.');

@@ -25,9 +25,11 @@
         }
 
         body {
-            background-color: #F0F4F8;
-            background-image:
-                radial-gradient(ellipse 80% 50% at 50% -20%, rgba(59, 111, 232, 0.08) 0%, transparent 70%);
+            background-color: #F4F7FC;
+            background-image: 
+                radial-gradient(circle at 50% 0%, rgba(59, 111, 232, 0.04), transparent 50%),
+                radial-gradient(circle at 100% 100%, rgba(59, 111, 232, 0.02), transparent 40%);
+            background-attachment: fixed;
         }
 
         /* Navbar glassy style */
@@ -80,6 +82,18 @@
 </head>
 
 <body class="text-slate-900 min-h-screen flex flex-col font-sans selection:bg-blue-100 selection:text-blue-900">
+
+    {{-- Elemen Latar Belakang Ambient (Hanya visual belakang, tidak menghalangi interaksi) --}}
+    <div class="fixed inset-0 -z-10 overflow-hidden pointer-events-none">
+        <!-- Orb 1 (Biru-Indigo lembut di kanan atas) -->
+        <div class="absolute -top-[10%] -right-[10%] w-[55vw] h-[55vw] max-w-[650px] max-h-[650px] rounded-full bg-gradient-to-br from-blue-400/15 to-indigo-500/15 blur-[120px] animate-ambient-slow"></div>
+        
+        <!-- Orb 2 (Teal-Sky lembut di tengah kiri) -->
+        <div class="absolute top-[30%] -left-[15%] w-[50vw] h-[50vw] max-w-[550px] max-h-[550px] rounded-full bg-gradient-to-tr from-teal-400/10 to-sky-400/10 blur-[100px] animate-ambient-slower"></div>
+        
+        <!-- Orb 3 (Biru Muda/Cyan di bawah kanan) -->
+        <div class="absolute bottom-[5%] right-[10%] w-[45vw] h-[45vw] max-w-[500px] max-h-[500px] rounded-full bg-gradient-to-tr from-sky-300/10 to-teal-400/10 blur-[110px] animate-ambient-slow"></div>
+    </div>
 
     {{-- NAVBAR --}}
     <nav id="mainNavbar" class="sticky top-0 z-50">

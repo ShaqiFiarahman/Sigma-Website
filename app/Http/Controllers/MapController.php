@@ -27,11 +27,10 @@ class MapController extends Controller
         $query = Disaster::latest();
 
         if (strtolower($role) !== 'admin') {
-            // Citizens/Volunteers can see public disasters (RESOLVED, SIAGA_1, SIAGA_2, AWAS)
-            // AND their own reports (including pending or rejected)
+            // Citizens/Volunteers can see active public disasters (SIAGA_1, SIAGA_2, AWAS - i.e. not RESOLVED/selesai)
+            // AND their own reports (including pending, rejected, or resolved)
             $query->where(function($q) use ($user) {
                 $q->whereIn('status', [
-                    'RESOLVED',
                     'SIAGA_1',
                     'SIAGA_2',
                     'AWAS'
@@ -81,7 +80,6 @@ class MapController extends Controller
                 'SIAGA_2',
                 'AWAS'
             ])
-            ->where('created_at', '>=', now()->subDays(7))
             ->latest()
             ->get()
             ->map(fn($d) => [

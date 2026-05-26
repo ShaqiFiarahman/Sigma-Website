@@ -43,7 +43,7 @@ class VolunteerReport extends Model
                 ['name' => 'luka_berat',       'label' => 'Luka Berat',            'type' => 'number'],
                 ['name' => 'kritis',           'label' => 'Kritis',                'type' => 'number'],
                 ['name' => 'meninggal',        'label' => 'Meninggal',             'type' => 'number'],
-                ['name' => 'kebutuhan_medis',  'label' => 'Kebutuhan Medis',       'type' => 'textarea'],
+                ['name' => 'kebutuhan_medis',  'label' => 'Kebutuhan Medis',       'type' => 'textarea', 'optional' => true],
             ],
             'SAR' => [
                 ['name' => 'total_dievakuasi', 'label' => 'Total Dievakuasi',      'type' => 'number'],

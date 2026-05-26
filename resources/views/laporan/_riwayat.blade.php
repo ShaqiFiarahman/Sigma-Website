@@ -1,6 +1,22 @@
 <div class="mt-8">
     <h2 class="flex items-center gap-2 text-lg font-bold mb-4" style="color: #0A0F1E;">
-        <i class="bi bi-clock-history" style="color: #3B6FE8;"></i> Riwayat Laporan Anda
+        <svg class="w-5 h-5 shrink-0" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <!-- Backwards curving arrow indicating looking back in time -->
+            <path d="M12 21C16.9706 21 21 16.9706 21 12C21 7.02944 16.9706 3 12 3C9.02058 3 6.36852 4.45037 4.7082 6.66667" stroke="url(#historyGrad)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <!-- Small arrow tip -->
+            <path d="M5 3V7H9" stroke="url(#historyGrad)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <!-- A small elegant pulse center dot representing points in time -->
+            <circle cx="12" cy="12" r="2" fill="#2563eb" />
+            <!-- Clock hands pointing at historical record -->
+            <path d="M12 7V12H15" stroke="#1d4ed8" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+            <defs>
+                <linearGradient id="historyGrad" x1="3" y1="3" x2="21" y2="21" gradientUnits="userSpaceOnUse">
+                    <stop stop-color="#3b82f6"/>
+                    <stop offset="1" stop-color="#1d4ed8"/>
+                </linearGradient>
+            </defs>
+        </svg>
+        Riwayat Laporan Anda
     </h2>
 
     @if($riwayat->isEmpty())

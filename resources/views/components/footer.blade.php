@@ -1,24 +1,13 @@
+@if(strtolower(auth()->user()->role ?? '') !== 'admin')
 <style>
     .u-footer {
         position: relative;
-        background-color: white;
-        overflow: hidden;
-        margin-top: 0.5rem;
-    }
-
-    .u-footer::before {
-        content: '';
-        position: absolute;
-        top: -85px;
-        left: 50%;
-        transform: translateX(-50%);
-        width: 140%;
-        height: 100px;
-        background-color: #F0F4F8;
-        border-radius: 50%;
-        pointer-events: none;
-        box-shadow: 0 12px 28px rgba(59, 111, 232, 0.12);
-        filter: blur(3px);
+        background: rgba(255, 255, 255, 0.45);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border-top: 1px solid rgba(59, 111, 232, 0.08);
+        margin-top: 3rem;
+        box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.6);
     }
 </style>
 <footer class="py-10 u-footer">
@@ -37,9 +26,28 @@
                 <div class="text-left">
                     <span class="font-bold text-slate-900 text-sm block mb-3">Menu</span>
                     <div class="flex flex-col gap-2 text-slate-600">
-                        <a href="{{ route('dashboard') }}" class="hover:text-[#2B52C3] font-medium transition-colors">Dashboard</a>
-                        <a href="{{ route('laporan.index') }}" class="hover:text-[#2B52C3] font-medium transition-colors">Laporan</a>
-                        <a href="{{ route('panduan') }}" class="hover:text-[#2B52C3] font-medium transition-colors">Panduan</a>
+                        @php
+                            $role = strtolower(auth()->user()->role ?? '');
+                        @endphp
+                        
+                        @if($role === 'admin')
+                            <a href="{{ route('admin.laporan') }}" class="hover:text-[#2B52C3] font-medium transition-colors">Kelola Laporan</a>
+                            <a href="{{ route('volunteer.index') }}" class="hover:text-[#2B52C3] font-medium transition-colors">Kelola Relawan</a>
+                            <a href="{{ route('shelter') }}" class="hover:text-[#2B52C3] font-medium transition-colors">Kelola Posko</a>
+                        @elseif($role === 'relawan')
+                            <a href="{{ route('volunteer.reports') }}" class="hover:text-[#2B52C3] font-medium transition-colors">Laporan Tugas</a>
+                            <a href="{{ route('volunteer.report.create') }}" class="hover:text-[#2B52C3] font-medium transition-colors">Buat Laporan Tugas</a>
+                            <a href="{{ route('laporan.index') }}" class="hover:text-[#2B52C3] font-medium transition-colors">Cari Bencana</a>
+                            <a href="{{ route('shelter') }}" class="hover:text-[#2B52C3] font-medium transition-colors">Info Posko</a>
+                            <a href="{{ route('panduan') }}" class="hover:text-[#2B52C3] font-medium transition-colors">Panduan Bencana</a>
+                        @else
+                            {{-- Default: Masyarakat --}}
+                            <a href="{{ route('laporan.create') }}" class="hover:text-[#2B52C3] font-medium transition-colors">Buat Laporan</a>
+                            <a href="{{ route('laporan.index') }}" class="hover:text-[#2B52C3] font-medium transition-colors">Cari Bencana</a>
+                            <a href="{{ route('volunteer.create') }}" class="hover:text-[#2B52C3] font-medium transition-colors">Daftar Relawan</a>
+                            <a href="{{ route('shelter') }}" class="hover:text-[#2B52C3] font-medium transition-colors">Info Posko</a>
+                            <a href="{{ route('panduan') }}" class="hover:text-[#2B52C3] font-medium transition-colors">Panduan Bencana</a>
+                        @endif
                     </div>
                 </div>
             </div>
@@ -78,8 +86,9 @@
         </div>
 
         <!-- Footer Bottom -->
-        <div class="border-t border-slate-100 pt-6 flex flex-col md:flex-row justify-between items-center gap-4">
-            <p class="text-slate-400 text-[11px] font-medium">&copy;2026 SIGMA &bull; Data: BMKG & BNPB</p>
+        <div class="border-t border-slate-200/50 pt-6 flex justify-center items-center">
+            <p class="text-slate-400 text-[11px] font-medium text-center">&copy; 2026 SIGMA &bull; Data: BMKG & BNPB</p>
         </div>
     </div>
 </footer>
+@endif

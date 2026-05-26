@@ -158,6 +158,166 @@
                     </div>
                 </div>
 
+                {{-- Data Korban & Evakuasi (Relawan Update) --}}
+                <div class="border-t border-slate-100/60 pt-5">
+                    <h3 class="text-xs font-bold text-slate-700 mb-3 uppercase tracking-wider flex items-center gap-1.5">
+                        <i class="bi bi-people-fill text-slate-400"></i> Kondisi Korban & Evakuasi <span class="text-[10px] font-bold text-blue-600 ml-1.5">· Update Relawan</span>
+                    </h3>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        {{-- Medis Update --}}
+                        <div class="bg-red-50/20 border border-red-100 rounded-xl p-4.5">
+                            <div class="flex items-center gap-2 mb-3 text-red-700">
+                                <i class="bi bi-heart-pulse-fill text-sm"></i>
+                                <h4 class="text-xs font-bold uppercase tracking-wider">Kondisi Medis & Korban</h4>
+                            </div>
+                            @if($latestMedis && !empty($latestMedis->report_data))
+                                <div class="grid grid-cols-2 gap-2 text-xs">
+                                    <div class="bg-white/80 p-2.5 rounded-lg border border-red-50 flex flex-col">
+                                        <span class="text-slate-400 font-semibold text-[9px] uppercase">Total Korban</span>
+                                        <span class="text-base font-bold text-red-600 mt-0.5">{{ $latestMedis->report_data['total_korban'] ?? 0 }}</span>
+                                    </div>
+                                    <div class="bg-white/80 p-2.5 rounded-lg border border-red-50 flex flex-col">
+                                        <span class="text-slate-400 font-semibold text-[9px] uppercase">Selamat</span>
+                                        <span class="text-base font-bold text-emerald-600 mt-0.5">{{ $latestMedis->report_data['selamat'] ?? 0 }}</span>
+                                    </div>
+                                    <div class="bg-white/80 p-2.5 rounded-lg border border-red-50 flex flex-col">
+                                        <span class="text-slate-400 font-semibold text-[9px] uppercase">Luka Ringan</span>
+                                        <span class="text-base font-bold text-amber-500 mt-0.5">{{ $latestMedis->report_data['luka_ringan'] ?? 0 }}</span>
+                                    </div>
+                                    <div class="bg-white/80 p-2.5 rounded-lg border border-red-50 flex flex-col">
+                                        <span class="text-slate-400 font-semibold text-[9px] uppercase">Luka Berat</span>
+                                        <span class="text-base font-bold text-orange-600 mt-0.5">{{ $latestMedis->report_data['luka_berat'] ?? 0 }}</span>
+                                    </div>
+                                    <div class="bg-white/80 p-2.5 rounded-lg border border-red-50 flex flex-col">
+                                        <span class="text-slate-400 font-semibold text-[9px] uppercase">Kritis</span>
+                                        <span class="text-base font-bold text-purple-600 mt-0.5">{{ $latestMedis->report_data['kritis'] ?? 0 }}</span>
+                                    </div>
+                                    <div class="bg-white/80 p-2.5 rounded-lg border border-red-50 flex flex-col">
+                                        <span class="text-slate-400 font-semibold text-[9px] uppercase">Meninggal</span>
+                                        <span class="text-base font-bold text-slate-800 mt-0.5">{{ $latestMedis->report_data['meninggal'] ?? 0 }}</span>
+                                    </div>
+                                </div>
+                                <p class="text-[9px] text-slate-400 mt-2.5 italic">Dilaporkan oleh: {{ $latestMedis->volunteer->name }} · {{ $latestMedis->created_at->diffForHumans() }}</p>
+                            @else
+                                <div class="grid grid-cols-2 gap-2 text-xs opacity-50">
+                                    <div class="bg-white/80 p-2.5 rounded-lg border border-red-50 flex flex-col">
+                                        <span class="text-slate-400 font-semibold text-[9px] uppercase">Total Korban</span>
+                                        <span class="text-base font-bold text-red-600 mt-0.5">0</span>
+                                    </div>
+                                    <div class="bg-white/80 p-2.5 rounded-lg border border-red-50 flex flex-col">
+                                        <span class="text-slate-400 font-semibold text-[9px] uppercase">Selamat</span>
+                                        <span class="text-base font-bold text-emerald-600 mt-0.5">0</span>
+                                    </div>
+                                    <div class="bg-white/80 p-2.5 rounded-lg border border-red-50 flex flex-col">
+                                        <span class="text-slate-400 font-semibold text-[9px] uppercase">Luka Ringan</span>
+                                        <span class="text-base font-bold text-amber-500 mt-0.5">0</span>
+                                    </div>
+                                    <div class="bg-white/80 p-2.5 rounded-lg border border-red-50 flex flex-col">
+                                        <span class="text-slate-400 font-semibold text-[9px] uppercase">Luka Berat</span>
+                                        <span class="text-base font-bold text-orange-600 mt-0.5">0</span>
+                                    </div>
+                                    <div class="bg-white/80 p-2.5 rounded-lg border border-red-50 flex flex-col">
+                                        <span class="text-slate-400 font-semibold text-[9px] uppercase">Kritis</span>
+                                        <span class="text-base font-bold text-purple-600 mt-0.5">0</span>
+                                    </div>
+                                    <div class="bg-white/80 p-2.5 rounded-lg border border-red-50 flex flex-col">
+                                        <span class="text-slate-400 font-semibold text-[9px] uppercase">Meninggal</span>
+                                        <span class="text-base font-bold text-slate-800 mt-0.5">0</span>
+                                    </div>
+                                </div>
+                                <p class="text-[10px] text-slate-450 mt-3.5 italic font-medium">Belum ada update data medis dari relawan.</p>
+                            @endif
+                        </div>
+
+                        {{-- SAR Update --}}
+                        <div class="bg-orange-50/20 border border-orange-100 rounded-xl p-4.5">
+                             <div class="flex items-center gap-2 mb-3 text-orange-700">
+                                <svg class="w-5.5 h-5.5 shrink-0 shadow-sm rounded-full" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <!-- Basarnas Official Circle Emblem -->
+                                    <circle cx="12" cy="12" r="11.5" fill="#facc15" />
+                                    <circle cx="12" cy="12" r="11" fill="#0b3c1b" />
+                                    <circle cx="12" cy="12" r="8" fill="#facc15" />
+                                    <!-- Map of Indonesia -->
+                                    <path d="M4.6 11.2c.2-.4.7-.2.9.1.4.5.8 1.1 1.2 1.6.2.3 0 .6-.3.6-.4 0-.8-.5-1.2-1-.3-.4-.6-.9-.4-1.3z" fill="#0b3c1b" />
+                                    <path d="M9.4 10c.5-.2 1.1.1 1.3.5.2.4-.1.9-.4 1.1-.3.2-.9-.1-1.1-.4-.2-.4.1-.6.2-.8z" fill="#0b3c1b" />
+                                    <path d="M7.4 14.3c.7-.1 1.4 0 2.1.1.2 0 .2.2 0 .2-.7 0-1.4-.1-2.1-.2-.2 0-.2-.1 0-.1z" fill="#0b3c1b" />
+                                    <path d="M12.6 10.5c.2-.2.7-.1.6.2 0 .3-.3.4-.3.7s.4.4.3.7c-.1.2-.3.1-.4-.1 0-.2.2-.4.1-.7 0-.3-.3-.3-.3-.6 0-.1 0-.2 0-.2z" fill="#0b3c1b" />
+                                    <path d="M16.8 11.8c.3-.3.7-.3 1.1-.2.3.2.7.2 1.1-.1.2-.1.3 0 .2.2-.2.3-.5.5-.9.4-.3 0-.5-.2-.6-.3z" fill="#0b3c1b" />
+                                    <!-- Minor Islands -->
+                                    <circle cx="10.8" cy="14.3" r="0.3" fill="#0b3c1b" />
+                                    <circle cx="11.6" cy="14.3" r="0.3" fill="#0b3c1b" />
+                                    <circle cx="12.4" cy="14.2" r="0.3" fill="#0b3c1b" />
+                                    <circle cx="13.2" cy="13.8" r="0.3" fill="#0b3c1b" />
+                                    <circle cx="14.5" cy="12.8" r="0.3" fill="#0b3c1b" />
+                                    <circle cx="15.2" cy="12.0" r="0.3" fill="#0b3c1b" />
+                                    <!-- Stars -->
+                                    <polygon points="12,2.2 12.2,2.7 12.8,2.7 12.3,3.1 12.5,3.6 12,3.3 11.5,3.6 11.7,3.1 11.2,2.7 11.8,2.7" fill="#facc15" />
+                                    <polygon points="9.5,2.6 9.7,3.1 10.3,3.1 9.8,3.5 10,4 9.5,3.7 9,4 9.2,3.5 8.7,3.1 9.3,3.1" fill="#facc15" />
+                                    <polygon points="14.5,2.6 14.7,3.1 15.3,3.1 14.8,3.5 15,4 14.5,3.7 14,4 14.2,3.5 13.7,3.1 14.3,3.1" fill="#facc15" />
+                                    <polygon points="7.2,3.6 7.4,4.1 8,4.1 7.5,4.5 7.7,5 7.2,4.7 6.7,5 6.9,4.5 6.4,4.1 7,4.1" fill="#facc15" />
+                                    <polygon points="16.8,3.6 17,4.1 17.6,4.1 17.1,4.5 17.3,5 16.8,4.7 16.3,5 16.5,4.5 16,4.1 16.6,4.1" fill="#facc15" />
+                                    <polygon points="5.2,5.2 5.4,5.7 6,5.7 5.5,6.1 5.7,6.6 5.2,6.3 4.7,6.6 4.9,6.1 4.4,5.7 5,5.7" fill="#facc15" />
+                                    <polygon points="18.8,5.2 19,5.7 19.6,5.7 19.1,6.1 19.3,6.6 18.8,6.3 18.3,6.6 18.5,6.1 18,5.7 18.6,5.7" fill="#facc15" />
+                                    <!-- Red Text -->
+                                    <text x="12" y="8" fill="#dc2626" font-size="2.6" font-weight="900" font-family="system-ui, -apple-system, sans-serif" text-anchor="middle" letter-spacing="0.1">SAR</text>
+                                    <text x="12" y="16.8" fill="#dc2626" font-size="1.8" font-weight="900" font-family="system-ui, -apple-system, sans-serif" text-anchor="middle" letter-spacing="0.1">NASIONAL</text>
+                                    <!-- Bottom Text -->
+                                    <text x="12" y="21.3" fill="#facc15" font-size="0.95" font-weight="800" font-family="system-ui, -apple-system, sans-serif" text-anchor="middle" letter-spacing="0.1">AVIGNAM JAGAT SAMAGRAM</text>
+                                </svg>
+                                <h4 class="text-xs font-bold uppercase tracking-wider">Pencarian & Evakuasi (SAR)</h4>
+                            </div>
+                            @if($latestSar && !empty($latestSar->report_data))
+                                <div class="grid grid-cols-2 gap-2 text-xs">
+                                    <div class="bg-white/80 p-2.5 rounded-lg border border-orange-50 flex flex-col">
+                                        <span class="text-slate-400 font-semibold text-[9px] uppercase">Total Dievakuasi</span>
+                                        <span class="text-base font-bold text-orange-600 mt-0.5">{{ $latestSar->report_data['total_dievakuasi'] ?? 0 }}</span>
+                                    </div>
+                                    <div class="bg-white/80 p-2.5 rounded-lg border border-orange-50 flex flex-col">
+                                        <span class="text-slate-400 font-semibold text-[9px] uppercase">Masih Dicari</span>
+                                        <span class="text-base font-bold text-red-500 mt-0.5">{{ $latestSar->report_data['masih_dicari'] ?? 0 }}</span>
+                                    </div>
+                                </div>
+                                <div class="mt-2.5 space-y-2 text-[11px]">
+                                    <div class="bg-white/60 p-2.5 rounded-lg border border-orange-50">
+                                        <span class="text-slate-500 font-bold block mb-0.5 uppercase text-[9px]">Status Pencarian:</span>
+                                        <span class="font-bold text-slate-700">{{ $latestSar->report_data['status_pencarian'] ?? 'Dalam proses' }}</span>
+                                    </div>
+                                    <div class="bg-white/60 p-2.5 rounded-lg border border-orange-50">
+                                        <span class="text-slate-500 font-bold block mb-0.5 uppercase text-[9px]">Lokasi Evakuasi:</span>
+                                        <span class="text-slate-700 font-semibold leading-relaxed">{{ $latestSar->report_data['lokasi_evakuasi'] ?? '-' }}</span>
+                                    </div>
+                                </div>
+                                @if(!empty($latestSar->report_data['kendala']))
+                                    <div class="mt-3 bg-white/60 p-2.5 rounded-lg border border-orange-50 text-[11px]">
+                                        <span class="text-slate-500 font-bold block mb-0.5 uppercase text-[9px]">Kendala di Lapangan:</span>
+                                        <span class="text-slate-700 font-semibold leading-relaxed">{{ $latestSar->report_data['kendala'] }}</span>
+                                    </div>
+                                @endif
+                                <p class="text-[9px] text-slate-400 mt-2.5 italic">Dilaporkan oleh: {{ $latestSar->volunteer->name }} · {{ $latestSar->created_at->diffForHumans() }}</p>
+                            @else
+                                <div class="grid grid-cols-2 gap-2 text-xs opacity-50">
+                                    <div class="bg-white/80 p-2.5 rounded-lg border border-orange-50 flex flex-col">
+                                        <span class="text-slate-400 font-semibold text-[9px] uppercase">Total Dievakuasi</span>
+                                        <span class="text-base font-bold text-orange-600 mt-0.5">0</span>
+                                    </div>
+                                    <div class="bg-white/80 p-2.5 rounded-lg border border-orange-50 flex flex-col">
+                                        <span class="text-slate-400 font-semibold text-[9px] uppercase">Masih Dicari</span>
+                                        <span class="text-base font-bold text-red-500 mt-0.5">0</span>
+                                    </div>
+                                </div>
+                                <div class="mt-2.5 space-y-2 text-[11px] opacity-50">
+                                    <div class="bg-white/60 p-2.5 rounded-lg border border-orange-50">
+                                        <span class="text-slate-500 font-bold block mb-0.5 uppercase text-[9px]">Status Pencarian:</span>
+                                        <span class="font-bold text-slate-700">Belum dimulai</span>
+                                    </div>
+                                </div>
+                                <p class="text-[10px] text-slate-450 mt-3.5 italic font-medium">Belum ada update pencarian dari relawan SAR.</p>
+                            @endif
+                        </div>
+                    </div>
+                </div>
+
             </div>
         </div>
     </div>

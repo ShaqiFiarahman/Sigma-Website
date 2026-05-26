@@ -111,7 +111,18 @@ class LaporanController extends Controller
         $disaster = Disaster::with('user')->findOrFail($id);
         $laporan = $this->toArray($disaster);
 
-        return view('laporan.show', compact('laporan'));
+        // Fetch the latest reports
+        $latestMedis = \App\Models\VolunteerReport::where('disaster_id', $id)
+            ->where('skill_type', 'MEDIS')
+            ->latest()
+            ->first();
+
+        $latestSar = \App\Models\VolunteerReport::where('disaster_id', $id)
+            ->where('skill_type', 'SAR')
+            ->latest()
+            ->first();
+
+        return view('laporan.show', compact('laporan', 'latestMedis', 'latestSar'));
     }
 
     private function toArray(Disaster $d): array

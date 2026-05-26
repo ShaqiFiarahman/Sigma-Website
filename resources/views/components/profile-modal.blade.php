@@ -86,6 +86,14 @@
                     if ($roleType === 'admin') {
                         $laporanLabel = 'Laporan Diverifikasi';
                         $laporanCount = \App\Models\Disaster::where('verified_by', auth()->id())->count() . ' Laporan';
+                    } elseif ($roleType === 'relawan') {
+                        $volunteerData = \App\Models\Volunteer::where('user_id', auth()->id())->first();
+                        $laporanLabel = 'Total Laporan Tugas Anda';
+                        if ($volunteerData) {
+                            $laporanCount = \App\Models\VolunteerReport::where('volunteer_id', $volunteerData->id)->count() . ' Laporan';
+                        } else {
+                            $laporanCount = '0 Laporan';
+                        }
                     } else {
                         $laporanLabel = 'Total Laporan Anda';
                         $laporanCount = \App\Models\Disaster::where('user_id', auth()->id())->count() . ' Laporan';
