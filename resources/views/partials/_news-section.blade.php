@@ -1,4 +1,4 @@
-<section class="animate-fade-up" style="animation-delay: 0.1s;">
+<section class="animate-fade-up min-w-0" style="animation-delay: 0.1s;">
     <div class="flex items-center justify-between mb-4 px-1">
         <div>
             <h2 class="text-lg font-bold text-slate-900">Berita Terkini</h2>
@@ -10,11 +10,11 @@
         </a>
     </div>
 
-    <div class="news-scroll flex gap-4 overflow-x-auto pb-4">
+    <div class="news-scroll">
         @forelse($news as $item)
             <div onclick="window.open('{{ $item['url'] ?? '#' }}', '_blank')"
                  class="group bg-white border border-slate-100 rounded-2xl overflow-hidden flex flex-col justify-between shadow-sm hover:shadow-[0_12px_28px_rgba(0,0,0,0.1)] hover:-translate-y-1 transition-all duration-300 cursor-pointer"
-                 style="min-width: 280px; max-width: 280px;">
+                 style="min-width: 280px; max-width: 280px; flex-shrink: 0;">
                 <div class="relative h-32 overflow-hidden">
                     @if(isset($item['image_url']) && $item['image_url'])
                         <img src="{{ $item['image_url'] }}"

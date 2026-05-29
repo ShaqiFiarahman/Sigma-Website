@@ -7,7 +7,7 @@
 @endsection
 
 @section('page-actions')
-    <x-ui.back-button :route="route('volunteer.reports')" label="Kembali" />
+    <x-ui.back-button :route="route('dashboard')" label="Kembali" />
 @endsection
 
 @section('content')

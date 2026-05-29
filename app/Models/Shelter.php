@@ -44,6 +44,11 @@ class Shelter extends Model
         $this->save();
     }
 
+    public function setLogisticsAttribute($value)
+    {
+        $this->attributes['logistics'] = is_array($value) ? json_encode($value) : $value;
+    }
+
     public function getLogisticsAttribute($value)
     {
         // 1. Fetch all volunteer reports with skill type MEDIS or LOGISTIK where the volunteer's assignment matches $this->name

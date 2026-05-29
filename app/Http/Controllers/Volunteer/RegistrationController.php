@@ -19,7 +19,7 @@ class RegistrationController extends Controller
     {
         $request->validate([
             'name'         => 'required|string|max:255',
-            'skill'        => 'required|in:MEDIS,SAR,LOGISTIK,KONSUMSI,PSIKOSOSIAL',
+            'skill'        => 'required|in:MEDIS,SAR,LOGISTIK,KONSUMSI,PSIKOSOSIAL,PENDIDIKAN',
             'address'      => 'required|string',
             'phone_number' => 'required|string|max:20',
         ]);

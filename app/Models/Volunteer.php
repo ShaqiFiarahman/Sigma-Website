@@ -50,6 +50,7 @@ class Volunteer extends Model
     const SKILL_LOGISTIK    = 'LOGISTIK';
     const SKILL_KONSUMSI    = 'KONSUMSI';
     const SKILL_PSIKOSOSIAL = 'PSIKOSOSIAL';
+    const SKILL_PENDIDIKAN  = 'PENDIDIKAN';
 
     public static function getSkillOptions(): array
     {
@@ -59,6 +60,7 @@ class Volunteer extends Model
             self::SKILL_LOGISTIK    => 'LOGISTIK',
             self::SKILL_KONSUMSI    => 'KONSUMSI',
             self::SKILL_PSIKOSOSIAL => 'PSIKOSOSIAL',
+            self::SKILL_PENDIDIKAN  => 'PENDIDIKAN',
         ];
     }
 

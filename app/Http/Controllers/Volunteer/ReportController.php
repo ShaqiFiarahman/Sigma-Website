@@ -122,7 +122,7 @@ class ReportController extends Controller
                         }
                     }
 
-                    $shelter->logistics = $currentLogistics;
+                    $shelter->setAttribute('logistics', $currentLogistics);
                     $shelter->save();
                 }
             }

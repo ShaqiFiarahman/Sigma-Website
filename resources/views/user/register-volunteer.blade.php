@@ -151,6 +151,7 @@
                                             'LOGISTIK' => ['icon' => 'bi-box-seam', 'color' => 'amber', 'desc' => 'Distribusi bantuan & kebutuhan'],
                                             'KONSUMSI' => ['icon' => 'bi-cup-hot', 'color' => 'emerald', 'desc' => 'Penyediaan makanan & minuman'],
                                             'PSIKOSOSIAL' => ['icon' => 'bi-chat-heart', 'color' => 'purple', 'desc' => 'Dukungan mental & konseling'],
+                                            'PENDIDIKAN' => ['icon' => 'bi-book', 'color' => 'teal', 'desc' => 'Edukasi & penyuluhan bencana'],
                                         ];
                                         $meta = $icons[$value] ?? ['icon' => 'bi-box', 'color' => 'slate', 'desc' => ''];
                                     @endphp

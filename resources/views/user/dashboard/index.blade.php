@@ -64,8 +64,21 @@
             const dots = indicatorsContainer.querySelectorAll('div');
 
             newsScroll.addEventListener('wheel', (e) => {
-                if (e.deltaY !== 0) { e.preventDefault(); newsScroll.scrollBy({ left: e.deltaY * 2.5, behavior: 'smooth' }); }
-            });
+                if (e.deltaY !== 0) {
+                    const maxScroll = newsScroll.scrollWidth - newsScroll.clientWidth;
+                    // Only prevent default if there's room to scroll horizontally
+                    if (maxScroll > 0) {
+                        const atStart = newsScroll.scrollLeft <= 0;
+                        const atEnd = newsScroll.scrollLeft >= maxScroll - 1;
+                        // Allow vertical page scroll if already at the edge
+                        if ((e.deltaY < 0 && atStart) || (e.deltaY > 0 && atEnd)) {
+                            return;
+                        }
+                        e.preventDefault();
+                        newsScroll.scrollBy({ left: e.deltaY * 2.5, behavior: 'smooth' });
+                    }
+                }
+            }, { passive: false });
 
             newsScroll.addEventListener('scroll', () => {
                 const maxScroll = newsScroll.scrollWidth - newsScroll.clientWidth;
