@@ -116,7 +116,7 @@
     }
 
     function fetchAdminStats() {
-        fetch('/api/pending-reports').then(r=>r.json()).then(data => {
+        fetch('{{ route("api.pending_reports") }}').then(r=>r.json()).then(data => {
             renderPendingList(data.map(d=>({id:d.id,judul:d.title,tanggal:d.date,lokasi:d.reporter})));
             const sub = document.getElementById('pending-subtitle'); if(sub) sub.textContent = data.length+' laporan pending';
         }).catch(()=>{});

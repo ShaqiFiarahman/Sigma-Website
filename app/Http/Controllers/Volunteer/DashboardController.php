@@ -3,11 +3,59 @@
 namespace App\Http\Controllers\Volunteer;
 
 use App\Http\Controllers\Controller;
+use App\Models\News;
 use App\Models\Volunteer;
+use App\Models\VolunteerReport;
 use Illuminate\Http\Request;
 
 class DashboardController extends Controller
 {
+    /**
+     * Show the volunteer dashboard for approved volunteers
+     */
+    public function index()
+    {
+        $user = auth()->user();
+        $volunteerData = Volunteer::where('user_id', $user->id)
+            ->where('status', Volunteer::STATUS_APPROVED)
+            ->firstOrFail();
+
+        $news = $this->getNews();
+        $menu = $this->getMenu();
+
+        $totalReports = VolunteerReport::where('volunteer_id', $volunteerData->id)->count();
+        $reportsThisMonth = VolunteerReport::where('volunteer_id', $volunteerData->id)
+            ->whereMonth('created_at', now()->month)
+            ->whereYear('created_at', now()->year)
+            ->count();
+
+        $recentReports = VolunteerReport::where('volunteer_id', $volunteerData->id)
+            ->with('disaster')
+            ->latest()
+            ->limit(3)
+            ->get();
+
+        $teamMembers = collect();
+        if ($volunteerData->assignment) {
+            $teamMembers = Volunteer::where('status', Volunteer::STATUS_APPROVED)
+                ->where('assignment', $volunteerData->assignment)
+                ->where('id', '!=', $volunteerData->id)
+                ->limit(5)
+                ->get();
+        }
+
+        return view('volunteer.dashboard.index', [
+            'user' => $user,
+            'volunteer' => $volunteerData,
+            'news' => $news,
+            'menu' => $menu,
+            'totalReports' => $totalReports,
+            'reportsThisMonth' => $reportsThisMonth,
+            'recentReports' => $recentReports,
+            'teamMembers' => $teamMembers,
+        ]);
+    }
+
     public function toggleAvailability(Request $request)
     {
         $user = auth()->user();
@@ -35,5 +83,36 @@ class DashboardController extends Controller
         $volunteer->update(['assignment_notified_at' => now()]);
 
         return redirect()->route('dashboard');
+    }
+
+    private function getNews(): array
+    {
+        return News::where('published_at', '>=', now()->subDays(7))
+            ->latest('published_at')
+            ->limit(6)
+            ->get()
+            ->map(function ($item) {
+                return [
+                    'id' => $item->id,
+                    'title' => $item->title,
+                    'time' => $item->published_at->diffForHumans(),
+                    'category' => strtoupper($item->source),
+                    'tone' => 'info',
+                    'image_url' => $item->image_url,
+                    'url' => $item->url,
+                    'source' => $item->source,
+                ];
+            })
+            ->toArray();
+    }
+
+    private function getMenu(): array
+    {
+        return [
+            ['id' => 12, 'title' => 'Lapor Tugas',       'description' => 'Kirim laporan tugas',  'icon' => 'bi-send-fill'],
+            ['id' => 3,  'title' => 'Info Posko',        'description' => 'Titik pengungsian',    'icon' => 'bi-house-heart-fill'],
+            ['id' => 10, 'title' => 'Panduan Bencana',   'description' => 'Tips mitigasi',        'icon' => 'bi-book-fill'],
+            ['id' => 7,  'title' => 'Cari Bencana',      'description' => 'Pencarian & filter',   'icon' => 'bi-search'],
+        ];
     }
 }

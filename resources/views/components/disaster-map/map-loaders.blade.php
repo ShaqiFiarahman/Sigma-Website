@@ -1,8 +1,19 @@
 <script>
     async function loadDisasters() {
+        console.log('loadDisasters: Function called');
         try {
-            const response = await fetch('/api/disasters');
+            const url = '{{ route("api.disasters") }}';
+            console.log('loadDisasters: Fetching from URL:', url);
+            const response = await fetch(url);
+            console.log('loadDisasters: Fetch response status:', response.status);
+            
+            if (!response.ok) {
+                console.error('loadDisasters: Fetch response was not OK:', response.status, response.statusText);
+                return;
+            }
+
             const disasters = await response.json();
+            console.log('loadDisasters: Fetched disasters count:', disasters.length, disasters);
 
             // Set of active disaster IDs from the API response
             const activeIds = new Set(disasters.map(d => Number(d.id)));
@@ -62,6 +73,7 @@
                 // Check if marker already exists
                 const existing = disasterMarkers[d.id];
                 if (!existing) {
+                    console.log('loadDisasters: Creating marker for disaster ID:', d.id, 'at', d.lat, d.lng);
                     // Create new marker
                     const marker = new google.maps.Marker({
                         position: { lat: Number(d.lat), lng: Number(d.lng) },
@@ -92,6 +104,7 @@
                 } else {
                     // Marker exists, check if status/data has changed
                     if (existing.data.status !== d.status || existing.data.title !== d.title || existing.data.description !== d.description) {
+                        console.log('loadDisasters: Updating marker for disaster ID:', d.id);
                         existing.marker.setIcon(markerIcon);
                         existing.marker.setTitle(d.title);
 
@@ -115,6 +128,7 @@
             Object.keys(disasterMarkers).forEach(id => {
                 const numId = Number(id);
                 if (!activeIds.has(numId)) {
+                    console.log('loadDisasters: Removing inactive marker for ID:', numId);
                     disasterMarkers[numId].marker.setMap(null);
                     delete disasterMarkers[numId];
                 }
@@ -124,10 +138,12 @@
             if (initialLoad) {
                 if (disasters.length > 0) {
                     const newest = disasters[0]; // first item is newest due to latest() sorting
+                    console.log('loadDisasters: Initial load zoom to newest disaster at:', newest.lat, newest.lng);
                     map.setCenter({ lat: Number(newest.lat), lng: Number(newest.lng) });
                     map.setZoom(14);
                     hasZoomedToNewest = true;
                 } else {
+                    console.log('loadDisasters: No disasters found, fitting bounds');
                     fitBounds();
                 }
                 initialLoad = false;
@@ -138,11 +154,23 @@
     }
 
     async function loadShelters() {
+        console.log('loadShelters: Function called');
         try {
-            const response = await fetch('/api/shelters');
+            const url = '{{ route("api.shelters") }}';
+            console.log('loadShelters: Fetching from URL:', url);
+            const response = await fetch(url);
+            console.log('loadShelters: Fetch response status:', response.status);
+
+            if (!response.ok) {
+                console.error('loadShelters: Fetch response was not OK:', response.status, response.statusText);
+                return;
+            }
+
             const shelters = await response.json();
+            console.log('loadShelters: Fetched shelters count:', shelters.length, shelters);
 
             shelters.forEach(s => {
+                console.log('loadShelters: Creating marker for shelter ID:', s.id, 'at', s.lat, s.lng);
                 const marker = new google.maps.Marker({
                     position: { lat: Number(s.lat), lng: Number(s.lng) },
                     map: map,
@@ -162,6 +190,7 @@
             });
 
             if (!hasZoomedToNewest) {
+                console.log('loadShelters: Fitting bounds');
                 fitBounds();
             }
         } catch (error) {

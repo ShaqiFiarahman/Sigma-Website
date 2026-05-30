@@ -53,7 +53,7 @@ Route::middleware('auth')->group(function () {
     Route::middleware('role:Masyarakat,Relawan')->group(function () {
         // Dashboard
         Route::get('/dashboard', [\App\Http\Controllers\User\DashboardController::class, 'index'])->name('dashboard');
-        Route::get('/panduan-bencana', function () { return view('panduan.index'); })->name('panduan');
+        Route::get('/panduan-bencana', [\App\Http\Controllers\User\DashboardController::class, 'panduan'])->name('panduan');
         Route::get('/peta-bencana', function () { return redirect()->route('dashboard'); })->name('map');
 
         // Volunteer Registration
@@ -65,8 +65,8 @@ Route::middleware('auth')->group(function () {
         Route::get('/relawan/laporan/buat', [\App\Http\Controllers\Volunteer\ReportController::class, 'create'])->name('volunteer.report.create');
         Route::post('/relawan/laporan/buat', [\App\Http\Controllers\Volunteer\ReportController::class, 'store'])->name('volunteer.report.store');
 
-        // Volunteer Dashboard Actions
-        Route::get('/relawan/dashboard', [\App\Http\Controllers\User\DashboardController::class, 'index'])->name('volunteer.dashboard');
+        // Volunteer Dashboard
+        Route::get('/relawan/dashboard', [\App\Http\Controllers\Volunteer\DashboardController::class, 'index'])->name('volunteer.dashboard');
         Route::post('/relawan/ketersediaan', [\App\Http\Controllers\Volunteer\DashboardController::class, 'toggleAvailability'])->name('volunteer.toggle_availability');
         Route::post('/relawan/notifikasi-dismiss', [\App\Http\Controllers\Volunteer\DashboardController::class, 'dismissNotification'])->name('volunteer.dismiss_notification');
     });
@@ -84,63 +84,14 @@ Route::middleware('auth')->group(function () {
     Route::get('/info-posko', [MapController::class, 'shelterPage'])->name('shelter');
     Route::get('/cari-bencana', [MapController::class, 'search'])->name('search');
 
-    // ═══════════════════════════════════════════
-    //  API ROUTES
-    // ═══════════════════════════════════════════
-    Route::get('/api/disasters', [MapController::class, 'disasters'])->name('api.disasters');
-    Route::get('/api/shelters', [MapController::class, 'shelters'])->name('api.shelters');
-
-    Route::get('/api/pending-reports', function () {
-        if (strtolower(auth()->user()->role ?? '') !== 'admin') {
-            return response()->json([]);
-        }
-        return response()->json(
-            \App\Models\Disaster::where('status', 'PENDING')
-                ->latest()
-                ->limit(10)
-                ->get()
-                ->map(fn($d) => [
-                    'id' => $d->id,
-                    'title' => $d->title,
-                    'reporter' => $d->reporter_name,
-                    'date' => $d->created_at?->diffForHumans(),
-                    'created_at' => $d->created_at?->toISOString(),
-                ])
-        );
-    })->name('api.pending_reports');
-
-    Route::get('/api/admin-stats', function () {
-        if (strtolower(auth()->user()->role ?? '') !== 'admin') {
-            return response()->json([], 403);
-        }
-
-        $disasters = \App\Models\Disaster::all();
-
-        return response()->json([
-            'total'          => $disasters->count(),
-            'pending'        => $disasters->where('status', 'PENDING')->count(),
-            'selesai'        => $disasters->whereNotIn('status', ['PENDING', 'DECLINE'])->count(),
-            'decline'        => $disasters->where('status', 'DECLINE')->count(),
-            'awas'           => $disasters->where('status', 'AWAS')->count(),
-            'siaga1'         => $disasters->where('status', 'SIAGA_1')->count(),
-            'siaga2'         => $disasters->where('status', 'SIAGA_2')->count(),
-            'verified_total' => $disasters->whereNotIn('status', ['PENDING', 'DECLINE'])->count(),
-            'week_verified'  => \App\Models\Disaster::where('created_at', '>=', now()->subWeek())
-                ->whereNotIn('status', ['PENDING', 'DECLINE'])->count(),
-            'today_count'    => \App\Models\Disaster::whereDate('created_at', today())->count(),
-            'all_disasters'  => $disasters->map(fn($d) => [
-                'id'     => $d->id,
-                'status' => $d->status,
-                'date'   => $d->created_at?->toIso8601String(),
-            ]),
-            'pending_items'  => \App\Models\Disaster::where('status', 'PENDING')
-                ->latest()->limit(5)->get()->map(fn($d) => [
-                    'id'         => $d->id,
-                    'judul'      => $d->title,
-                    'lokasi'     => $d->location ?? '',
-                    'tanggal'    => $d->created_at?->format('d M Y'),
-                    'created_at' => $d->created_at?->toISOString(),
-                ]),
-        ]);
-    })->name('api.admin_stats');
+    // API Routes for Map & Dashboard (session authenticated)
+    Route::prefix('api')->group(function () {
+        Route::get('/disasters', [MapController::class, 'disasters'])->name('api.disasters');
+        Route::get('/shelters', [MapController::class, 'shelters'])->name('api.shelters');
+        
+        Route::middleware('role:admin')->prefix('admin')->group(function () {
+            Route::get('/pending-reports', [\App\Http\Controllers\Admin\DashboardController::class, 'pendingReports'])->name('api.pending_reports');
+            Route::get('/stats', [\App\Http\Controllers\Admin\DashboardController::class, 'stats'])->name('api.admin_stats');
+        });
+    });
 });
