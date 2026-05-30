@@ -6,8 +6,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SIGMA — @yield('title')</title>
     <meta name="description" content="SIGMA — Sistem Informasi Tanggap Bencana.">
-    <link rel="preload" href="/fonts/PlusJakartaSans-Regular.ttf" as="font" type="font/ttf" crossorigin>
-    <link rel="preload" href="/fonts/PlusJakartaSans-Bold.ttf" as="font" type="font/ttf" crossorigin>
+    <link rel="preload" href="{{ Vite::asset('resources/fonts/PlusJakartaSans-Regular.ttf') }}" as="font" type="font/ttf" crossorigin>
+    <link rel="preload" href="{{ Vite::asset('resources/fonts/PlusJakartaSans-Bold.ttf') }}" as="font" type="font/ttf" crossorigin>
     <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
     <link rel="preconnect" href="https://maps.googleapis.com" crossorigin>
     <link rel="preconnect" href="https://maps.gstatic.com" crossorigin>
@@ -190,7 +190,7 @@
     <main class="flex-1 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 pb-16 animate-fade-up">
 
         {{-- Page Header --}}
-        @if(!Route::is('dashboard') && !Route::is('admin.dashboard'))
+        @if(!Route::is('dashboard') && !Route::is('admin.dashboard') && !Route::is('volunteer.dashboard'))
             <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
                 <div>
                     <h1 class="text-2xl font-bold text-slate-900 tracking-tight">@yield('title')</h1>

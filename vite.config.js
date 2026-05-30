@@ -11,6 +11,7 @@ export default defineConfig({
         tailwindcss(),
     ],
     server: {
+        host: 'localhost',
         watch: {
             ignored: ['**/storage/**', '**/node_modules/**', '**/.git/**'],
         },

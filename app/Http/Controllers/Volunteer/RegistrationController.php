@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Volunteer;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\StoreVolunteerRequest;
 use App\Models\Volunteer;
 use Illuminate\Http\Request;
 
@@ -15,15 +16,8 @@ class RegistrationController extends Controller
         return view('user.register-volunteer', compact('skills', 'existing'));
     }
 
-    public function store(Request $request)
+    public function store(StoreVolunteerRequest $request)
     {
-        $request->validate([
-            'name'         => 'required|string|max:255',
-            'skill'        => 'required|in:MEDIS,SAR,LOGISTIK,KONSUMSI,PSIKOSOSIAL,PENDIDIKAN',
-            'address'      => 'required|string',
-            'phone_number' => 'required|string|max:20',
-        ]);
-
         $user = auth()->user();
 
         $existing = Volunteer::where('user_id', $user->id)->first();

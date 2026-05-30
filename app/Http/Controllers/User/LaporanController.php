@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\User;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\StoreLaporanRequest;
 use App\Models\Disaster;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
@@ -20,17 +21,8 @@ class LaporanController extends Controller
         return view('laporan.create', compact('riwayat'));
     }
 
-    public function store(Request $request)
+    public function store(StoreLaporanRequest $request)
     {
-        $request->validate([
-            'judul'     => 'required|string|max:255',
-            'deskripsi' => 'required|string',
-            'latitude'  => 'required|numeric',
-            'longitude' => 'required|numeric',
-            'foto'      => 'required|array|max:3',
-            'foto.*'    => 'image|max:25600',
-        ]);
-
         $user = auth()->user();
         $photoUrls = [];
 

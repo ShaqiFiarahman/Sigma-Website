@@ -36,6 +36,43 @@ class Disaster extends Model
     const STATUS_SIAGA_2  = 'SIAGA_2';
     const STATUS_AWAS     = 'AWAS';
 
+    /**
+     * Display metadata (icon, color, name) per canonical disaster type.
+     */
+    private const TYPE_META = [
+        'flood'      => ['icon' => 'bi-water',                 'color' => 'text-blue-500',    'name' => 'Banjir'],
+        'fire'       => ['icon' => 'bi-fire',                  'color' => 'text-red-500',     'name' => 'Kebakaran'],
+        'earthquake' => ['icon' => 'bi-house-exclamation',     'color' => 'text-emerald-500', 'name' => 'Gempa Bumi'],
+        'landslide'  => ['icon' => 'bi-mountain',              'color' => 'text-amber-600',   'name' => 'Tanah Longsor'],
+        'storm'      => ['icon' => 'bi-lightning-charge-fill', 'color' => 'text-cyan-500',    'name' => 'Badai/Angin Topan'],
+        'tsunami'    => ['icon' => 'bi-water',                 'color' => 'text-cyan-500',    'name' => 'Tsunami'],
+    ];
+
+    /**
+     * Fallback metadata when the type cannot be determined.
+     */
+    private const TYPE_FALLBACK = [
+        'icon' => 'bi-exclamation-triangle',
+        'color' => 'text-slate-500',
+        'name' => 'Lainnya / Tidak Diketahui',
+    ];
+
+    /**
+     * Keyword → canonical type, used to guess the type from the title
+     * when disaster_type is "unknown". Order matters (first match wins).
+     */
+    private const TITLE_KEYWORDS = [
+        'banjir'    => 'flood',
+        'kebakaran' => 'fire',
+        'api'       => 'fire',
+        'gempa'     => 'earthquake',
+        'longsor'   => 'landslide',
+        'tsunami'   => 'tsunami',
+        'badai'     => 'storm',
+        'topan'     => 'storm',
+        'angin'     => 'storm',
+    ];
+
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
@@ -77,30 +114,42 @@ class Disaster extends Model
     }
 
     /**
+     * Resolve display metadata (icon, color, name) for this disaster.
+     * Uses disaster_type when known, otherwise guesses from the title.
+     */
+    private function typeMeta(): array
+    {
+        $type = strtolower($this->disaster_type ?? 'unknown');
+
+        if ($type === 'unknown') {
+            $type = $this->guessTypeFromTitle();
+        }
+
+        return self::TYPE_META[$type] ?? self::TYPE_FALLBACK;
+    }
+
+    /**
+     * Guess the canonical type from keywords in the title.
+     */
+    private function guessTypeFromTitle(): string
+    {
+        $title = strtolower($this->title ?? '');
+
+        foreach (self::TITLE_KEYWORDS as $keyword => $type) {
+            if (str_contains($title, $keyword)) {
+                return $type;
+            }
+        }
+
+        return 'unknown';
+    }
+
+    /**
      * Get disaster type icon class
      */
     public function getTypeIconAttribute(): string
     {
-        $t = strtolower($this->disaster_type ?? 'unknown');
-        if ($t === 'unknown') {
-            $titleLower = strtolower($this->title);
-            if (str_contains($titleLower, 'banjir')) return 'bi-water';
-            if (str_contains($titleLower, 'kebakaran') || str_contains($titleLower, 'api')) return 'bi-fire';
-            if (str_contains($titleLower, 'gempa')) return 'bi-house-exclamation';
-            if (str_contains($titleLower, 'longsor')) return 'bi-mountain';
-            if (str_contains($titleLower, 'tsunami')) return 'bi-water';
-            if (str_contains($titleLower, 'badai') || str_contains($titleLower, 'topan') || str_contains($titleLower, 'angin')) return 'bi-lightning-charge-fill';
-            return 'bi-exclamation-triangle';
-        }
-
-        return match($t) {
-            'flood' => 'bi-water',
-            'fire' => 'bi-fire',
-            'earthquake' => 'bi-house-exclamation',
-            'landslide' => 'bi-mountain',
-            'storm' => 'bi-lightning-charge-fill',
-            default => 'bi-exclamation-triangle',
-        };
+        return $this->typeMeta()['icon'];
     }
 
     /**
@@ -108,26 +157,7 @@ class Disaster extends Model
      */
     public function getTypeColorAttribute(): string
     {
-        $t = strtolower($this->disaster_type ?? 'unknown');
-        if ($t === 'unknown') {
-            $titleLower = strtolower($this->title);
-            if (str_contains($titleLower, 'banjir')) return 'text-blue-500';
-            if (str_contains($titleLower, 'kebakaran') || str_contains($titleLower, 'api')) return 'text-red-500';
-            if (str_contains($titleLower, 'gempa')) return 'text-emerald-500';
-            if (str_contains($titleLower, 'longsor')) return 'text-amber-600';
-            if (str_contains($titleLower, 'tsunami')) return 'text-cyan-500';
-            if (str_contains($titleLower, 'badai') || str_contains($titleLower, 'topan') || str_contains($titleLower, 'angin')) return 'text-cyan-500';
-            return 'text-slate-500';
-        }
-
-        return match($t) {
-            'flood' => 'text-blue-500',
-            'fire' => 'text-red-500',
-            'earthquake' => 'text-emerald-500',
-            'landslide' => 'text-amber-600',
-            'storm' => 'text-cyan-500',
-            default => 'text-slate-500',
-        };
+        return $this->typeMeta()['color'];
     }
 
     /**
@@ -135,25 +165,6 @@ class Disaster extends Model
      */
     public function getTypeNameAttribute(): string
     {
-        $t = strtolower($this->disaster_type ?? 'unknown');
-        if ($t === 'unknown') {
-            $titleLower = strtolower($this->title);
-            if (str_contains($titleLower, 'banjir')) return 'Banjir';
-            if (str_contains($titleLower, 'kebakaran') || str_contains($titleLower, 'api')) return 'Kebakaran';
-            if (str_contains($titleLower, 'gempa')) return 'Gempa Bumi';
-            if (str_contains($titleLower, 'longsor')) return 'Tanah Longsor';
-            if (str_contains($titleLower, 'tsunami')) return 'Tsunami';
-            if (str_contains($titleLower, 'badai') || str_contains($titleLower, 'topan') || str_contains($titleLower, 'angin')) return 'Badai/Angin Topan';
-            return 'Lainnya / Tidak Diketahui';
-        }
-
-        return match($t) {
-            'flood' => 'Banjir',
-            'fire' => 'Kebakaran',
-            'earthquake' => 'Gempa Bumi',
-            'landslide' => 'Tanah Longsor',
-            'storm' => 'Badai/Angin Topan',
-            default => 'Lainnya / Tidak Diketahui',
-        };
+        return $this->typeMeta()['name'];
     }
 }

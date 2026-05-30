@@ -19,6 +19,8 @@ class Volunteer extends Model
         'disaster_id',
         'availability',
         'assignment_notified_at',
+        'assignment_status',
+        'assignment_rejection_reason',
     ];
 
     protected $casts = [

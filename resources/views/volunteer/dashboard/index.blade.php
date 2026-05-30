@@ -10,26 +10,78 @@
         {{-- Warning Banner --}}
         @include('partials._warning-banner')
 
-        {{-- Notifikasi Penugasan Baru --}}
-        @if($volunteer->assignment && !$volunteer->assignment_notified_at)
-            <div class="relative overflow-hidden rounded-2xl px-6 py-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-lg shadow-blue-500/10 animate-fade-up"
+        {{-- Notifikasi Penugasan Baru - Menunggu Konfirmasi --}}
+        @if($volunteer->assignment && $volunteer->assignment_status === 'pending')
+            <div class="relative overflow-hidden rounded-2xl px-6 py-5 shadow-lg shadow-blue-500/10 animate-fade-up"
                  style="background: linear-gradient(135deg, #1d4ed8 0%, #2563eb 50%, #3b82f6 100%);">
                 <div class="absolute top-0 right-0 w-40 h-40 rounded-full opacity-[0.07] pointer-events-none" style="background: white; transform: translate(30%, -40%);"></div>
-                <div class="flex items-center gap-4 relative z-10">
+                
+                <div class="flex items-center gap-4 relative z-10 mb-4">
                     <div class="w-11 h-11 rounded-xl bg-white/15 flex items-center justify-center shrink-0 backdrop-blur-sm border border-white/10">
                         <i class="bi bi-bell-fill text-white text-lg animate-bounce"></i>
                     </div>
                     <div>
-                        <p class="text-sm font-bold text-white tracking-wide">Penugasan Baru Diterima!</p>
-                        <p class="text-xs text-white/80 mt-0.5">Lokasi Tugas: <span class="text-white font-extrabold underline decoration-white/30 decoration-2 underline-offset-2">{{ $volunteer->assignment }}</span></p>
+                        <p class="text-sm font-bold text-white tracking-wide">Penugasan Baru!</p>
+                        <p class="text-xs text-white/80 mt-0.5">Anda ditugaskan ke: <span class="text-white font-extrabold underline decoration-white/30 decoration-2 underline-offset-2">{{ $volunteer->assignment }}</span></p>
+                        @if($volunteer->disaster)
+                            <p class="text-xs text-white/70 mt-0.5">Bencana: <span class="text-white font-bold">{{ $volunteer->disaster->title }}</span></p>
+                        @endif
                     </div>
                 </div>
-                <form action="{{ route('volunteer.dismiss_notification') }}" method="POST" class="shrink-0 relative z-10">
-                    @csrf
-                    <button type="submit" class="px-5 py-2.5 text-xs font-bold text-blue-700 bg-white rounded-xl hover:bg-blue-50 transition-all cursor-pointer shadow-lg shadow-blue-900/20 hover:scale-[1.02] active:scale-[0.98]">
-                        Saya Mengerti
+
+                <p class="text-xs text-white/80 mb-4 relative z-10">Apakah Anda bersedia menerima penugasan ini?</p>
+
+                <div class="flex flex-col sm:flex-row gap-2 relative z-10">
+                    {{-- Tombol Terima --}}
+                    <form action="{{ route('volunteer.accept_assignment') }}" method="POST" class="flex-1">
+                        @csrf
+                        <button type="submit" class="w-full px-5 py-2.5 text-xs font-bold text-emerald-700 bg-white rounded-xl hover:bg-emerald-50 transition-all cursor-pointer shadow-lg shadow-blue-900/20 hover:scale-[1.02] active:scale-[0.98] flex items-center justify-center gap-2">
+                            <i class="bi bi-check-circle-fill"></i> Terima Penugasan
+                        </button>
+                    </form>
+
+                    {{-- Tombol Tolak --}}
+                    <button type="button" onclick="document.getElementById('rejectModal').classList.remove('hidden')"
+                            class="flex-1 px-5 py-2.5 text-xs font-bold text-white/90 bg-white/15 border border-white/30 rounded-xl hover:bg-white/25 transition-all cursor-pointer hover:scale-[1.02] active:scale-[0.98] flex items-center justify-center gap-2 backdrop-blur-sm">
+                        <i class="bi bi-x-circle"></i> Tolak Penugasan
                     </button>
-                </form>
+                </div>
+            </div>
+
+            {{-- Modal Tolak Penugasan --}}
+            <div id="rejectModal" class="fixed inset-0 z-[999] flex items-center justify-center hidden">
+                <div class="absolute inset-0 bg-slate-900/50 backdrop-blur-sm" onclick="document.getElementById('rejectModal').classList.add('hidden')"></div>
+                <div class="relative bg-white w-full max-w-md mx-4 rounded-3xl px-7 pt-8 pb-7 shadow-2xl">
+                    <div class="mb-5">
+                        <div class="w-11 h-11 rounded-xl bg-rose-100 flex items-center justify-center mb-4">
+                            <i class="bi bi-x-circle-fill text-rose-500 text-lg"></i>
+                        </div>
+                        <h4 class="text-lg font-bold text-slate-900">Tolak Penugasan</h4>
+                        <p class="text-sm text-slate-500 mt-1">Mohon berikan alasan mengapa Anda tidak bisa menerima penugasan ini.</p>
+                    </div>
+
+                    <form action="{{ route('volunteer.reject_assignment') }}" method="POST">
+                        @csrf
+                        <div class="mb-5">
+                            <label class="block text-xs font-bold text-slate-700 mb-2">Alasan Penolakan <span class="text-rose-500">*</span></label>
+                            <textarea name="rejection_reason" rows="4" required
+                                      class="w-full px-4 py-3 text-sm border border-slate-200 rounded-xl focus:outline-none focus:border-blue-400 focus:ring-1 focus:ring-blue-500/20 resize-none"
+                                      placeholder="Contoh: Sedang sakit, lokasi terlalu jauh, ada keperluan mendesak..."></textarea>
+                        </div>
+
+                        <div class="flex gap-3">
+                            <button type="button" onclick="document.getElementById('rejectModal').classList.add('hidden')"
+                                    class="flex-1 py-3 text-sm font-medium text-slate-600 bg-slate-100 hover:bg-slate-200 rounded-2xl transition-colors cursor-pointer">
+                                Batal
+                            </button>
+                            <button type="submit"
+                                    class="flex-1 py-3 text-sm font-semibold text-white rounded-2xl transition-all cursor-pointer active:scale-[0.98] hover:brightness-105"
+                                    style="background: linear-gradient(135deg, #f43f5e 0%, #be123c 100%);">
+                                Kirim Penolakan
+                            </button>
+                        </div>
+                    </form>
+                </div>
             </div>
         @endif
 
@@ -150,6 +202,7 @@
                         </div>
                         <div class="p-3">
                             @if($volunteer->assignment)
+                                @if($volunteer->assignment_status === 'accepted')
                                 <div class="flex flex-col sm:flex-row items-start gap-3 p-3 rounded-xl border border-blue-50/70 bg-blue-50/15 backdrop-blur-sm">
                                     <div class="w-8 h-8 rounded-lg flex items-center justify-center shrink-0 shadow-sm shadow-blue-500/10"
                                          style="background: linear-gradient(135deg, #3B6FE8 0%, #1e3a8a 100%);">
@@ -175,6 +228,23 @@
                                         </div>
                                     </div>
                                 </div>
+                                @elseif($volunteer->assignment_status === 'pending')
+                                <div class="flex flex-col items-center justify-center py-6 px-4 text-center rounded-xl bg-amber-50/50 border border-amber-100">
+                                    <div class="w-10 h-10 rounded-full bg-amber-100 flex items-center justify-center mb-3">
+                                        <i class="bi bi-hourglass-split text-amber-600 text-base"></i>
+                                    </div>
+                                    <h3 class="text-xs font-bold text-slate-800">Menunggu Konfirmasi Anda</h3>
+                                    <p class="text-[10px] text-slate-500 max-w-xs mt-0.5">Anda memiliki penugasan baru ke <span class="font-bold text-amber-700">{{ $volunteer->assignment }}</span>. Silakan terima atau tolak di notifikasi di atas.</p>
+                                </div>
+                                @elseif($volunteer->assignment_status === 'rejected')
+                                <div class="flex flex-col items-center justify-center py-6 px-4 text-center rounded-xl bg-rose-50/50 border border-rose-100">
+                                    <div class="w-10 h-10 rounded-full bg-rose-100 flex items-center justify-center mb-3">
+                                        <i class="bi bi-x-circle text-rose-500 text-base"></i>
+                                    </div>
+                                    <h3 class="text-xs font-bold text-slate-800">Penugasan Ditolak</h3>
+                                    <p class="text-[10px] text-slate-500 max-w-xs mt-0.5">Anda menolak penugasan ke <span class="font-bold">{{ $volunteer->assignment }}</span>. Admin akan meninjau dan mungkin memberikan penugasan baru.</p>
+                                </div>
+                                @endif
                             @else
                                 <div class="flex flex-col items-center justify-center py-6 px-4 text-center rounded-xl bg-slate-50/50 border border-slate-100">
                                     {{-- Pulsing Radar Wave Icon --}}

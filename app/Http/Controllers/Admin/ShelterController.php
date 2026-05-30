@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\StoreShelterRequest;
 use App\Models\Shelter;
 use App\Models\Volunteer;
 use Illuminate\Http\Request;
@@ -16,21 +17,8 @@ class ShelterController extends Controller
         return view('admin.shelter.create');
     }
 
-    public function store(Request $request)
+    public function store(StoreShelterRequest $request)
     {
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'address' => 'nullable|string|max:500',
-            'capacity_current' => 'required|integer|min:0',
-            'capacity_max' => 'required|integer|min:1',
-            'status' => 'required|in:Tersedia,Penuh',
-            'logistics' => 'nullable|string',
-            'contact_phone' => 'nullable|string|max:20',
-            'photo' => 'nullable|image|max:5120',
-            'latitude' => 'nullable|numeric',
-            'longitude' => 'nullable|numeric',
-        ]);
-
         $data = [
             'name' => $request->name,
             'address' => $request->address,
@@ -86,21 +74,8 @@ class ShelterController extends Controller
         return view('admin.shelter.edit', compact('shelter', 'assignedVolunteers'));
     }
 
-    public function update(Request $request, $id)
+    public function update(StoreShelterRequest $request, $id)
     {
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'address' => 'nullable|string|max:500',
-            'capacity_current' => 'required|integer|min:0',
-            'capacity_max' => 'required|integer|min:1',
-            'status' => 'required|in:Tersedia,Penuh',
-            'logistics' => 'nullable|string',
-            'contact_phone' => 'nullable|string|max:20',
-            'photo' => 'nullable|image|max:5120',
-            'latitude' => 'nullable|numeric',
-            'longitude' => 'nullable|numeric',
-        ]);
-
         $shelter = Shelter::findOrFail($id);
 
         $data = [

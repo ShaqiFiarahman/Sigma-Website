@@ -68,10 +68,36 @@
                                 <span class="text-sm text-slate-600">Bencana Tugas</span>
                                 <span class="text-sm font-medium text-slate-900">{{ $volunteer->disaster->title ?? 'Belum ditugaskan' }}</span>
                             </div>
-                            <div class="flex justify-between py-2">
+                            <div class="flex justify-between py-2 border-b border-slate-100">
                                 <span class="text-sm text-slate-600">Posko Evakuasi</span>
                                 <span class="text-sm font-medium text-slate-900">{{ $volunteer->assignment ?? 'Belum ditugaskan' }}</span>
                             </div>
+                            <div class="flex justify-between py-2">
+                                <span class="text-sm text-slate-600">Status Konfirmasi</span>
+                                <span class="text-sm font-medium">
+                                    @if($volunteer->assignment_status === 'pending')
+                                        <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-bold bg-amber-50 text-amber-700 border border-amber-200">
+                                            <i class="bi bi-hourglass-split text-[10px]"></i> Menunggu Konfirmasi
+                                        </span>
+                                    @elseif($volunteer->assignment_status === 'accepted')
+                                        <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">
+                                            <i class="bi bi-check-circle-fill text-[10px]"></i> Diterima
+                                        </span>
+                                    @elseif($volunteer->assignment_status === 'rejected')
+                                        <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-bold bg-rose-50 text-rose-700 border border-rose-200">
+                                            <i class="bi bi-x-circle-fill text-[10px]"></i> Ditolak
+                                        </span>
+                                    @else
+                                        <span class="text-slate-400">—</span>
+                                    @endif
+                                </span>
+                            </div>
+                            @if($volunteer->assignment_status === 'rejected' && $volunteer->assignment_rejection_reason)
+                                <div class="mt-3 p-3 rounded-xl bg-rose-50 border border-rose-100">
+                                    <p class="text-[10px] font-bold text-rose-600 uppercase tracking-wider mb-1">Alasan Penolakan:</p>
+                                    <p class="text-xs text-rose-800">{{ $volunteer->assignment_rejection_reason }}</p>
+                                </div>
+                            @endif
                         @endif
                     </div>
                 </div>

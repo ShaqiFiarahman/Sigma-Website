@@ -19,7 +19,7 @@ class VolunteerController extends Controller
 
     public function show($id)
     {
-        $volunteer = Volunteer::with('user')->findOrFail($id);
+        $volunteer = Volunteer::with(['user', 'disaster'])->findOrFail($id);
         return view('admin.volunteer.show', compact('volunteer'));
     }
 
@@ -78,13 +78,21 @@ class VolunteerController extends Controller
         ]);
 
         $volunteer = Volunteer::findOrFail($id);
+
+        // Jika penugasan dikosongkan, reset semua field terkait
+        $isClearing = empty($request->assignment) && empty($request->disaster_id);
+
         $volunteer->update([
             'assignment' => $request->assignment,
             'disaster_id' => $request->disaster_id,
             'assignment_notified_at' => null,
+            'assignment_status' => $isClearing ? null : 'pending',
+            'assignment_rejection_reason' => null,
         ]);
 
+        $msg = $isClearing ? 'Penugasan berhasil dihapus.' : 'Penugasan dikirim, menunggu konfirmasi relawan.';
+
         return redirect()->route('volunteer.show', $id)
-            ->with('msg', 'Penugasan berhasil diperbarui.');
+            ->with('msg', $msg);
     }
 }

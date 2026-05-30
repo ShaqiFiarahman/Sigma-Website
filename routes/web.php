@@ -69,6 +69,8 @@ Route::middleware('auth')->group(function () {
         Route::get('/relawan/dashboard', [\App\Http\Controllers\Volunteer\DashboardController::class, 'index'])->name('volunteer.dashboard');
         Route::post('/relawan/ketersediaan', [\App\Http\Controllers\Volunteer\DashboardController::class, 'toggleAvailability'])->name('volunteer.toggle_availability');
         Route::post('/relawan/notifikasi-dismiss', [\App\Http\Controllers\Volunteer\DashboardController::class, 'dismissNotification'])->name('volunteer.dismiss_notification');
+        Route::post('/relawan/penugasan/terima', [\App\Http\Controllers\Volunteer\DashboardController::class, 'acceptAssignment'])->name('volunteer.accept_assignment');
+        Route::post('/relawan/penugasan/tolak', [\App\Http\Controllers\Volunteer\DashboardController::class, 'rejectAssignment'])->name('volunteer.reject_assignment');
     });
 
     // ═══════════════════════════════════════════

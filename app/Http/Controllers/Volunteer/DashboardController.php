@@ -18,10 +18,11 @@ class DashboardController extends Controller
         $user = auth()->user();
         $volunteerData = Volunteer::where('user_id', $user->id)
             ->where('status', Volunteer::STATUS_APPROVED)
+            ->with('disaster')
             ->firstOrFail();
 
         $news = $this->getNews();
-        $menu = $this->getMenu();
+        $menu = config('menu.relawan');
 
         $totalReports = VolunteerReport::where('volunteer_id', $volunteerData->id)->count();
         $reportsThisMonth = VolunteerReport::where('volunteer_id', $volunteerData->id)
@@ -85,6 +86,54 @@ class DashboardController extends Controller
         return redirect()->route('dashboard');
     }
 
+    public function acceptAssignment()
+    {
+        $user = auth()->user();
+        $volunteer = Volunteer::where('user_id', $user->id)
+            ->where('status', Volunteer::STATUS_APPROVED)
+            ->firstOrFail();
+
+        if ($volunteer->assignment_status !== 'pending') {
+            return redirect()->route('dashboard')
+                ->with('error', 'Tidak ada penugasan yang menunggu konfirmasi.');
+        }
+
+        $volunteer->update([
+            'assignment_status' => 'accepted',
+            'assignment_notified_at' => now(),
+            'assignment_rejection_reason' => null,
+        ]);
+
+        return redirect()->route('dashboard')
+            ->with('msg', 'Penugasan berhasil diterima. Selamat bertugas!');
+    }
+
+    public function rejectAssignment(Request $request)
+    {
+        $request->validate([
+            'rejection_reason' => 'required|string|max:500',
+        ]);
+
+        $user = auth()->user();
+        $volunteer = Volunteer::where('user_id', $user->id)
+            ->where('status', Volunteer::STATUS_APPROVED)
+            ->firstOrFail();
+
+        if ($volunteer->assignment_status !== 'pending') {
+            return redirect()->route('dashboard')
+                ->with('error', 'Tidak ada penugasan yang menunggu konfirmasi.');
+        }
+
+        $volunteer->update([
+            'assignment_status' => 'rejected',
+            'assignment_rejection_reason' => $request->rejection_reason,
+            'assignment_notified_at' => now(),
+        ]);
+
+        return redirect()->route('dashboard')
+            ->with('msg', 'Penugasan ditolak. Admin akan meninjau alasan Anda.');
+    }
+
     private function getNews(): array
     {
         return News::where('published_at', '>=', now()->subDays(7))
@@ -104,15 +153,5 @@ class DashboardController extends Controller
                 ];
             })
             ->toArray();
-    }
-
-    private function getMenu(): array
-    {
-        return [
-            ['id' => 12, 'title' => 'Lapor Tugas',       'description' => 'Kirim laporan tugas',  'icon' => 'bi-send-fill'],
-            ['id' => 3,  'title' => 'Info Posko',        'description' => 'Titik pengungsian',    'icon' => 'bi-house-heart-fill'],
-            ['id' => 10, 'title' => 'Panduan Bencana',   'description' => 'Tips mitigasi',        'icon' => 'bi-book-fill'],
-            ['id' => 7,  'title' => 'Cari Bencana',      'description' => 'Pencarian & filter',   'icon' => 'bi-search'],
-        ];
     }
 }

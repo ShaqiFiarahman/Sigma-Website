@@ -170,6 +170,19 @@
                                                 <span class="truncate max-w-[120px]">{{ $volunteer->assignment }}</span>
                                             </span>
                                         @endif
+                                        @if($volunteer->assignment_status === 'pending')
+                                            <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-bold bg-amber-50 text-amber-700 border border-amber-100/50">
+                                                <i class="bi bi-hourglass-split text-[9px]"></i> Menunggu Konfirmasi
+                                            </span>
+                                        @elseif($volunteer->assignment_status === 'accepted')
+                                            <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-100/50">
+                                                <i class="bi bi-check-circle-fill text-[9px]"></i> Diterima
+                                            </span>
+                                        @elseif($volunteer->assignment_status === 'rejected')
+                                            <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-bold bg-rose-50 text-rose-700 border border-rose-100/50">
+                                                <i class="bi bi-x-circle-fill text-[9px]"></i> Ditolak
+                                            </span>
+                                        @endif
                                     </div>
                                 @else
                                     <span class="text-[11px] text-slate-400 font-semibold bg-slate-50 border border-slate-100/80 px-2 py-0.5 rounded-md">Belum ditugaskan</span>
