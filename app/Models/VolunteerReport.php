@@ -70,6 +70,14 @@ class VolunteerReport extends Model
                 ['name' => 'kasus_khusus',       'label' => 'Kasus Khusus',          'type' => 'number'],
                 ['name' => 'rekomendasi',        'label' => 'Rekomendasi',           'type' => 'textarea'],
             ],
+            'PENDIDIKAN' => [
+                ['name' => 'jumlah_peserta',     'label' => 'Jumlah Peserta',        'type' => 'number'],
+                ['name' => 'materi',             'label' => 'Materi yang Diajarkan', 'type' => 'text'],
+                ['name' => 'lokasi_kegiatan',    'label' => 'Lokasi Kegiatan',       'type' => 'text'],
+                ['name' => 'durasi_jam',         'label' => 'Durasi (jam)',           'type' => 'number'],
+                ['name' => 'kendala',            'label' => 'Kendala',               'type' => 'textarea', 'optional' => true],
+                ['name' => 'catatan_perkembangan', 'label' => 'Catatan Perkembangan', 'type' => 'textarea', 'optional' => true],
+            ],
             default => [],
         };
     }
