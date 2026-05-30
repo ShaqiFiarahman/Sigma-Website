@@ -9,7 +9,7 @@ class NewsController extends Controller
 {
     public function index(Request $request)
     {
-        $query = News::latest('published_at');
+        $query = News::where('published_at', '>=', now()->subDays(7))->latest('published_at');
 
         // Filter by source
         if ($request->filled('source')) {

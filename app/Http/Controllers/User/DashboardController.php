@@ -32,7 +32,8 @@ class DashboardController extends Controller
 
     private function getNews(): array
     {
-        return News::latest('published_at')
+        return News::where('published_at', '>=', now()->subDays(7))
+            ->latest('published_at')
             ->limit(6)
             ->get()
             ->map(function ($item) {

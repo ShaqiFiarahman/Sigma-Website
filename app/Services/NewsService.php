@@ -20,7 +20,7 @@ class NewsService
 
     public function fetchNews()
     {
-        News::where('published_at', '<', now()->subDays(30))->delete();
+        News::where('published_at', '<', now()->subDays(7))->delete();
 
         foreach ($this->feeds as $source => $url) {
             try {

@@ -9,32 +9,58 @@
         @include('components.disaster-map.legend')
 
         {{-- Map Container --}}
-        <div class="w-full rounded-2xl overflow-hidden border border-slate-200/60" style="height: 550px; box-shadow: 0 4px 24px rgba(10,15,30,0.08);" id="map"></div>
+        <div class="w-full rounded-2xl overflow-hidden border border-slate-200/60"
+            style="height: 550px; box-shadow: 0 4px 24px rgba(10,15,30,0.08);" id="map"></div>
     </div>
 </section>
 
 <style>
     @keyframes slideIn {
-        from { transform: translateY(-20px) scale(0.95); opacity: 0; }
-        to   { transform: translateY(0) scale(1);        opacity: 1; }
+        from {
+            transform: translateY(-20px) scale(0.95);
+            opacity: 0;
+        }
+
+        to {
+            transform: translateY(0) scale(1);
+            opacity: 1;
+        }
     }
+
     @keyframes fadeOut {
-        from { transform: translateY(0) scale(1);        opacity: 1; }
-        to   { transform: translateY(10px) scale(0.9);   opacity: 0; }
+        from {
+            transform: translateY(0) scale(1);
+            opacity: 1;
+        }
+
+        to {
+            transform: translateY(10px) scale(0.9);
+            opacity: 0;
+        }
     }
-    .toast-slide-in { animation: slideIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
-    .toast-fade-out { animation: fadeOut 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+
+    .toast-slide-in {
+        animation: slideIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+
+    .toast-fade-out {
+        animation: fadeOut 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
 
     /* Custom GM InfoWindow styling */
-    .gm-style-iw { padding: 0px !important; }
+    .gm-style-iw {
+        padding: 0px !important;
+    }
+
     .gm-style-iw-c {
         border-radius: 16px !important;
-        box-shadow: 0 10px 40px rgba(10,15,30,0.12) !important;
+        box-shadow: 0 10px 40px rgba(10, 15, 30, 0.12) !important;
         padding: 0px !important;
         overflow: hidden !important;
         min-width: 240px !important;
         max-width: 240px !important;
     }
+
     .gm-style-iw-d {
         overflow: hidden !important;
         max-height: none !important;
@@ -42,12 +68,14 @@
         min-width: 240px !important;
         max-width: 240px !important;
     }
-    .gm-style-iw-d > div,
-    .gm-style-iw-d > div > div {
+
+    .gm-style-iw-d>div,
+    .gm-style-iw-d>div>div {
         padding: 0px !important;
         margin: 0px !important;
         overflow: hidden !important;
     }
+
     .gm-style-iw-c button.gm-ui-hover-effect {
         width: 22px !important;
         height: 22px !important;
@@ -61,19 +89,23 @@
         transition: all 0.2s ease !important;
         z-index: 99999 !important;
     }
+
     .gm-style-iw-c:has(.disaster-popup-content) button.gm-ui-hover-effect {
         top: 28px !important;
         right: 6px !important;
     }
+
     .gm-style-iw-c:has(.shelter-popup-content) button.gm-ui-hover-effect {
         top: 30px !important;
         right: 4px !important;
     }
+
     .gm-style-iw-c button.gm-ui-hover-effect:hover {
         opacity: 0.95 !important;
         background-color: rgba(255, 255, 255, 1) !important;
         transform: scale(1.08);
     }
+
     .gm-style-iw-c button.gm-ui-hover-effect span {
         margin: 0 !important;
         width: 10px !important;
@@ -96,15 +128,15 @@
         const center = { lat: -7.5505, lng: 110.8063 };
 
         map = new google.maps.Map(document.getElementById('map'), {
-            zoom: 12,
+            zoom: 11,
             center: center,
+            mapTypeId: 'terrain', // Tipe peta fisik / medan (Terrain)
             disableDefaultUI: true,
             gestureHandling: 'greedy',
             styles: [
-                { featureType: "water",     elementType: "geometry", stylers: [{ color: "#c8dff0" }] },
-                { featureType: "landscape", elementType: "geometry", stylers: [{ color: "#f0f4f8" }] },
-                { featureType: "poi",       stylers: [{ visibility: "off" }] },
-                { featureType: "transit",   stylers: [{ visibility: "off" }] },
+                { featureType: "water", elementType: "geometry", stylers: [{ color: "#c8dff0" }] },
+                { featureType: "poi", stylers: [{ visibility: "off" }] },
+                { featureType: "transit", stylers: [{ visibility: "off" }] },
             ]
         });
 
@@ -148,8 +180,8 @@
     }
 
     function buildShelterPopup(s) {
-        const statusColor   = s.status === 'Penuh' ? '#B91C1C' : '#15803D';
-        const statusDot     = s.status === 'Penuh' ? '#EF4444' : '#10B981';
+        const statusColor = s.status === 'Penuh' ? '#B91C1C' : '#15803D';
+        const statusDot = s.status === 'Penuh' ? '#EF4444' : '#10B981';
         const logisticsHtml = (s.logistics || []).map(l =>
             `<span style="display:inline-block; background:#F0FDFA; color:#0D9488; font-size:9px; font-weight:600; padding:2px 6px; border-radius:4px; border:1px solid #CCFBF1;">${l}</span>`
         ).join('');
@@ -228,4 +260,5 @@
 {{-- API Loaders: loadDisasters, loadShelters --}}
 @include('components.disaster-map.map-loaders')
 
-<script src="https://maps.googleapis.com/maps/api/js?key={{ config('services.google_maps.key') }}&callback=initMap" async defer></script>
+<script src="https://maps.googleapis.com/maps/api/js?key={{ config('services.google_maps.key') }}&callback=initMap"
+    async defer></script>

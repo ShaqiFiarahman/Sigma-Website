@@ -83,4 +83,15 @@ Route::middleware('auth')->group(function () {
     Route::get('/laporan/detail/{id}', [\App\Http\Controllers\User\LaporanController::class, 'show'])->name('laporan.show');
     Route::get('/info-posko', [MapController::class, 'shelterPage'])->name('shelter');
     Route::get('/cari-bencana', [MapController::class, 'search'])->name('search');
+
+    // API Routes for Map & Dashboard (session authenticated)
+    Route::prefix('api')->group(function () {
+        Route::get('/disasters', [MapController::class, 'disasters'])->name('api.disasters');
+        Route::get('/shelters', [MapController::class, 'shelters'])->name('api.shelters');
+        
+        Route::middleware('role:admin')->prefix('admin')->group(function () {
+            Route::get('/pending-reports', [\App\Http\Controllers\Admin\DashboardController::class, 'pendingReports'])->name('api.pending_reports');
+            Route::get('/stats', [\App\Http\Controllers\Admin\DashboardController::class, 'stats'])->name('api.admin_stats');
+        });
+    });
 });
