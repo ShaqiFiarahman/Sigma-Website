@@ -49,7 +49,7 @@
     };
 
     function fetchNotifications() {
-        fetch('/api/pending-reports')
+        fetch('{{ route("api.pending_reports") }}')
             .then(r => r.json())
             .then(data => {
                 const lastSeen = getLastSeen();

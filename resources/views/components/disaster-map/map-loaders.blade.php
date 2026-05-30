@@ -1,7 +1,7 @@
 <script>
     async function loadDisasters() {
         try {
-            const response = await fetch('/api/disasters');
+            const response = await fetch('{{ route("api.disasters") }}');
             const disasters = await response.json();
 
             // Set of active disaster IDs from the API response
@@ -139,7 +139,7 @@
 
     async function loadShelters() {
         try {
-            const response = await fetch('/api/shelters');
+            const response = await fetch('{{ route("api.shelters") }}');
             const shelters = await response.json();
 
             shelters.forEach(s => {

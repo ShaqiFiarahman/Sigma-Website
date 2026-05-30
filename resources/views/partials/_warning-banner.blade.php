@@ -62,7 +62,7 @@
     };
 
     window.checkNearbyDisasters = function(userLat, userLng) {
-        fetch('/api/disasters')
+        fetch('{{ route("api.disasters") }}')
             .then(response => response.json())
             .then(data => {
                 let nearbyCount = 0;
