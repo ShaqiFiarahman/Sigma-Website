@@ -41,6 +41,7 @@
                 'LOGISTIK' => ['from' => '#d97706', 'to' => '#f59e0b', 'bg' => 'bg-amber-50', 'text' => 'text-amber-700', 'border' => 'border-amber-200', 'icon' => 'bi-box-seam-fill'],
                 'KONSUMSI' => ['from' => '#059669', 'to' => '#10b981', 'bg' => 'bg-emerald-50', 'text' => 'text-emerald-700', 'border' => 'border-emerald-200', 'icon' => 'bi-cup-hot-fill'],
                 'PSIKOSOSIAL' => ['from' => '#7c3aed', 'to' => '#a78bfa', 'bg' => 'bg-purple-50', 'text' => 'text-purple-700', 'border' => 'border-purple-200', 'icon' => 'bi-chat-heart-fill'],
+                'PENDIDIKAN' => ['from' => '#0891b2', 'to' => '#06b6d4', 'bg' => 'bg-cyan-50', 'text' => 'text-cyan-700', 'border' => 'border-cyan-200', 'icon' => 'bi-mortarboard-fill'],
                 default => ['from' => '#334155', 'to' => '#64748b', 'bg' => 'bg-slate-50', 'text' => 'text-slate-700', 'border' => 'border-slate-200', 'icon' => 'bi-person-badge'],
             };
         @endphp
@@ -136,7 +137,28 @@
 
         @if($volunteer->status === 'APPROVED')
 
-
+            {{-- Stats --}}
+            <div class="grid grid-cols-3 gap-4 animate-fade-up" style="animation-delay: 0.08s;">
+                <div class="bg-white/80 backdrop-blur-md rounded-2xl border border-white/60 p-5 shadow-sm hover:shadow-md transition-all">
+                    <div class="flex items-end justify-between">
+                        <div>
+                            <p class="text-3xl font-extrabold text-slate-900 tabular-nums leading-none">{{ $totalReports }}</p>
+                            <p class="text-[12px] text-slate-500 mt-2">Laporan terkirim</p>
+                        </div>
+                        @if($reportsThisMonth > 0)
+                            <span class="text-[10px] font-bold text-emerald-600 bg-emerald-50 px-2 py-1 rounded-lg border border-emerald-100">+{{ $reportsThisMonth }}</span>
+                        @endif
+                    </div>
+                </div>
+                <div class="bg-white/80 backdrop-blur-md rounded-2xl border border-white/60 p-5 shadow-sm hover:shadow-md transition-all">
+                    <p class="text-3xl font-extrabold text-slate-900 tabular-nums leading-none">{{ $volunteer->assignment ? '1' : '0' }}</p>
+                    <p class="text-[12px] text-slate-500 mt-2">Penugasan aktif</p>
+                </div>
+                <div class="bg-white/80 backdrop-blur-md rounded-2xl border border-white/60 p-5 shadow-sm hover:shadow-md transition-all">
+                    <p class="text-3xl font-extrabold text-slate-900 tabular-nums leading-none">{{ $teamMembers->count() }}</p>
+                    <p class="text-[12px] text-slate-500 mt-2">Anggota tim</p>
+                </div>
+            </div>
 
             {{-- Main Layout Grid --}}
             <div class="grid grid-cols-1 lg:grid-cols-5 gap-6 animate-fade-up" style="animation-delay: 0.1s;">
@@ -167,11 +189,6 @@
                                                 style="background: #25D366;">
                                                 <i class="bi bi-whatsapp text-[12px]"></i> Hubungi Admin
                                             </button>
-                                            <a href="{{ route('volunteer.report.create') }}" 
-                                               class="inline-flex items-center gap-1.5 px-3 py-1.5 text-[11px] font-bold text-white rounded-lg cursor-pointer transition-all hover:scale-[1.02] active:scale-[0.98] shadow-sm"
-                                               style="background: linear-gradient(135deg, #3B6FE8 0%, #1e3a8a 100%); box-shadow: 0 2px 6px rgba(59, 111, 232, 0.2);">
-                                                <i class="bi bi-plus-lg text-[11px]"></i> Kirim Laporan Tugas
-                                            </a>
                                         </div>
                                     </div>
                                 </div>
@@ -245,7 +262,8 @@
                                         @php
                                             $memberColor = match($member->skill) {
                                                 'MEDIS' => '#dc2626', 'SAR' => '#f97316', 'LOGISTIK' => '#d97706',
-                                                'KONSUMSI' => '#059669', 'PSIKOSOSIAL' => '#7c3aed', default => '#475569',
+                                                'KONSUMSI' => '#059669', 'PSIKOSOSIAL' => '#7c3aed', 'PENDIDIKAN' => '#0891b2',
+                                                default => '#475569',
                                             };
                                         @endphp
                                         <div class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-slate-50/80 border border-transparent hover:border-slate-100/55 transition-all">

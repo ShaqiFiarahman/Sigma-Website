@@ -69,7 +69,7 @@ class ReportController extends Controller
         // Build validation rules dynamically
         $rules = [
             'notes' => 'nullable|string|max:1000',
-            'disaster_id' => 'required|exists:disasters,id',
+            'disaster_id' => 'nullable|exists:disasters,id',
         ];
         foreach ($fields as $field) {
             $key = 'data.' . $field['name'];
@@ -89,7 +89,7 @@ class ReportController extends Controller
 
         VolunteerReport::create([
             'volunteer_id' => $volunteer->id,
-            'disaster_id'  => $request->disaster_id,
+            'disaster_id'  => $request->disaster_id ?: null,
             'skill_type'   => $volunteer->skill,
             'report_data'  => $request->data,
             'notes'        => $request->notes,

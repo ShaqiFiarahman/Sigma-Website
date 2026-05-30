@@ -65,5 +65,7 @@
     <div class="bg-white rounded-xl border border-slate-200/80 px-4 py-3.5 hover:-translate-y-0.5 hover:shadow-md transition-all duration-200" style="box-shadow: 0 1px 2px rgba(10,15,30,0.04);">
         <p class="text-[10px] text-slate-500 font-bold uppercase tracking-wider mb-0.5">Relawan</p>
         <p class="text-xl font-extrabold text-purple-600">{{ $approvedVolunteers }} <span class="text-[11px] font-medium text-slate-400">aktif</span></p>
+        @php $availableVolunteers = \App\Models\Volunteer::where('status', 'APPROVED')->where('availability', 'available')->count(); @endphp
+        <p class="text-[10px] text-slate-400 mt-0.5">{{ $availableVolunteers }} tersedia · {{ $pendingVolunteers }} pending</p>
     </div>
 </div>
