@@ -138,19 +138,25 @@
                     </button>
                 @endif
 
-                {{-- User profile (clickable to open modal) --}}
-                <div class="hidden md:flex items-center gap-3 pl-4 border-l border-slate-200 cursor-pointer group"
-                    onclick="document.getElementById('profileModal').classList.remove('hidden')">
-                    <div class="text-right">
-                        <p class="text-sm font-semibold text-slate-900 leading-none group-hover:text-blue-800 transition-colors">{{ auth()->user()->short_name }}</p>
-                        <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1">
-                            {{ auth()->user()->role }}
-                        </p>
-                    </div>
-                    <div class="w-11 h-11 rounded-full flex items-center justify-center text-white text-base font-bold transition-transform group-hover:scale-105"
-                        style="background: linear-gradient(135deg, #0A0F1E 0%, #1e3a8a 100%);">
-                        {{ substr(auth()->user()->full_name ?? 'U', 0, 1) }}
-                    </div>
+                {{-- User profile (clickable to toggle dropdown) --}}
+                <div class="hidden md:block relative pl-4 border-l border-slate-200">
+                    <button type="button" id="profileDropdownBtn" aria-expanded="false" aria-haspopup="true"
+                        class="flex items-center gap-3 cursor-pointer group focus:outline-none">
+                        <div class="text-right">
+                            <p class="text-sm font-semibold text-slate-900 leading-none group-hover:text-blue-800 transition-colors">{{ auth()->user()->short_name }}</p>
+                            <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1">
+                                {{ auth()->user()->role }}
+                            </p>
+                        </div>
+                        <div class="profile-trigger-avatar w-11 h-11 rounded-full flex items-center justify-center text-white text-base font-bold transition-all duration-300 group-hover:scale-105"
+                            style="background: linear-gradient(135deg, #0A0F1E 0%, #1e3a8a 100%);">
+                            {{ substr(auth()->user()->full_name ?? 'U', 0, 1) }}
+                        </div>
+                        <i class="profile-chevron bi bi-chevron-down text-xs text-slate-400 group-hover:text-slate-600"></i>
+                    </button>
+
+                    {{-- Profile Dropdown --}}
+                    <x-profile-dropdown />
                 </div>
 
                 {{-- Mobile toggle --}}
@@ -208,8 +214,6 @@
     </main>
 
     @yield('footer')
-
-    <x-profile-modal />
 
     {{-- Toast Notification Container (Below navbar on the right) --}}
     <div id="disaster-toast-container" class="fixed top-24 right-6 z-[9999] flex flex-col gap-3 pointer-events-none w-[calc(100%-2rem)] max-w-sm sm:w-80"></div>
@@ -289,10 +293,10 @@
             icon.className = menu.classList.contains('hidden') ? 'bi bi-list text-xl' : 'bi bi-x-lg text-xl';
         });
 
-        // Close modal with Escape key
+        // Close profile dropdown with Escape key
         document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape') {
-                document.getElementById('profileModal')?.classList.add('hidden');
+            if (e.key === 'Escape' && typeof closeProfileDropdown === 'function') {
+                closeProfileDropdown();
             }
         });
     </script>

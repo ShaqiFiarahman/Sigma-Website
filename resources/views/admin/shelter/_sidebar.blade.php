@@ -1,36 +1,41 @@
 {{-- Shelter Edit: Sidebar Info Panels --}}
 <div class="lg:col-span-2 space-y-5">
 
-    {{-- Status Posko --}}
-    <div class="bg-white border border-slate-200/80 rounded-2xl p-5" style="box-shadow: 0 1px 3px rgba(10,15,30,0.06);">
-        <p class="text-xs font-bold text-slate-700 mb-3">Status Posko</p>
-        <div class="space-y-2.5">
-            <div class="flex justify-between text-xs">
-                <span class="text-slate-500">Status</span>
-                <span class="font-semibold {{ $shelter->status === 'Tersedia' ? 'text-emerald-600' : 'text-red-600' }}">{{ $shelter->status }}</span>
-            </div>
-            <div class="flex justify-between text-xs">
-                <span class="text-slate-500">Kapasitas</span>
-                <span class="font-semibold text-slate-800">{{ $shelter->capacity_current }}/{{ $shelter->capacity_max }} orang</span>
-            </div>
-            <div class="flex justify-between text-xs">
-                <span class="text-slate-500">Koordinat</span>
-                <span class="font-mono text-slate-600 text-[11px]" id="coordStatusText">{{ $shelter->latitude }}, {{ $shelter->longitude }}</span>
-            </div>
-            <div class="flex justify-between text-xs">
-                <span class="text-slate-500">Terakhir update</span>
-                <span class="text-slate-600">{{ $shelter->updated_at->diffForHumans() }}</span>
+    {{-- Info Posko (gabungan Status, Relawan, Logistik) --}}
+    <div class="bg-white border border-slate-200/80 rounded-2xl overflow-hidden" style="box-shadow: 0 1px 3px rgba(10,15,30,0.06);">
+
+        {{-- Status Posko --}}
+        <div class="p-5">
+            <p class="text-xs font-bold text-slate-700 mb-3">Status Posko</p>
+            <div class="space-y-2.5">
+                <div class="flex justify-between text-xs">
+                    <span class="text-slate-500">Status</span>
+                    <span class="font-semibold {{ $shelter->status === 'Tersedia' ? 'text-emerald-600' : 'text-red-600' }}">{{ $shelter->status }}</span>
+                </div>
+                <div class="flex justify-between text-xs">
+                    <span class="text-slate-500">Kapasitas</span>
+                    <span class="font-semibold text-slate-800">{{ $shelter->capacity_current }}/{{ $shelter->capacity_max }} orang</span>
+                </div>
+                <div class="flex justify-between text-xs">
+                    <span class="text-slate-500">Koordinat</span>
+                    <span class="font-mono text-slate-600 text-[11px]" id="coordStatusText">{{ $shelter->latitude }}, {{ $shelter->longitude }}</span>
+                </div>
+                <div class="flex justify-between text-xs">
+                    <span class="text-slate-500">Terakhir update</span>
+                    <span class="text-slate-600">{{ $shelter->updated_at->diffForHumans() }}</span>
+                </div>
             </div>
         </div>
-    </div>
 
-    {{-- Relawan Bertugas --}}
-    <div class="bg-white border border-slate-200/80 rounded-2xl overflow-hidden" style="box-shadow: 0 1px 3px rgba(10,15,30,0.06);">
-        <div class="px-5 py-4 border-b border-slate-100 flex items-center justify-between">
+        {{-- Divider --}}
+        <div class="border-t border-slate-100"></div>
+
+        {{-- Relawan Bertugas --}}
+        <div class="px-5 py-4 flex items-center justify-between">
             <p class="text-xs font-bold text-slate-700">Relawan Bertugas</p>
             <span class="text-[10px] font-bold text-slate-500 bg-slate-100 px-2 py-0.5 rounded">{{ $assignedVolunteers->count() }}</span>
         </div>
-        <div class="p-4">
+        <div class="px-5 pb-5">
             @if($assignedVolunteers->count() > 0)
                 <div class="space-y-3">
                     @foreach($assignedVolunteers as $vol)
@@ -47,23 +52,24 @@
                     @endforeach
                 </div>
             @else
-                <p class="text-xs text-slate-400 text-center py-4">Belum ada relawan ditugaskan.</p>
+                <p class="text-xs text-slate-400 text-center py-2">Belum ada relawan ditugaskan.</p>
             @endif
         </div>
-    </div>
 
-    {{-- Logistik Saat Ini (computed from volunteer reports) --}}
-    @php($dynamicLogistics = $shelter->getDynamicLogistics())
-    @if(!empty($dynamicLogistics))
-        <div class="bg-white border border-slate-200/80 rounded-2xl p-5" style="box-shadow: 0 1px 3px rgba(10,15,30,0.06);">
-            <p class="text-xs font-bold text-slate-700 mb-3">Kebutuhan Logistik</p>
-            <div class="flex flex-wrap gap-2">
-                @foreach($dynamicLogistics as $item)
-                    <span class="text-[11px] font-medium px-2.5 py-1 rounded-lg border border-teal-100 text-teal-700" style="background: #F0FDFA;">{{ $item }}</span>
-                @endforeach
+        {{-- Kebutuhan Logistik --}}
+        @php($dynamicLogistics = $shelter->getDynamicLogistics())
+        @if(!empty($dynamicLogistics))
+            <div class="border-t border-slate-100"></div>
+            <div class="p-5">
+                <p class="text-xs font-bold text-slate-700 mb-3">Kebutuhan Logistik</p>
+                <div class="flex flex-wrap gap-2">
+                    @foreach($dynamicLogistics as $item)
+                        <span class="text-[11px] font-medium px-2.5 py-1 rounded-lg border border-teal-100 text-teal-700" style="background: #F0FDFA;">{{ $item }}</span>
+                    @endforeach
+                </div>
             </div>
-        </div>
-    @endif
+        @endif
+    </div>
 
     {{-- Hapus Posko --}}
     <div class="bg-white border border-red-100/50 rounded-2xl p-5" style="box-shadow: 0 1px 3px rgba(10,15,30,0.04);">

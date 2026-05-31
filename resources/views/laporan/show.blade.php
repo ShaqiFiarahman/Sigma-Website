@@ -60,28 +60,28 @@
                     </div>
                     {{-- Status Badge --}}
                     @if($s === 'PENDING')
-                        <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[11px] font-bold bg-amber-50 text-amber-700 border border-amber-200 shrink-0">
-                            <span class="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse"></span> Pending
+                        <span class="inline-flex items-center px-3 py-1.5 rounded-full text-[11px] font-bold bg-amber-50 text-amber-700 border border-amber-200 shrink-0">
+                            Pending
                         </span>
                     @elseif($s === 'DECLINE')
-                        <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[11px] font-bold bg-slate-100 text-slate-600 border border-slate-200 shrink-0">
-                            <span class="w-1.5 h-1.5 rounded-full bg-slate-400"></span> Ditolak
+                        <span class="inline-flex items-center px-3 py-1.5 rounded-full text-[11px] font-bold bg-slate-100 text-slate-600 border border-slate-200 shrink-0">
+                            Ditolak
                         </span>
                     @elseif($s === 'AWAS')
-                        <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[11px] font-bold bg-red-50 text-red-700 border border-red-200 shrink-0">
-                            <span class="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse"></span> Awas
+                        <span class="inline-flex items-center px-3 py-1.5 rounded-full text-[11px] font-bold bg-red-50 text-red-700 border border-red-200 shrink-0">
+                            Awas
                         </span>
                     @elseif($s === 'SIAGA_1')
-                        <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[11px] font-bold bg-orange-50 text-orange-700 border border-orange-200 shrink-0">
-                            <span class="w-1.5 h-1.5 rounded-full bg-orange-500"></span> Siaga 1
+                        <span class="inline-flex items-center px-3 py-1.5 rounded-full text-[11px] font-bold bg-orange-50 text-orange-700 border border-orange-200 shrink-0">
+                            Siaga 1
                         </span>
                     @elseif($s === 'SIAGA_2')
-                        <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[11px] font-bold bg-violet-50 text-violet-700 border border-violet-200 shrink-0">
-                            <span class="w-1.5 h-1.5 rounded-full bg-violet-500"></span> Siaga 2
+                        <span class="inline-flex items-center px-3 py-1.5 rounded-full text-[11px] font-bold bg-violet-50 text-violet-700 border border-violet-200 shrink-0">
+                            Siaga 2
                         </span>
                     @else
-                        <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[11px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200 shrink-0">
-                            <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> Terverifikasi
+                        <span class="inline-flex items-center px-3 py-1.5 rounded-full text-[11px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200 shrink-0">
+                            Terverifikasi
                         </span>
                     @endif
                 </div>
@@ -355,9 +355,7 @@
         <div class="bg-white border border-slate-200/80 rounded-2xl overflow-hidden"
              style="box-shadow: 0 1px 3px rgba(10,15,30,0.06);">
             <div class="px-5 py-4 border-b border-slate-100 bg-slate-50">
-                <h3 class="text-sm font-semibold text-slate-800 flex items-center gap-2">
-                    <i class="bi bi-lightning-fill text-amber-500"></i> Aksi Cepat
-                </h3>
+                <h3 class="text-sm font-semibold text-slate-800">Aksi Cepat</h3>
             </div>
             <div class="p-5 space-y-2">
                 <button type="button"

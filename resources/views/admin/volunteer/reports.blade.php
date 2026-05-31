@@ -166,8 +166,8 @@
 
     {{-- Fallback empty state for JS filtering --}}
     <div id="noReportsFound" class="hidden bg-white rounded-2xl border border-slate-200/80 p-14 text-center shadow-sm">
-        <div class="w-14 h-14 rounded-2xl mx-auto mb-4 flex items-center justify-center bg-blue-50/60">
-            <i class="bi bi-search text-2xl text-blue-600"></i>
+        <div class="mb-4">
+            <i class="bi bi-search text-3xl text-blue-600"></i>
         </div>
         <p class="text-sm font-semibold text-slate-800 mb-1">Tidak ada laporan yang cocok</p>
         <p class="text-xs text-slate-400">Coba ubah kata kunci pencarian atau pengaturan filter Anda.</p>

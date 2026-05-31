@@ -74,7 +74,7 @@ class Shelter extends Model
             ->pluck('id');
 
         if ($volunteerIds->isEmpty()) {
-            return $this->logistics;
+            return [];
         }
 
         $reports = VolunteerReport::whereIn('volunteer_id', $volunteerIds)
@@ -105,6 +105,6 @@ class Shelter extends Model
             }
         }
 
-        return !empty($needs) ? $needs : $this->logistics;
+        return !empty($needs) ? $needs : [];
     }
 }
