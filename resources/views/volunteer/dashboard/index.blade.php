@@ -172,8 +172,8 @@
                                 </div>
                                 @elseif($volunteer->assignment_status === 'pending')
                                 <div class="flex flex-col items-center justify-center py-6 px-4 text-center rounded-xl bg-amber-50/50 border border-amber-100">
-                                    <div class="w-10 h-10 rounded-full bg-amber-100 flex items-center justify-center mb-3">
-                                        <i class="bi bi-hourglass-split text-amber-600 text-base"></i>
+                                    <div class="mb-3">
+                                        <i class="bi bi-hourglass-split text-amber-600 text-xl"></i>
                                     </div>
                                     <h3 class="text-xs font-bold text-slate-800">Menunggu Konfirmasi Anda</h3>
                                     <p class="text-[10px] text-slate-500 max-w-xs mt-0.5">Anda memiliki penugasan baru ke <span class="font-bold text-amber-700">{{ $volunteer->assignment }}</span>. Silakan terima atau tolak di notifikasi di atas.</p>

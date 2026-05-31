@@ -230,6 +230,7 @@
                     @endphp
                     <div class="bg-white border border-slate-200/80 rounded-2xl shadow-sm overflow-hidden"
                         style="box-shadow: 0 1px 3px rgba(10,15,30,0.06);">
+                        {{-- Statistik Laporan --}}
                         <div class="px-5 py-3 border-b border-slate-100 bg-slate-50">
                             <h3 class="font-bold text-slate-800 flex items-center gap-2 text-sm">
                                 <i class="bi bi-bar-chart-fill" style="color: #3B6FE8;"></i> Statistik Laporan Anda
@@ -245,11 +246,9 @@
                                 <span class="font-bold text-blue-600 text-sm">{{ $monthReportsCount }}</span>
                             </div>
                         </div>
-                    </div>
 
-                    {{-- 2. Riwayat Laporan Tugas --}}
-                    <div class="bg-white border border-slate-200/80 rounded-2xl shadow-sm overflow-hidden"
-                        style="box-shadow: 0 1px 3px rgba(10,15,30,0.06);">
+                        {{-- Divider + Riwayat Laporan Tugas --}}
+                        <div class="border-t border-slate-100"></div>
                         <div class="px-5 py-3 border-b border-slate-100 bg-slate-50">
                             <h3 class="font-bold text-slate-800 flex items-center gap-2 text-sm">
                                 <i class="bi bi-clock-history" style="color: #3B6FE8;"></i> Riwayat Laporan Tugas

@@ -1,26 +1,26 @@
-<div class="relative rounded-2xl overflow-hidden mb-8"
+<div class="relative rounded-2xl overflow-hidden mb-8 welcome-banner"
     style="background: linear-gradient(135deg, #0A0F1E 0%, #0f1f4a 50%, #1a3068 100%);">
 
-    <div class="absolute -top-16 -right-16 w-64 h-64 rounded-full opacity-20 pointer-events-none"
+    <div class="absolute -top-16 -right-16 w-64 h-64 rounded-full opacity-20 pointer-events-none welcome-glow"
         style="background: radial-gradient(circle, #E4F0F6 0%, transparent 70%);"></div>
-    <div class="absolute bottom-0 left-1/3 w-96 h-48 opacity-10 pointer-events-none"
+    <div class="absolute bottom-0 left-1/3 w-96 h-48 opacity-10 pointer-events-none welcome-glow"
         style="background: radial-gradient(ellipse, #3B6FE8 0%, transparent 70%);"></div>
 
-    <div class="absolute inset-0 opacity-15 pointer-events-none">
+    <div class="absolute inset-0 opacity-15 pointer-events-none welcome-map">
         <img src="{{ asset('images/indonesia_map.webp') }}" class="w-full h-full object-cover object-center"
             alt="" loading="lazy" decoding="async">
     </div>
 
     <div class="relative z-10 px-12 sm:px-16 py-14 flex flex-col sm:flex-row sm:items-center justify-between gap-12">
         <div class="max-w-3xl">
-            <h2 class="text-xl sm:text-2xl font-extrabold text-white tracking-tight mb-3">Halo,
+            <h2 class="text-xl sm:text-2xl font-extrabold text-white tracking-tight mb-3 welcome-text">Halo,
                 {{ auth()->user()->short_name ?? 'Pengguna' }}.
             </h2>
-            <p class="text-sm sm:text-base leading-relaxed" style="color: rgba(228,240,246,0.7);">
+            <p class="text-sm sm:text-base leading-relaxed welcome-text" style="color: rgba(228,240,246,0.7); animation-delay: 0.15s;">
                 Pantau informasi bencana dan laporkan kejadian di sekitar Anda secara cepat.
             </p>
         </div>
-        <div class="shrink-0 hidden sm:flex flex-col items-end gap-1">
+        <div class="shrink-0 hidden sm:flex flex-col items-end gap-1 welcome-info">
             <p class="text-2xl font-bold text-white" id="liveClock">--:--</p>
             <p class="text-xs" style="color: rgba(228,240,246,0.45);" id="liveDate">—</p>
             <p class="text-xs font-medium text-white/70 mt-1 flex items-center gap-1">

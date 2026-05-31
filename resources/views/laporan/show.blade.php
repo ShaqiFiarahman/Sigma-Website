@@ -161,7 +161,7 @@
                 {{-- Data Korban & Evakuasi (Relawan Update) --}}
                 <div class="border-t border-slate-100/60 pt-5">
                     <h3 class="text-xs font-bold text-slate-700 mb-3 uppercase tracking-wider flex items-center gap-1.5">
-                        <i class="bi bi-people-fill text-slate-400"></i> Kondisi Korban & Evakuasi <span class="text-[10px] font-bold text-blue-600 ml-1.5">· Update Relawan</span>
+                        <i class="bi bi-people-fill text-slate-400"></i> Kondisi Korban & Evakuasi <span class="text-[10px] font-bold text-blue-600 ml-1.5">Update Relawan</span>
                     </h3>
                     
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -413,17 +413,30 @@
                                 <option value="AWAS"     {{ $currentStatus === 'AWAS'     ? 'selected' : '' }}>Awas</option>
                                 <option value="SIAGA_1"  {{ $currentStatus === 'SIAGA_1'  ? 'selected' : '' }}>Siaga 1</option>
                                 <option value="SIAGA_2"  {{ $currentStatus === 'SIAGA_2'  ? 'selected' : '' }}>Siaga 2</option>
-                                <option value="RESOLVED" {{ $currentStatus === 'RESOLVED' ? 'selected' : '' }}>Selesai</option>
                                 <option value="DECLINE"  {{ $currentStatus === 'DECLINE'  ? 'selected' : '' }}>Tolak</option>
                             </select>
                         </div>
 
                         <button type="submit"
                                 class="w-full py-2.5 text-sm font-semibold text-white rounded-xl cursor-pointer"
-                                style="background: linear-gradient(135deg, #059669 0%, #10b981 100%);">
-                            Simpan
+                                style="background: linear-gradient(135deg, #3B6FE8 0%, #1e3a8a 100%);">
+                            Simpan Perubahan
                         </button>
                     </form>
+
+                    {{-- Tombol Selesai terpisah --}}
+                    @if($currentStatus !== 'RESOLVED')
+                        <form id="resolveForm" action="{{ route('laporan.update_status', $laporan['id']) }}" method="POST" class="mt-3">
+                            @csrf
+                            <input type="hidden" name="status" value="RESOLVED">
+                            <input type="hidden" name="disaster_type" value="{{ $currentType }}">
+                            <button type="submit"
+                                    class="w-full py-2.5 text-sm font-semibold text-white rounded-xl cursor-pointer transition-all hover:opacity-90"
+                                    style="background: linear-gradient(135deg, #059669 0%, #10b981 100%);">
+                                Tandai Selesai
+                            </button>
+                        </form>
+                    @endif
             </div>
         </div>
         @endif
@@ -432,10 +445,11 @@
 </div>
 
 {{-- Custom Confirm Modal --}}
-<div id="confirmModal" class="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm hidden opacity-0 transition-opacity duration-200">
-    <div class="bg-white rounded-2xl w-full max-w-sm overflow-hidden shadow-2xl border border-slate-100/80 transform scale-95 transition-transform duration-200">
+<div id="confirmModal" class="fixed inset-0 z-[9999] flex items-center justify-center p-4 hidden">
+    <div class="absolute inset-0 bg-slate-900/60 backdrop-blur-sm sigma-modal-backdrop"></div>
+    <div class="relative bg-white rounded-2xl w-full max-w-sm overflow-hidden shadow-2xl border border-slate-100/80 sigma-modal-content">
         <div class="p-6 text-center">
-            <div class="w-12 h-12 rounded-2xl bg-gradient-to-tr from-emerald-500 to-teal-400 text-white flex items-center justify-center mx-auto mb-5 shadow-lg shadow-emerald-500/20 transform rotate-3 hover:rotate-0 transition-transform duration-300">
+            <div class="w-12 h-12 rounded-2xl bg-gradient-to-tr from-emerald-500 to-teal-400 text-white flex items-center justify-center mx-auto mb-5 shadow-lg shadow-emerald-500/20 sigma-modal-icon" style="transform: rotate(3deg);">
                 <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
                     <polyline points="20 6 9 17 4 12"></polyline>
                 </svg>
@@ -455,20 +469,27 @@
 <script>
     function showConfirmModal(callback) {
         const modal = document.getElementById('confirmModal');
-        const content = modal.querySelector('.transform');
+        const backdrop = modal.querySelector('.sigma-modal-backdrop');
+        const content = modal.querySelector('.sigma-modal-content');
         const okBtn = document.getElementById('confirmOkBtn');
         const cancelBtn = document.getElementById('confirmCancelBtn');
 
         modal.classList.remove('hidden');
-        setTimeout(() => {
-            modal.classList.remove('opacity-0');
-            content.classList.remove('scale-95');
-        }, 10);
+        requestAnimationFrame(() => {
+            backdrop.classList.add('is-visible');
+            content.classList.add('is-visible');
+        });
 
         const closeModal = () => {
-            modal.classList.add('opacity-0');
-            content.classList.add('scale-95');
-            setTimeout(() => { modal.classList.add('hidden'); }, 200);
+            backdrop.classList.remove('is-visible');
+            backdrop.classList.add('is-hiding');
+            content.classList.remove('is-visible');
+            content.classList.add('is-hiding');
+            setTimeout(() => {
+                modal.classList.add('hidden');
+                backdrop.classList.remove('is-hiding');
+                content.classList.remove('is-hiding');
+            }, 300);
         };
 
         const newOkBtn = okBtn.cloneNode(true);
@@ -478,7 +499,7 @@
 
         newOkBtn.addEventListener('click', () => { closeModal(); callback(true); });
         newCancelBtn.addEventListener('click', () => { closeModal(); callback(false); });
-        modal.onclick = (e) => { if (e.target === modal) { closeModal(); callback(false); } };
+        modal.onclick = (e) => { if (e.target === modal || e.target === backdrop) { closeModal(); callback(false); } };
     }
 
     document.getElementById('updateStatusForm')?.addEventListener('submit', function(e) {
@@ -491,6 +512,16 @@
                 }
             });
         }
+    });
+
+    document.getElementById('resolveForm')?.addEventListener('submit', function(e) {
+        e.preventDefault();
+        const form = this;
+        showConfirmModal((confirmed) => {
+            if (confirmed) {
+                form.submit();
+            }
+        });
     });
 </script>
 @endsection

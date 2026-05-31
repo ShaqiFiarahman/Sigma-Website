@@ -9,11 +9,11 @@
         <span class="absolute top-1 right-1 min-w-[18px] h-[18px] flex items-center justify-center text-[9px] font-bold text-white bg-red-500 rounded-full px-1 animate-pulse">1</span>
     </button>
 
-    <div id="volunteerNotifDropdown" class="hidden absolute right-0 top-full mt-2 w-96 bg-white border border-slate-200/80 rounded-2xl overflow-hidden z-50 animate-fade-in"
+    <div id="volunteerNotifDropdown" class="hidden absolute right-0 top-full mt-2 w-96 bg-white border border-slate-200/80 rounded-2xl overflow-hidden z-50 notif-dropdown"
          style="box-shadow: 0 20px 40px -15px rgba(10, 15, 30, 0.25), 0 0 0 1px rgba(10, 15, 30, 0.045);">
         
         {{-- Header --}}
-        <div class="px-5 py-3 border-b border-slate-100 flex items-center justify-between" style="background: linear-gradient(180deg, #f8fafc 0%, #f1f5f9 100%);">
+        <div class="px-5 py-3 border-b border-slate-100 flex items-center justify-between notif-item" style="background: linear-gradient(180deg, #f8fafc 0%, #f1f5f9 100%);">
             <div class="flex items-center gap-1.5">
                 <i class="bi bi-bell-fill text-blue-500 text-xs"></i>
                 <span class="text-xs font-bold text-slate-700">Penugasan Baru</span>
@@ -22,7 +22,7 @@
         </div>
 
         {{-- Content --}}
-        <div class="p-5">
+        <div class="p-5 notif-item">
             <div class="flex items-start gap-3 mb-4">
                 <div class="w-10 h-10 rounded-xl flex items-center justify-center shrink-0"
                      style="background: linear-gradient(135deg, #3B6FE8 0%, #1e3a8a 100%);">
@@ -47,7 +47,7 @@
                         <i class="bi bi-check-circle-fill text-[11px]"></i> Terima
                     </button>
                 </form>
-                <button type="button" onclick="document.getElementById('rejectModalNavbar').classList.remove('hidden')"
+                <button type="button" onclick="openRejectModal()"
                         class="flex-1 px-4 py-2.5 text-xs font-bold text-rose-600 bg-rose-50 border border-rose-200 rounded-xl hover:bg-rose-100 transition-all cursor-pointer hover:scale-[1.02] active:scale-[0.98] flex items-center justify-center gap-1.5">
                     <i class="bi bi-x-circle text-[11px]"></i> Tolak
                 </button>
@@ -58,10 +58,10 @@
 
 {{-- Modal Tolak Penugasan (dari Navbar) --}}
 <div id="rejectModalNavbar" class="fixed inset-0 z-[9999] flex items-center justify-center hidden">
-    <div class="absolute inset-0 bg-slate-900/50 backdrop-blur-sm" onclick="document.getElementById('rejectModalNavbar').classList.add('hidden')"></div>
-    <div class="relative bg-white w-full max-w-md mx-4 rounded-3xl px-7 pt-8 pb-7 shadow-2xl">
+    <div class="absolute inset-0 bg-slate-900/50 backdrop-blur-sm sigma-modal-backdrop" onclick="closeRejectModal()"></div>
+    <div class="relative bg-white w-full max-w-md mx-4 rounded-3xl px-7 pt-8 pb-7 shadow-2xl sigma-modal-content">
         <div class="mb-5">
-            <div class="w-11 h-11 rounded-xl bg-rose-100 flex items-center justify-center mb-4">
+            <div class="w-11 h-11 rounded-xl bg-rose-100 flex items-center justify-center mb-4 sigma-modal-icon">
                 <i class="bi bi-x-circle-fill text-rose-500 text-lg"></i>
             </div>
             <h4 class="text-lg font-bold text-slate-900">Tolak Penugasan</h4>
@@ -78,7 +78,7 @@
             </div>
 
             <div class="flex gap-3">
-                <button type="button" onclick="document.getElementById('rejectModalNavbar').classList.add('hidden')"
+                <button type="button" onclick="closeRejectModal()"
                         class="flex-1 py-3 text-sm font-medium text-slate-600 bg-slate-100 hover:bg-slate-200 rounded-2xl transition-colors cursor-pointer">
                     Batal
                 </button>
@@ -94,12 +94,71 @@
 
 <script>
 (function() {
+    window.openRejectModal = function() {
+        const modal = document.getElementById('rejectModalNavbar');
+        const backdrop = modal.querySelector('.sigma-modal-backdrop');
+        const content = modal.querySelector('.sigma-modal-content');
+        modal.classList.remove('hidden');
+        requestAnimationFrame(() => {
+            backdrop.classList.add('is-visible');
+            content.classList.add('is-visible');
+        });
+    };
+    window.closeRejectModal = function() {
+        const modal = document.getElementById('rejectModalNavbar');
+        const backdrop = modal.querySelector('.sigma-modal-backdrop');
+        const content = modal.querySelector('.sigma-modal-content');
+        backdrop.classList.remove('is-visible');
+        backdrop.classList.add('is-hiding');
+        content.classList.remove('is-visible');
+        content.classList.add('is-hiding');
+        setTimeout(() => {
+            modal.classList.add('hidden');
+            backdrop.classList.remove('is-hiding');
+            content.classList.remove('is-hiding');
+        }, 300);
+    };
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && !document.getElementById('rejectModalNavbar').classList.contains('hidden')) closeRejectModal();
+    });
+})();
+</script>
+
+<script>
+(function() {
     const btn = document.getElementById('volunteerNotifBtn');
     const dropdown = document.getElementById('volunteerNotifDropdown');
+    const bellIcon = btn?.querySelector('.bi-bell');
     if (!btn || !dropdown) return;
 
-    btn.addEventListener('click', (e) => { e.stopPropagation(); dropdown.classList.toggle('hidden'); });
-    document.addEventListener('click', () => dropdown.classList.add('hidden'));
+    let isOpen = false;
+
+    function openDropdown() {
+        isOpen = true;
+        dropdown.classList.remove('hidden', 'is-closing');
+        dropdown.classList.add('is-opening');
+        if (bellIcon) { bellIcon.classList.add('notif-bell-active'); setTimeout(() => bellIcon.classList.remove('notif-bell-active'), 600); }
+        dropdown.addEventListener('animationend', function handler() {
+            dropdown.classList.remove('is-opening');
+            dropdown.classList.add('is-open');
+            dropdown.removeEventListener('animationend', handler);
+        });
+    }
+
+    function closeDropdown() {
+        if (!isOpen) return;
+        isOpen = false;
+        dropdown.classList.remove('is-open', 'is-opening');
+        dropdown.classList.add('is-closing');
+        dropdown.addEventListener('animationend', function handler() {
+            dropdown.classList.remove('is-closing');
+            dropdown.classList.add('hidden');
+            dropdown.removeEventListener('animationend', handler);
+        });
+    }
+
+    btn.addEventListener('click', (e) => { e.stopPropagation(); isOpen ? closeDropdown() : openDropdown(); });
+    document.addEventListener('click', () => closeDropdown());
     dropdown.addEventListener('click', (e) => e.stopPropagation());
 })();
 </script>

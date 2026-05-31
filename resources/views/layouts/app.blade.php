@@ -152,7 +152,6 @@
                             style="background: linear-gradient(135deg, #0A0F1E 0%, #1e3a8a 100%);">
                             {{ substr(auth()->user()->full_name ?? 'U', 0, 1) }}
                         </div>
-                        <i class="profile-chevron bi bi-chevron-down text-xs text-slate-400 group-hover:text-slate-600"></i>
                     </button>
 
                     {{-- Profile Dropdown --}}
@@ -222,6 +221,11 @@
     <x-disaster-toast />
 
     <script>
+        // Remove animation from main after it completes so fixed modals work correctly
+        document.querySelector('main.animate-fade-up')?.addEventListener('animationend', function() {
+            this.style.animation = 'none';
+        });
+
         window.userRole = "{{ strtolower(auth()->user()->role ?? '') }}";
 
         window.showDisasterToast = function(d) {

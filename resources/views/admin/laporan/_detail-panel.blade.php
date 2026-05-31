@@ -60,7 +60,6 @@
                                 <option value="AWAS">Awas</option>
                                 <option value="SIAGA_1">Siaga 1</option>
                                 <option value="SIAGA_2">Siaga 2</option>
-                                <option value="RESOLVED">Selesai</option>
                                 <option value="DECLINE">Tolak</option>
                             </select>
                         </div>
@@ -82,6 +81,11 @@
                             class="w-full py-2 text-xs font-semibold text-white rounded-lg cursor-pointer"
                             style="background: linear-gradient(135deg, #3B6FE8 0%, #1e3a8a 100%);">
                         Simpan Perubahan
+                    </button>
+                    <button type="button" id="btnResolveAction"
+                            class="w-full py-2 mt-2 text-xs font-semibold text-white rounded-lg cursor-pointer transition-all hover:opacity-90"
+                            style="background: linear-gradient(135deg, #059669 0%, #10b981 100%);">
+                        Tandai Selesai
                     </button>
                 </div>
 

@@ -26,10 +26,11 @@
     ];
 @endphp
 
-<div id="{{ $id }}" class="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm hidden opacity-0 transition-opacity duration-200">
-    <div class="bg-white rounded-2xl w-full max-w-sm overflow-hidden shadow-2xl border border-slate-100/80 transform scale-95 transition-transform duration-200">
+<div id="{{ $id }}" class="fixed inset-0 z-[9999] flex items-center justify-center p-4 hidden">
+    <div class="absolute inset-0 bg-slate-900/60 backdrop-blur-sm sigma-modal-backdrop"></div>
+    <div class="relative bg-white rounded-2xl w-full max-w-sm overflow-hidden shadow-2xl border border-slate-100/80 sigma-modal-content">
         <div class="p-6 text-center">
-            <div class="w-12 h-12 rounded-2xl bg-gradient-to-tr {{ $gradients[$color] ?? $gradients['emerald'] }} text-white flex items-center justify-center mx-auto mb-5 shadow-lg {{ $shadows[$color] ?? $shadows['emerald'] }} transform rotate-3 hover:rotate-0 transition-transform duration-300">
+            <div class="w-12 h-12 rounded-2xl bg-gradient-to-tr {{ $gradients[$color] ?? $gradients['emerald'] }} text-white flex items-center justify-center mx-auto mb-5 shadow-lg {{ $shadows[$color] ?? $shadows['emerald'] }} sigma-modal-icon" style="transform: rotate(3deg);">
                 @if($icon === 'check')
                     <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
                         <polyline points="20 6 9 17 4 12"></polyline>

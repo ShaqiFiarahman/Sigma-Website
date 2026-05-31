@@ -177,8 +177,8 @@
 
     {{-- No results (JS filtered) --}}
     <div id="noResults" class="hidden bg-white border border-slate-200/80 rounded-2xl p-14 text-center" style="box-shadow: 0 1px 3px rgba(10,15,30,0.06);">
-        <div class="w-14 h-14 rounded-2xl mx-auto mb-4 flex items-center justify-center" style="background: #E4F0F6;">
-            <i class="bi bi-emoji-frown text-2xl" style="color: #1e3a8a;"></i>
+        <div class="mb-4">
+            <i class="bi bi-emoji-frown text-3xl" style="color: #1e3a8a;"></i>
         </div>
         <p class="text-sm font-semibold text-slate-800 mb-1">Tidak ditemukan</p>
         <p class="text-xs text-slate-400">Coba ubah kata kunci atau filter pencarian.</p>

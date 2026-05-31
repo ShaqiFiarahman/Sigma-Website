@@ -365,19 +365,16 @@
 </div>
 
 {{-- ═══ CUSTOM CONFIRMATION MODAL ═══ --}}
-<div id="confirmModal" class="absolute inset-x-0 top-0 z-[999] flex items-start sm:items-center justify-center min-h-full hidden">
+<div id="confirmModal" class="fixed inset-0 z-[9999] flex items-center justify-center p-4 hidden">
     {{-- Backdrop --}}
-    <div class="absolute inset-0 bg-slate-900/50 backdrop-blur-sm" onclick="closeModal()"></div>
+    <div class="absolute inset-0 bg-slate-900/50 backdrop-blur-sm sigma-modal-backdrop" onclick="closeModal()"></div>
 
     {{-- Modal Panel --}}
-    <div class="relative bg-white w-full sm:max-w-[380px] sm:mx-4 sm:rounded-3xl rounded-t-3xl px-7 pt-8 pb-7 sm:my-auto mt-[15vh]"
+    <div class="relative bg-white w-full max-w-[380px] rounded-3xl px-7 pt-8 pb-7 sigma-modal-content"
          style="box-shadow: 0 -4px 40px rgba(10,15,30,0.10), 0 16px 50px rgba(10,15,30,0.15);">
 
-        {{-- Close pill (mobile) --}}
-        <div class="sm:hidden w-10 h-1 bg-slate-200 rounded-full mx-auto mb-6"></div>
-
         {{-- Icon --}}
-        <div id="modalIconWrap" class="mb-5 text-rose-500">
+        <div id="modalIconWrap" class="mb-5 text-rose-500 sigma-modal-icon">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"
                  stroke-linecap="round" stroke-linejoin="round" class="w-9 h-9">
                 <circle cx="10" cy="7" r="4"/>
@@ -470,11 +467,29 @@
         document.getElementById('modalConfirmLabel').textContent = cfg.confirmLabel;
         document.getElementById('modalIconWrap').innerHTML     = iconSvgs[cfg.iconKey];
 
-        document.getElementById('confirmModal').classList.remove('hidden');
+        const modal = document.getElementById('confirmModal');
+        const backdrop = modal.querySelector('.sigma-modal-backdrop');
+        const content = modal.querySelector('.sigma-modal-content');
+        modal.classList.remove('hidden');
+        requestAnimationFrame(() => {
+            backdrop.classList.add('is-visible');
+            content.classList.add('is-visible');
+        });
     }
 
     function closeModal() {
-        document.getElementById('confirmModal').classList.add('hidden');
+        const modal = document.getElementById('confirmModal');
+        const backdrop = modal.querySelector('.sigma-modal-backdrop');
+        const content = modal.querySelector('.sigma-modal-content');
+        backdrop.classList.remove('is-visible');
+        backdrop.classList.add('is-hiding');
+        content.classList.remove('is-visible');
+        content.classList.add('is-hiding');
+        setTimeout(() => {
+            modal.classList.add('hidden');
+            backdrop.classList.remove('is-hiding');
+            content.classList.remove('is-hiding');
+        }, 300);
         pendingFormId = null;
     }
 

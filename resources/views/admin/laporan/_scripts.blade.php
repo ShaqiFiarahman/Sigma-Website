@@ -103,20 +103,27 @@
 
     function showConfirmModal(callback) {
         const modal = document.getElementById('confirmModal');
-        const content = modal.querySelector('.transform');
+        const backdrop = modal.querySelector('.sigma-modal-backdrop');
+        const content = modal.querySelector('.sigma-modal-content');
         const okBtn = document.getElementById('confirmOkBtn');
         const cancelBtn = document.getElementById('confirmCancelBtn');
 
         modal.classList.remove('hidden');
-        setTimeout(() => {
-            modal.classList.remove('opacity-0');
-            content.classList.remove('scale-95');
-        }, 10);
+        requestAnimationFrame(() => {
+            backdrop.classList.add('is-visible');
+            content.classList.add('is-visible');
+        });
 
         const closeModal = () => {
-            modal.classList.add('opacity-0');
-            content.classList.add('scale-95');
-            setTimeout(() => { modal.classList.add('hidden'); }, 200);
+            backdrop.classList.remove('is-visible');
+            backdrop.classList.add('is-hiding');
+            content.classList.remove('is-visible');
+            content.classList.add('is-hiding');
+            setTimeout(() => {
+                modal.classList.add('hidden');
+                backdrop.classList.remove('is-hiding');
+                content.classList.remove('is-hiding');
+            }, 300);
         };
 
         const newOkBtn = okBtn.cloneNode(true);
@@ -126,20 +133,22 @@
 
         newOkBtn.addEventListener('click', () => { closeModal(); callback(true); });
         newCancelBtn.addEventListener('click', () => { closeModal(); callback(false); });
-        modal.onclick = (e) => { if (e.target === modal) { closeModal(); callback(false); } };
+        modal.onclick = (e) => { if (e.target === modal || e.target === backdrop) { closeModal(); callback(false); } };
     }
 
     // Save
     document.getElementById('btnSaveAction').addEventListener('click', () => {
         if (!currentId) return;
         const statusVal = document.getElementById('actionStatus').value;
-        if (statusVal === 'RESOLVED') {
-            showConfirmModal((confirmed) => {
-                if (confirmed) submitSaveForm(statusVal);
-            });
-        } else {
-            submitSaveForm(statusVal);
-        }
+        submitSaveForm(statusVal);
+    });
+
+    // Tandai Selesai
+    document.getElementById('btnResolveAction').addEventListener('click', () => {
+        if (!currentId) return;
+        showConfirmModal((confirmed) => {
+            if (confirmed) submitSaveForm('RESOLVED');
+        });
     });
 
     function submitSaveForm(statusVal) {

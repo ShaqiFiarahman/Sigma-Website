@@ -5,7 +5,7 @@
         <span id="notifBadge" class="hidden absolute top-1 right-1 min-w-[18px] h-[18px] flex items-center justify-center text-[9px] font-bold text-white bg-red-500 rounded-full px-1 animate-pulse">0</span>
     </button>
 
-    <div id="notifDropdown" class="hidden absolute right-0 top-full mt-2 w-80 bg-white border border-slate-200/80 rounded-2xl overflow-hidden z-50 animate-fade-in"
+    <div id="notifDropdown" class="hidden absolute right-0 top-full mt-2 w-80 bg-white border border-slate-200/80 rounded-2xl overflow-hidden z-50 notif-dropdown"
          style="box-shadow: 0 20px 40px -15px rgba(10, 15, 30, 0.25), 0 0 0 1px rgba(10, 15, 30, 0.045);">
         <div class="px-5 py-3 border-b border-slate-100 flex items-center justify-between" style="background: linear-gradient(180deg, #f8fafc 0%, #f1f5f9 100%);">
             <div class="flex items-center gap-1.5">
@@ -31,10 +31,37 @@
     const notifCount = document.getElementById('notifCount');
     const notifList = document.getElementById('notifList');
     const markReadBtn = document.getElementById('markReadBtn');
+    const bellIcon = notifBtn?.querySelector('.bi-bell');
     if (!notifBtn) return;
 
-    notifBtn.addEventListener('click', (e) => { e.stopPropagation(); notifDropdown.classList.toggle('hidden'); });
-    document.addEventListener('click', () => notifDropdown?.classList.add('hidden'));
+    let isOpen = false;
+
+    function openDropdown() {
+        isOpen = true;
+        notifDropdown.classList.remove('hidden', 'is-closing');
+        notifDropdown.classList.add('is-opening');
+        if (bellIcon) { bellIcon.classList.add('notif-bell-active'); setTimeout(() => bellIcon.classList.remove('notif-bell-active'), 600); }
+        notifDropdown.addEventListener('animationend', function handler() {
+            notifDropdown.classList.remove('is-opening');
+            notifDropdown.classList.add('is-open');
+            notifDropdown.removeEventListener('animationend', handler);
+        });
+    }
+
+    function closeDropdown() {
+        if (!isOpen) return;
+        isOpen = false;
+        notifDropdown.classList.remove('is-open', 'is-opening');
+        notifDropdown.classList.add('is-closing');
+        notifDropdown.addEventListener('animationend', function handler() {
+            notifDropdown.classList.remove('is-closing');
+            notifDropdown.classList.add('hidden');
+            notifDropdown.removeEventListener('animationend', handler);
+        });
+    }
+
+    notifBtn.addEventListener('click', (e) => { e.stopPropagation(); isOpen ? closeDropdown() : openDropdown(); });
+    document.addEventListener('click', () => closeDropdown());
     notifDropdown?.addEventListener('click', (e) => e.stopPropagation());
 
     function getLastSeen() { return localStorage.getItem('sigma_notif_last_seen') || '1970-01-01T00:00:00.000Z'; }
@@ -70,7 +97,7 @@
                 }
                 notifList.innerHTML = data.map(item => {
                     const isNew = item.created_at > lastSeen;
-                    return `<div class="px-5 py-3 flex items-start gap-3 hover:bg-slate-50/80 cursor-pointer border-b border-slate-100/50 last:border-0" onclick="window.location.href='/laporan/detail/${item.id}'">
+                    return `<div class="notif-item px-5 py-3 flex items-start gap-3 hover:bg-slate-50/80 cursor-pointer border-b border-slate-100/50 last:border-0" onclick="window.location.href='/laporan/detail/${item.id}'">
                         <div class="flex-1 min-w-0">
                             <p class="text-xs font-semibold text-slate-800 truncate">${item.title}</p>
                             <p class="text-[10px] text-slate-400 mt-0.5">${item.reporter} · ${item.date}</p>
