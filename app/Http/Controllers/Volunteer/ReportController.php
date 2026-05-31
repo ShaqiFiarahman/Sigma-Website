@@ -108,12 +108,8 @@ class ReportController extends Controller
                 }
 
                 if (!empty($needsInput)) {
-                    // Split the comma-separated, semicolon-separated, or newline-separated needs
                     $splitNeeds = preg_split('/[,;\n\r]+/', $needsInput);
-                    $currentLogistics = $shelter->logistics ?? [];
-                    if (!is_array($currentLogistics)) {
-                        $currentLogistics = [];
-                    }
+                    $currentLogistics = $shelter->logistics;
 
                     foreach ($splitNeeds as $needItem) {
                         $trimmed = trim($needItem);
@@ -122,7 +118,7 @@ class ReportController extends Controller
                         }
                     }
 
-                    $shelter->setAttribute('logistics', $currentLogistics);
+                    $shelter->logistics = $currentLogistics;
                     $shelter->save();
                 }
             }

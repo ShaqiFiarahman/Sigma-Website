@@ -3,13 +3,15 @@
 namespace App\Http\Controllers\Volunteer;
 
 use App\Http\Controllers\Controller;
-use App\Models\News;
+use App\Http\Controllers\Traits\FetchesNews;
 use App\Models\Volunteer;
 use App\Models\VolunteerReport;
 use Illuminate\Http\Request;
 
 class DashboardController extends Controller
 {
+    use FetchesNews;
+
     /**
      * Show the volunteer dashboard for approved volunteers
      */
@@ -132,26 +134,5 @@ class DashboardController extends Controller
 
         return redirect()->route('dashboard')
             ->with('msg', 'Penugasan ditolak. Admin akan meninjau alasan Anda.');
-    }
-
-    private function getNews(): array
-    {
-        return News::where('published_at', '>=', now()->subDays(7))
-            ->latest('published_at')
-            ->limit(6)
-            ->get()
-            ->map(function ($item) {
-                return [
-                    'id' => $item->id,
-                    'title' => $item->title,
-                    'time' => $item->published_at->diffForHumans(),
-                    'category' => strtoupper($item->source),
-                    'tone' => 'info',
-                    'image_url' => $item->image_url,
-                    'url' => $item->url,
-                    'source' => $item->source,
-                ];
-            })
-            ->toArray();
     }
 }

@@ -6,12 +6,15 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreShelterRequest;
 use App\Models\Shelter;
 use App\Models\Volunteer;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Facades\Storage;
+use App\Services\ImageUploadService;
+use Illuminate\Http\UploadedFile;
 
 class ShelterController extends Controller
 {
+    public function __construct(
+        private ImageUploadService $imageUpload,
+    ) {}
+
     public function create()
     {
         return view('admin.shelter.create');
@@ -19,47 +22,13 @@ class ShelterController extends Controller
 
     public function store(StoreShelterRequest $request)
     {
-        $data = [
-            'name' => $request->name,
-            'address' => $request->address,
-            'capacity_current' => $request->capacity_current,
-            'capacity_max' => $request->capacity_max,
-            'status' => $request->status,
-            'logistics' => $request->logistics ? array_map('trim', explode(',', $request->logistics)) : [],
-            'contact_phone' => $request->contact_phone,
-            'latitude' => $request->latitude,
-            'longitude' => $request->longitude,
-        ];
+        $data = $this->buildShelterData($request);
 
         $shelter = Shelter::create($data);
 
         if ($request->hasFile('photo')) {
-            $file = $request->file('photo');
-            $filename = 'shelter-' . $shelter->id . '-' . time() . '.' . $file->getClientOriginalExtension();
-
-            $supabaseUrl = rtrim(config('services.supabase.url'), '/');
-            $supabaseKey = config('services.supabase.key');
-            $bucketName = 'shelters';
-
-            if ($supabaseUrl && $supabaseKey) {
-                try {
-                    $response = Http::withHeaders([
-                        'Authorization' => 'Bearer ' . $supabaseKey,
-                        'Content-Type' => $file->getMimeType(),
-                    ])->withBody(file_get_contents($file->getRealPath()), $file->getMimeType())
-                      ->post($supabaseUrl . "/storage/v1/object/" . $bucketName . "/" . $filename);
-
-                    if ($response->successful()) {
-                        $shelter->update(['photo_url' => $supabaseUrl . "/storage/v1/object/public/" . $bucketName . "/" . $filename]);
-                    }
-                } catch (\Exception $e) {
-                    $path = $file->store('shelters', 'public');
-                    $shelter->update(['photo_url' => Storage::url($path)]);
-                }
-            } else {
-                $path = $file->store('shelters', 'public');
-                $shelter->update(['photo_url' => Storage::url($path)]);
-            }
+            $photoUrl = $this->uploadShelterPhoto($request->file('photo'), $shelter->id);
+            $shelter->update(['photo_url' => $photoUrl]);
         }
 
         return redirect()->route('shelter')->with('msg', 'Posko berhasil ditambahkan.');
@@ -77,46 +46,10 @@ class ShelterController extends Controller
     public function update(StoreShelterRequest $request, $id)
     {
         $shelter = Shelter::findOrFail($id);
-
-        $data = [
-            'name' => $request->name,
-            'address' => $request->address,
-            'capacity_current' => $request->capacity_current,
-            'capacity_max' => $request->capacity_max,
-            'status' => $request->status,
-            'logistics' => $request->logistics ? array_map('trim', explode(',', $request->logistics)) : [],
-            'contact_phone' => $request->contact_phone,
-            'latitude' => $request->latitude,
-            'longitude' => $request->longitude,
-        ];
+        $data = $this->buildShelterData($request);
 
         if ($request->hasFile('photo')) {
-            $file = $request->file('photo');
-            $filename = 'shelter-' . $shelter->id . '-' . time() . '.' . $file->getClientOriginalExtension();
-
-            $supabaseUrl = rtrim(config('services.supabase.url'), '/');
-            $supabaseKey = config('services.supabase.key');
-            $bucketName = 'shelters';
-
-            if ($supabaseUrl && $supabaseKey) {
-                try {
-                    $response = Http::withHeaders([
-                        'Authorization' => 'Bearer ' . $supabaseKey,
-                        'Content-Type' => $file->getMimeType(),
-                    ])->withBody(file_get_contents($file->getRealPath()), $file->getMimeType())
-                      ->post($supabaseUrl . "/storage/v1/object/" . $bucketName . "/" . $filename);
-
-                    if ($response->successful()) {
-                        $data['photo_url'] = $supabaseUrl . "/storage/v1/object/public/" . $bucketName . "/" . $filename;
-                    }
-                } catch (\Exception $e) {
-                    $path = $file->store('shelters', 'public');
-                    $data['photo_url'] = Storage::url($path);
-                }
-            } else {
-                $path = $file->store('shelters', 'public');
-                $data['photo_url'] = Storage::url($path);
-            }
+            $data['photo_url'] = $this->uploadShelterPhoto($request->file('photo'), $shelter->id);
         }
 
         $shelter->update($data);
@@ -129,5 +62,34 @@ class ShelterController extends Controller
         $shelter = Shelter::findOrFail($id);
         $shelter->delete();
         return redirect()->route('shelter')->with('msg', 'Posko berhasil dihapus.');
+    }
+
+    /**
+     * Build the shelter data array from the request.
+     */
+    private function buildShelterData(StoreShelterRequest $request): array
+    {
+        return [
+            'name' => $request->name,
+            'address' => $request->address,
+            'capacity_current' => $request->capacity_current,
+            'capacity_max' => $request->capacity_max,
+            'status' => $request->status,
+            'logistics' => $request->logistics ? array_map('trim', explode(',', $request->logistics)) : [],
+            'contact_phone' => $request->contact_phone,
+            'latitude' => $request->latitude,
+            'longitude' => $request->longitude,
+        ];
+    }
+
+    /**
+     * Upload a shelter photo using the ImageUploadService.
+     */
+    private function uploadShelterPhoto(UploadedFile $file, int $shelterId): string
+    {
+        return $this->imageUpload->upload(
+            file: $file,
+            bucket: 'shelters',
+        );
     }
 }

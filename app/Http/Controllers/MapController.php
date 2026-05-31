@@ -126,7 +126,7 @@ class MapController extends Controller
             'status'        => $s->status,
             'lat'           => $s->latitude,
             'lng'           => $s->longitude,
-            'logistics'     => $s->logistics ?? [],
+            'logistics'     => $s->getDynamicLogistics(),
             'contact_phone' => $s->contact_phone,
             'photo_url'     => $s->photo_url,
         ];

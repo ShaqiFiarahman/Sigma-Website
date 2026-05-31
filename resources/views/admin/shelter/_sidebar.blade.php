@@ -52,12 +52,13 @@
         </div>
     </div>
 
-    {{-- Logistik Saat Ini --}}
-    @if(!empty($shelter->logistics))
+    {{-- Logistik Saat Ini (computed from volunteer reports) --}}
+    @php($dynamicLogistics = $shelter->getDynamicLogistics())
+    @if(!empty($dynamicLogistics))
         <div class="bg-white border border-slate-200/80 rounded-2xl p-5" style="box-shadow: 0 1px 3px rgba(10,15,30,0.06);">
             <p class="text-xs font-bold text-slate-700 mb-3">Kebutuhan Logistik</p>
             <div class="flex flex-wrap gap-2">
-                @foreach($shelter->logistics as $item)
+                @foreach($dynamicLogistics as $item)
                     <span class="text-[11px] font-medium px-2.5 py-1 rounded-lg border border-teal-100 text-teal-700" style="background: #F0FDFA;">{{ $item }}</span>
                 @endforeach
             </div>

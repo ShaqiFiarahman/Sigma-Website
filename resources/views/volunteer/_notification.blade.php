@@ -1,15 +1,5 @@
 {{-- Volunteer Notification Bell (Navbar) --}}
-@php
-    $volunteerNotif = null;
-    if (strtolower(auth()->user()->role ?? '') === 'relawan') {
-        $volunteerNotif = \App\Models\Volunteer::where('user_id', auth()->id())
-            ->where('status', \App\Models\Volunteer::STATUS_APPROVED)
-            ->whereNotNull('assignment')
-            ->where('assignment_status', 'pending')
-            ->with(['disaster', 'assignedByUser'])
-            ->first();
-    }
-@endphp
+{{-- Data $volunteerNotif is provided by VolunteerNotificationComposer --}}
 
 @if($volunteerNotif)
 <div class="hidden md:block relative" id="volunteerNotifWrapper">

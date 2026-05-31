@@ -49,27 +49,54 @@ class Shelter extends Model
         $this->attributes['logistics'] = is_array($value) ? json_encode($value) : $value;
     }
 
-    public function getLogisticsAttribute($value)
+    /**
+     * Simple accessor: returns the raw database value as an array.
+     * Use getDynamicLogistics() for computed logistics from volunteer reports.
+     */
+    public function getLogisticsAttribute($value): array
     {
-        // 1. Fetch all volunteer reports with skill type MEDIS or LOGISTIK where the volunteer's assignment matches $this->name
-        $volunteerIds = \App\Models\Volunteer::where('assignment', $this->name)
-            ->where('status', \App\Models\Volunteer::STATUS_APPROVED)
+        if (is_string($value)) {
+            $decoded = json_decode($value, true);
+            return is_array($decoded) ? $decoded : [];
+        }
+
+        return is_array($value) ? $value : [];
+    }
+
+    /**
+     * Get dynamic logistics needs from volunteer reports assigned to this shelter.
+     * Call this explicitly when you need computed data (e.g. $shelter->getDynamicLogistics()).
+     */
+    public function getDynamicLogistics(): array
+    {
+        $volunteerIds = Volunteer::where('assignment', $this->name)
+            ->where('status', Volunteer::STATUS_APPROVED)
             ->pluck('id');
 
-        $reports = \App\Models\VolunteerReport::whereIn('volunteer_id', $volunteerIds)
+        if ($volunteerIds->isEmpty()) {
+            return $this->logistics;
+        }
+
+        $reports = VolunteerReport::whereIn('volunteer_id', $volunteerIds)
             ->whereIn('skill_type', ['MEDIS', 'LOGISTIK'])
             ->get();
 
         $needs = [];
         foreach ($reports as $report) {
             $data = $report->report_data;
-            $items = [];
+            $rawItems = '';
+
             if ($report->skill_type === 'MEDIS' && !empty($data['kebutuhan_medis'])) {
-                $items = preg_split('/[,;\n\r]+/', $data['kebutuhan_medis']);
+                $rawItems = $data['kebutuhan_medis'];
             } elseif ($report->skill_type === 'LOGISTIK' && !empty($data['kebutuhan_mendesak'])) {
-                $items = preg_split('/[,;\n\r]+/', $data['kebutuhan_mendesak']);
+                $rawItems = $data['kebutuhan_mendesak'];
             }
 
+            if (empty($rawItems)) {
+                continue;
+            }
+
+            $items = preg_split('/[,;\n\r]+/', $rawItems);
             foreach ($items as $item) {
                 $trimmed = trim($item);
                 if (!empty($trimmed) && !in_array($trimmed, $needs)) {
@@ -78,32 +105,6 @@ class Shelter extends Model
             }
         }
 
-        // If we have dynamic reports, return them!
-        if (!empty($needs)) {
-            return $needs;
-        }
-
-        // Otherwise, return the database value or empty array if it's just dummy
-        $dbLogistics = $value;
-        if (is_string($dbLogistics)) {
-            $dbLogistics = json_decode($dbLogistics, true);
-        }
-        if (!is_array($dbLogistics)) {
-            $dbLogistics = [];
-        }
-
-        // Filter out old dummy seeded values to keep it clean.
-        $dummyItems = [
-            'Sembako', 'Air Mineral', 'Selimut', 'Pakaian Layak Pakai', 
-            'Alat Mandi', 'Sleeping Bag', 'Makanan Instan', 'Obat-obatan', 
-            'Popok Bayi', 'Susu Formula', 'Tikar'
-        ];
-        
-        $filtered = array_filter($dbLogistics, function($item) use ($dummyItems) {
-            return !in_array(trim($item), $dummyItems);
-        });
-
-        return array_values($filtered);
+        return !empty($needs) ? $needs : $this->logistics;
     }
 }
-

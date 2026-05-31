@@ -5,12 +5,17 @@ namespace App\Http\Controllers\User;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreLaporanRequest;
 use App\Models\Disaster;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Facades\Storage;
+use App\Models\VolunteerReport;
+use App\Services\GeocodingService;
+use App\Services\ImageUploadService;
 
 class LaporanController extends Controller
 {
+    public function __construct(
+        private GeocodingService $geocoding,
+        private ImageUploadService $imageUpload,
+    ) {}
+
     public function create()
     {
         $riwayat = Disaster::where('user_id', auth()->id())
@@ -24,64 +29,17 @@ class LaporanController extends Controller
     public function store(StoreLaporanRequest $request)
     {
         $user = auth()->user();
-        $photoUrls = [];
 
-        // Reverse Geocoding via Nominatim
-        $locationName = 'Lokasi tidak diketahui';
-        try {
-            $response = Http::withHeaders([
-                'User-Agent' => 'SigmaApp/1.0'
-            ])->timeout(5)->get('https://nominatim.openstreetmap.org/reverse', [
-                'format' => 'json',
-                'lat' => $request->latitude,
-                'lon' => $request->longitude,
-                'zoom' => 18,
-            ]);
+        // Reverse geocode the coordinates
+        $locationName = $this->geocoding->reverseGeocode(
+            (float) $request->latitude,
+            (float) $request->longitude
+        );
 
-            if ($response->successful()) {
-                $data = $response->json();
-                $locationName = $data['display_name'] ?? 'Lokasi tidak diketahui';
-            }
-        } catch (\Exception $e) {
-            // Fallback
-        }
+        // Upload photos
+        $photoUrls = $this->uploadPhotos($request);
 
-        if ($request->hasFile('foto')) {
-            foreach ($request->file('foto') as $file) {
-                $path = $file->store('laporan', 'public');
-                $absolutePath = storage_path('app/public/' . $path);
-                $this->compressImage($absolutePath, $absolutePath, 60);
-
-                $fileContent = file_get_contents($absolutePath);
-                $filename = basename($absolutePath);
-
-                $supabaseUrl = rtrim(config('services.supabase.url'), '/');
-                $supabaseKey = config('services.supabase.key');
-                $bucketName = config('services.supabase.bucket', 'laporan');
-
-                if ($supabaseUrl && $supabaseKey) {
-                    try {
-                        $response = Http::withHeaders([
-                            'Authorization' => 'Bearer ' . $supabaseKey,
-                            'Content-Type' => mime_content_type($absolutePath),
-                        ])->withBody($fileContent, mime_content_type($absolutePath))
-                          ->post($supabaseUrl . "/storage/v1/object/" . $bucketName . "/" . $filename);
-
-                        if ($response->successful()) {
-                            $photoUrls[] = $supabaseUrl . "/storage/v1/object/public/" . $bucketName . "/" . $filename;
-                            @unlink($absolutePath);
-                        } else {
-                            $photoUrls[] = Storage::url($path);
-                        }
-                    } catch (\Exception $e) {
-                        $photoUrls[] = Storage::url($path);
-                    }
-                } else {
-                    $photoUrls[] = Storage::url($path);
-                }
-            }
-        }
-
+        // Create the disaster report
         Disaster::create([
             'user_id'       => $user->id,
             'title'         => $request->judul,
@@ -103,13 +61,12 @@ class LaporanController extends Controller
         $disaster = Disaster::with('user')->findOrFail($id);
         $laporan = $this->toArray($disaster);
 
-        // Fetch the latest reports
-        $latestMedis = \App\Models\VolunteerReport::where('disaster_id', $id)
+        $latestMedis = VolunteerReport::where('disaster_id', $id)
             ->where('skill_type', 'MEDIS')
             ->latest()
             ->first();
 
-        $latestSar = \App\Models\VolunteerReport::where('disaster_id', $id)
+        $latestSar = VolunteerReport::where('disaster_id', $id)
             ->where('skill_type', 'SAR')
             ->latest()
             ->first();
@@ -117,6 +74,30 @@ class LaporanController extends Controller
         return view('laporan.show', compact('laporan', 'latestMedis', 'latestSar'));
     }
 
+    /**
+     * Upload all photos from the request.
+     *
+     * @return array<string>
+     */
+    private function uploadPhotos(StoreLaporanRequest $request): array
+    {
+        $photoUrls = [];
+
+        if ($request->hasFile('foto')) {
+            foreach ($request->file('foto') as $file) {
+                $photoUrls[] = $this->imageUpload->upload(
+                    file: $file,
+                    bucket: config('services.supabase.bucket', 'laporan'),
+                );
+            }
+        }
+
+        return $photoUrls;
+    }
+
+    /**
+     * Transform a Disaster model into a display-friendly array.
+     */
     private function toArray(Disaster $d): array
     {
         $lokasi = $d->location
@@ -144,26 +125,5 @@ class LaporanController extends Controller
             'type_color'      => $d->type_color,
             'type_name'       => $d->type_name,
         ];
-    }
-
-    private function compressImage($sourceFile, $destinationPath, $quality = 60)
-    {
-        $info = getimagesize($sourceFile);
-
-        if ($info['mime'] == 'image/jpeg') {
-            $image = imagecreatefromjpeg($sourceFile);
-            imagejpeg($image, $destinationPath, $quality);
-        } elseif ($info['mime'] == 'image/png') {
-            $image = imagecreatefrompng($sourceFile);
-            imagepng($image, $destinationPath, 6);
-        } elseif ($info['mime'] == 'image/webp') {
-            $image = imagecreatefromwebp($sourceFile);
-            imagewebp($image, $destinationPath, $quality);
-        } else {
-            return false;
-        }
-
-        imagedestroy($image);
-        return true;
     }
 }
