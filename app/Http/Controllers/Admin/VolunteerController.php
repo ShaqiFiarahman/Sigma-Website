@@ -88,6 +88,7 @@ class VolunteerController extends Controller
             'assignment_notified_at' => null,
             'assignment_status' => $isClearing ? null : 'pending',
             'assignment_rejection_reason' => null,
+            'assigned_by' => $isClearing ? null : auth()->id(),
         ]);
 
         $msg = $isClearing ? 'Penugasan berhasil dihapus.' : 'Penugasan dikirim, menunggu konfirmasi relawan.';

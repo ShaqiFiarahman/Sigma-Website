@@ -18,7 +18,7 @@ class DashboardController extends Controller
         $user = auth()->user();
         $volunteerData = Volunteer::where('user_id', $user->id)
             ->where('status', Volunteer::STATUS_APPROVED)
-            ->with('disaster')
+            ->with(['disaster', 'assignedByUser'])
             ->firstOrFail();
 
         $news = $this->getNews();

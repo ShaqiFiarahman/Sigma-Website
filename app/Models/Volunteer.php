@@ -21,6 +21,7 @@ class Volunteer extends Model
         'assignment_notified_at',
         'assignment_status',
         'assignment_rejection_reason',
+        'assigned_by',
     ];
 
     protected $casts = [
@@ -74,6 +75,11 @@ class Volunteer extends Model
     public function disaster(): BelongsTo
     {
         return $this->belongsTo(Disaster::class);
+    }
+
+    public function assignedByUser(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'assigned_by');
     }
 
     public function getStatusLabelAttribute(): string
