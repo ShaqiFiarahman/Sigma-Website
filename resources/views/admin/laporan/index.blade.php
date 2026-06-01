@@ -31,12 +31,7 @@
 
 @include('admin.laporan._confirm-modal')
 
-<style>
-    .tab-btn { background: white; color: #64748b; border: 1px solid #e2e8f0; }
-    .tab-btn:hover { color: #1e40af; border-color: #93c5fd; }
-    .tab-btn.active { background: #0F172A; color: white; border-color: transparent; }
-    .laporan-item.active { background: #EFF6FF !important; }
-</style>
+
 @endsection
 
 @section('scripts')

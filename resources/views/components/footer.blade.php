@@ -1,15 +1,4 @@
 @if(strtolower(auth()->user()->role ?? '') !== 'admin')
-<style>
-    .u-footer {
-        position: relative;
-        background: rgba(255, 255, 255, 0.45);
-        backdrop-filter: blur(20px);
-        -webkit-backdrop-filter: blur(20px);
-        border-top: 1px solid rgba(59, 111, 232, 0.08);
-        margin-top: 3rem;
-        box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.6);
-    }
-</style>
 <footer class="py-10 u-footer">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8 text-xs text-slate-500 mb-8">

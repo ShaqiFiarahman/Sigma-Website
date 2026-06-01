@@ -315,53 +315,6 @@
 @endsection
 
 @section('scripts')
-<script>
-    // News scroll indicators
-    const newsScroll = document.querySelector('.news-scroll');
-    const indicatorsContainer = document.getElementById('newsIndicators');
-
-    if (newsScroll && indicatorsContainer) {
-        for (let i = 0; i < 3; i++) {
-            const dot = document.createElement('div');
-            dot.className = `w-2 h-2 rounded-full transition-all duration-300 cursor-pointer ${i === 0 ? 'bg-[#2B52C3] w-8' : 'bg-slate-300'}`;
-            dot.addEventListener('click', () => {
-                const maxScroll = newsScroll.scrollWidth - newsScroll.clientWidth;
-                newsScroll.scrollTo({ left: i === 0 ? 0 : i === 1 ? maxScroll * 0.5 : maxScroll, behavior: 'smooth' });
-            });
-            indicatorsContainer.appendChild(dot);
-        }
-
-        const dots = indicatorsContainer.querySelectorAll('div');
-
-        newsScroll.addEventListener('wheel', (e) => {
-            if (e.deltaY !== 0) {
-                const maxScroll = newsScroll.scrollWidth - newsScroll.clientWidth;
-                if (maxScroll > 0) {
-                    const atStart = newsScroll.scrollLeft <= 0;
-                    const atEnd = newsScroll.scrollLeft >= maxScroll - 1;
-                    if ((e.deltaY < 0 && atStart) || (e.deltaY > 0 && atEnd)) {
-                        return;
-                    }
-                    e.preventDefault();
-                    newsScroll.scrollBy({ left: e.deltaY * 2.5, behavior: 'smooth' });
-                }
-            }
-        }, { passive: false });
-
-        newsScroll.addEventListener('scroll', () => {
-            const maxScroll = newsScroll.scrollWidth - newsScroll.clientWidth;
-            let activeIndex = 0;
-            if (maxScroll > 0) {
-                const pct = newsScroll.scrollLeft / maxScroll;
-                if (pct > 0.33 && pct <= 0.66) activeIndex = 1;
-                else if (pct > 0.66) activeIndex = 2;
-            }
-            dots.forEach((dot, i) => {
-                dot.className = i === activeIndex ? 'w-8 h-2 rounded-full bg-[#2B52C3] transition-all duration-300' : 'w-2 h-2 rounded-full bg-slate-300 transition-all duration-300';
-            });
-        });
-    }
-</script>
 @endsection
 
 @endsection

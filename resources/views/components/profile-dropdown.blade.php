@@ -215,96 +215,7 @@
 </div>
 
 <script>
-    {{-- Dropdown open/close behaviour with animation --}}
-    (function () {
-        const btn = document.getElementById('profileDropdownBtn');
-        const dropdown = document.getElementById('profileDropdown');
-        if (!btn || !dropdown) return;
-
-        let isAnimating = false;
-
-        window.openProfileDropdown = function () {
-            if (isAnimating || !dropdown.classList.contains('hidden')) return;
-            isAnimating = true;
-            dropdown.classList.remove('hidden', 'is-closing');
-            dropdown.classList.add('is-opening');
-            btn.setAttribute('aria-expanded', 'true');
-            showProfilePanel('profileMainPanel');
-            dropdown.addEventListener('animationend', function handler() {
-                dropdown.classList.remove('is-opening');
-                isAnimating = false;
-                dropdown.removeEventListener('animationend', handler);
-            });
-        };
-
-        window.closeProfileDropdown = function () {
-            if (isAnimating || dropdown.classList.contains('hidden')) return;
-            isAnimating = true;
-            dropdown.classList.remove('is-opening');
-            dropdown.classList.add('is-closing');
-            btn.setAttribute('aria-expanded', 'false');
-            dropdown.addEventListener('animationend', function handler() {
-                dropdown.classList.add('hidden');
-                dropdown.classList.remove('is-closing');
-                isAnimating = false;
-                dropdown.removeEventListener('animationend', handler);
-            });
-        };
-
-        btn.addEventListener('click', (e) => {
-            e.stopPropagation();
-            if (dropdown.classList.contains('hidden')) {
-                openProfileDropdown();
-            } else {
-                closeProfileDropdown();
-            }
-        });
-
-        document.addEventListener('click', (e) => {
-            if (!dropdown.contains(e.target) && !btn.contains(e.target)) {
-                closeProfileDropdown();
-            }
-        });
-    })();
-
-    function showProfilePanel(panelId, direction = null) {
-        const panels = ['profileMainPanel', 'profileEditPanel', 'profilePasswordPanel'];
-
-        // Hide all panels & clear transition classes
-        panels.forEach(id => {
-            const el = document.getElementById(id);
-            el.classList.add('hidden');
-            el.classList.remove('profile-panel-forward', 'profile-panel-back');
-        });
-
-        // Hide messages
-        document.getElementById('profileEditError').classList.add('hidden');
-        document.getElementById('profileEditSuccess').classList.add('hidden');
-        document.getElementById('profilePasswordError').classList.add('hidden');
-        document.getElementById('profilePasswordSuccess').classList.add('hidden');
-
-        // Show target panel
-        const target = document.getElementById(panelId);
-        target.classList.remove('hidden');
-
-        // Apply directional slide animation
-        if (direction === 'forward') {
-            target.classList.add('profile-panel-forward');
-        } else if (direction === 'back') {
-            target.classList.add('profile-panel-back');
-        }
-
-        // Re-trigger staggered reveal when returning to the main panel
-        if (panelId === 'profileMainPanel') {
-            target.querySelectorAll('.stagger-item').forEach(item => {
-                item.style.animation = 'none';
-                // Force reflow so the animation can restart
-                void item.offsetWidth;
-                item.style.animation = '';
-            });
-        }
-    }
-
+    {{-- Profile form submissions (need Blade route URLs) --}}
     function submitProfileEdit(event) {
         event.preventDefault();
         const form = event.target;
@@ -314,7 +225,6 @@
         const errDiv = document.getElementById('profileEditError');
         const succDiv = document.getElementById('profileEditSuccess');
 
-        // UI Loading State
         btn.disabled = true;
         txt.textContent = 'Menyimpan...';
         spinner.classList.remove('hidden');
@@ -324,9 +234,7 @@
         fetch('{{ route("profile.update") }}', {
             method: 'POST',
             body: new FormData(form),
-            headers: {
-                'X-Requested-With': 'XMLHttpRequest'
-            }
+            headers: { 'X-Requested-With': 'XMLHttpRequest' }
         })
         .then(response => response.json().then(data => ({ status: response.status, body: data })))
         .then(res => {
@@ -338,28 +246,19 @@
                 succDiv.textContent = res.body.message;
                 succDiv.classList.remove('hidden');
 
-                // Dynamically update dropdown header text and avatar initials
                 const headerName = document.querySelector('#profileDropdown h3');
-                if (headerName && res.body.full_name) {
-                    headerName.textContent = res.body.full_name;
-                }
+                if (headerName && res.body.full_name) headerName.textContent = res.body.full_name;
 
                 const avatarDiv = document.querySelector('#profileDropdown .profile-avatar');
-                if (avatarDiv && res.body.full_name) {
-                    avatarDiv.textContent = res.body.full_name.charAt(0).toUpperCase();
-                }
+                if (avatarDiv && res.body.full_name) avatarDiv.textContent = res.body.full_name.charAt(0).toUpperCase();
 
-                // Soft refresh to apply changes across the layout
-                setTimeout(() => {
-                    showProfilePanel('profileMainPanel');
-                    window.location.reload();
-                }, 1200);
+                setTimeout(() => { showProfilePanel('profileMainPanel'); window.location.reload(); }, 1200);
             } else {
                 errDiv.textContent = res.body.message || 'Terjadi kesalahan saat menyimpan profil.';
                 errDiv.classList.remove('hidden');
             }
         })
-        .catch(err => {
+        .catch(() => {
             btn.disabled = false;
             txt.textContent = 'Simpan';
             spinner.classList.add('hidden');
@@ -377,7 +276,6 @@
         const errDiv = document.getElementById('profilePasswordError');
         const succDiv = document.getElementById('profilePasswordSuccess');
 
-        // UI Loading State
         btn.disabled = true;
         txt.textContent = 'Menyimpan...';
         spinner.classList.remove('hidden');
@@ -387,9 +285,7 @@
         fetch('{{ route("profile.password") }}', {
             method: 'POST',
             body: new FormData(form),
-            headers: {
-                'X-Requested-With': 'XMLHttpRequest'
-            }
+            headers: { 'X-Requested-With': 'XMLHttpRequest' }
         })
         .then(response => response.json().then(data => ({ status: response.status, body: data })))
         .then(res => {
@@ -401,12 +297,8 @@
                 succDiv.textContent = res.body.message;
                 succDiv.classList.remove('hidden');
                 form.reset();
-
-                setTimeout(() => {
-                    showProfilePanel('profileMainPanel');
-                }, 1500);
+                setTimeout(() => { showProfilePanel('profileMainPanel'); }, 1500);
             } else {
-                // Extract precise validation message
                 let msg = res.body.message || 'Terjadi kesalahan saat mengubah kata sandi.';
                 if (res.body.errors) {
                     const firstKey = Object.keys(res.body.errors)[0];
@@ -416,7 +308,7 @@
                 errDiv.classList.remove('hidden');
             }
         })
-        .catch(err => {
+        .catch(() => {
             btn.disabled = false;
             txt.textContent = 'Simpan';
             spinner.classList.add('hidden');

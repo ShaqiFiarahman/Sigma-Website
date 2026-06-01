@@ -164,18 +164,6 @@
 @endsection
 
 @section('scripts')
-    <style>
-        @keyframes shake {
-            0%, 100% { transform: translateX(0); }
-            15%, 45%, 75% { transform: translateX(-6px); }
-            30%, 60% { transform: translateX(6px); }
-        }
-        .shake-highlight {
-            animation: shake 0.5s ease-in-out;
-            border-color: #EF4444 !important;
-            box-shadow: 0 0 0 4px rgba(239, 68, 68, 0.25) !important;
-        }
-    </style>
     <script src="https://maps.googleapis.com/maps/api/js?key={{ config('services.google_maps.key') }}&callback=initMap"
         async defer></script>
     <script>

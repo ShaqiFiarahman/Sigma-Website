@@ -21,9 +21,7 @@
                 {{-- Header --}}
                 <div class="pl-5 pr-6 py-4 border-l-4 border-l-[#3B6FE8] border-b border-slate-100 bg-white flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                     <div class="flex items-center gap-3">
-                        <div class="w-8 h-8 rounded-lg flex items-center justify-center bg-blue-50 text-blue-600 border border-blue-100/50 shrink-0">
-                            <i class="bi bi-book-fill"></i>
-                        </div>
+                        <i class="bi bi-book-fill text-blue-600 text-xl shrink-0"></i>
                         <div>
                             <h2 class="text-base font-bold text-slate-800 leading-tight">Buku Saku Siaga Bencana</h2>
                             <p class="text-xs text-slate-500 mt-0.5">BNPB 2019 &middot; Panduan Mitigasi Bencana</p>

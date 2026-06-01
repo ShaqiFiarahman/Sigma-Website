@@ -185,11 +185,7 @@
     </div>
 </div>
 
-<style>
-    .filter-chip { background: white; border-color: #e2e8f0; color: #64748b; }
-    .filter-chip:hover { border-color: #93c5fd; color: #1e40af; background: #eff6ff; }
-    .filter-chip.active { background: linear-gradient(135deg, #3B6FE8 0%, #1e3a8a 100%); border-color: transparent; color: white; box-shadow: 0 2px 8px rgba(30,58,138,0.25); }
-</style>
+
 @endsection
 
 @section('scripts')

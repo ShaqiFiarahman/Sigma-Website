@@ -20,7 +20,24 @@
 
 /* Base */
 html { scroll-behavior: smooth; }
-body { font-family: 'Plus Jakarta Sans', ui-sans-serif, system-ui, sans-serif; -webkit-font-smoothing: antialiased; background-color: #F4F7FC; }
+body { font-family: 'Plus Jakarta Sans', ui-sans-serif, system-ui, sans-serif; -webkit-font-smoothing: antialiased; background-color: #F4F7FC; background-image: radial-gradient(circle at 50% 0%, rgba(59, 111, 232, 0.04), transparent 50%), radial-gradient(circle at 100% 100%, rgba(59, 111, 232, 0.02), transparent 40%); background-attachment: fixed; }
+
+/* ── CSS Variables ───────────────────────────────────────────── */
+:root {
+    --abyss: #0A0F1E;
+    --abyss-mid: #111827;
+    --frost: #E4F0F6;
+    --frost-mid: #C8DFF0;
+    --accent: #3B6FE8;
+    --accent-light: #5B8DF5;
+}
+
+/* ── Navbar ──────────────────────────────────────────────────── */
+#mainNavbar { background: rgba(255, 255, 255, 0.97); border-bottom: 1px solid rgba(10, 15, 30, 0.08); }
+.nav-active { background: linear-gradient(135deg, rgba(59, 111, 232, 0.10) 0%, rgba(59, 111, 232, 0.05) 100%); color: var(--accent) !important; font-weight: 600; }
+.brand-mark { background: linear-gradient(135deg, var(--abyss) 0%, #1e3a8a 100%); box-shadow: 0 2px 8px rgba(10, 15, 30, 0.25); }
+.btn-primary { background: linear-gradient(135deg, #1e3a8a 0%, var(--accent) 100%); box-shadow: 0 2px 8px rgba(59, 111, 232, 0.25); }
+.btn-primary:hover { background: linear-gradient(135deg, var(--accent) 0%, #5B8DF5 100%); box-shadow: 0 4px 14px rgba(59, 111, 232, 0.35); transform: translateY(-1px); }
 
 /* Animations */
 @keyframes fade-up { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
@@ -327,3 +344,73 @@ body { font-family: 'Plus Jakarta Sans', ui-sans-serif, system-ui, sans-serif; -
 /* FAB */
 .fab-emergency { position: fixed; bottom: 2rem; right: 2rem; z-index: 40; background: linear-gradient(135deg, #ef4444, #dc2626); color: #fff; padding: 1rem 1.5rem; border-radius: 999px; font-weight: 800; font-size: 0.875rem; display: inline-flex; align-items: center; gap: 0.6rem; box-shadow: 0 8px 24px rgba(239,68,68,0.35); border: 1px solid #f87171; cursor: pointer; animation: pulse-soft 2.5s ease-in-out infinite; }
 .fab-emergency:hover { transform: translateY(-3px); box-shadow: 0 12px 28px rgba(239,68,68,0.45); }
+
+/* ── Filter Chips (used in laporan/search & shelter/index) ─── */
+.filter-chip { background: white; border-color: #e2e8f0; color: #64748b; }
+.filter-chip:hover { border-color: #93c5fd; color: #1e40af; background: #eff6ff; }
+.filter-chip.active { background: linear-gradient(135deg, #3B6FE8 0%, #1e3a8a 100%); border-color: transparent; color: white; box-shadow: 0 2px 8px rgba(30,58,138,0.25); }
+
+/* ── Tab Buttons (admin laporan) ─────────────────────────────── */
+.tab-btn { background: white; color: #64748b; border: 1px solid #e2e8f0; }
+.tab-btn:hover { color: #1e40af; border-color: #93c5fd; }
+.tab-btn.active { background: #0F172A; color: white; border-color: transparent; }
+.laporan-item.active { background: #EFF6FF !important; }
+
+/* ── Shake Animation (form validation) ───────────────────────── */
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    15%, 45%, 75% { transform: translateX(-6px); }
+    30%, 60% { transform: translateX(6px); }
+}
+.shake-highlight {
+    animation: shake 0.5s ease-in-out;
+    border-color: #EF4444 !important;
+    box-shadow: 0 0 0 4px rgba(239, 68, 68, 0.25) !important;
+}
+
+/* ── Toast Animations (disaster map) ─────────────────────────── */
+@keyframes slideIn {
+    from { transform: translateY(-20px) scale(0.95); opacity: 0; }
+    to { transform: translateY(0) scale(1); opacity: 1; }
+}
+@keyframes fadeOut {
+    from { transform: translateY(0) scale(1); opacity: 1; }
+    to { transform: translateY(10px) scale(0.9); opacity: 0; }
+}
+.toast-slide-in { animation: slideIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+.toast-fade-out { animation: fadeOut 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+
+/* ── Google Maps InfoWindow Overrides ────────────────────────── */
+.gm-style-iw { padding: 0px !important; }
+.gm-style-iw-c { border-radius: 16px !important; box-shadow: 0 10px 40px rgba(10, 15, 30, 0.12) !important; padding: 0px !important; overflow: hidden !important; min-width: 240px !important; max-width: 240px !important; }
+.gm-style-iw-d { overflow: hidden !important; max-height: none !important; padding: 0px !important; min-width: 240px !important; max-width: 240px !important; }
+.gm-style-iw-d>div, .gm-style-iw-d>div>div { padding: 0px !important; margin: 0px !important; overflow: hidden !important; }
+.gm-style-iw-c button.gm-ui-hover-effect { width: 22px !important; height: 22px !important; opacity: 0.75 !important; background-color: rgba(255, 255, 255, 0.9) !important; box-shadow: 0 2px 6px rgba(10, 15, 30, 0.15) !important; border-radius: 50% !important; display: inline-flex !important; align-items: center !important; justify-content: center !important; transition: all 0.2s ease !important; z-index: 99999 !important; }
+.gm-style-iw-c:has(.disaster-popup-content) button.gm-ui-hover-effect { top: 28px !important; right: 6px !important; }
+.gm-style-iw-c:has(.shelter-popup-content) button.gm-ui-hover-effect { top: 30px !important; right: 4px !important; }
+.gm-style-iw-c button.gm-ui-hover-effect:hover { opacity: 0.95 !important; background-color: rgba(255, 255, 255, 1) !important; transform: scale(1.08); }
+.gm-style-iw-c button.gm-ui-hover-effect span { margin: 0 !important; width: 10px !important; height: 10px !important; }
+
+/* ── Footer ──────────────────────────────────────────────────── */
+.u-footer {
+    position: relative;
+    background: rgba(255, 255, 255, 0.45);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-top: 1px solid rgba(59, 111, 232, 0.08);
+    margin-top: 3rem;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.6);
+}
+
+/* ── Ambient Background Orbs ─────────────────────────────────── */
+@keyframes ambient-slow {
+    0%, 100% { transform: translate(0, 0) scale(1); }
+    50% { transform: translate(-10px, 10px) scale(1.02); }
+}
+@keyframes ambient-slower {
+    0%, 100% { transform: translate(0, 0) scale(1); }
+    50% { transform: translate(10px, -10px) scale(1.03); }
+}
+.animate-ambient-slow { animation: ambient-slow 20s ease-in-out infinite; }
+.animate-ambient-slower { animation: ambient-slower 28s ease-in-out infinite; }
+

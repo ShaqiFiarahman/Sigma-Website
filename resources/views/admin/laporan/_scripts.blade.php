@@ -102,38 +102,7 @@
     }
 
     function showConfirmModal(callback) {
-        const modal = document.getElementById('confirmModal');
-        const backdrop = modal.querySelector('.sigma-modal-backdrop');
-        const content = modal.querySelector('.sigma-modal-content');
-        const okBtn = document.getElementById('confirmOkBtn');
-        const cancelBtn = document.getElementById('confirmCancelBtn');
-
-        modal.classList.remove('hidden');
-        requestAnimationFrame(() => {
-            backdrop.classList.add('is-visible');
-            content.classList.add('is-visible');
-        });
-
-        const closeModal = () => {
-            backdrop.classList.remove('is-visible');
-            backdrop.classList.add('is-hiding');
-            content.classList.remove('is-visible');
-            content.classList.add('is-hiding');
-            setTimeout(() => {
-                modal.classList.add('hidden');
-                backdrop.classList.remove('is-hiding');
-                content.classList.remove('is-hiding');
-            }, 300);
-        };
-
-        const newOkBtn = okBtn.cloneNode(true);
-        const newCancelBtn = cancelBtn.cloneNode(true);
-        okBtn.parentNode.replaceChild(newOkBtn, okBtn);
-        cancelBtn.parentNode.replaceChild(newCancelBtn, cancelBtn);
-
-        newOkBtn.addEventListener('click', () => { closeModal(); callback(true); });
-        newCancelBtn.addEventListener('click', () => { closeModal(); callback(false); });
-        modal.onclick = (e) => { if (e.target === modal || e.target === backdrop) { closeModal(); callback(false); } };
+        window.showConfirmModal('confirmModal', callback);
     }
 
     // Save
