@@ -9,13 +9,14 @@ trait FetchesNews
     /**
      * Get latest disaster-related news from the last 7 days.
      *
+     * @param int $limit
      * @return array
      */
-    private function getNews(): array
+    private function getNews(int $limit = 9): array
     {
         return News::where('published_at', '>=', now()->subDays(7))
             ->latest('published_at')
-            ->limit(6)
+            ->limit($limit)
             ->get()
             ->map(function ($item) {
                 return [

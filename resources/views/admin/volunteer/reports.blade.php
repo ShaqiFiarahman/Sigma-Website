@@ -43,18 +43,7 @@
                 @endforeach
             </select>
         </div>
-        {{-- Volunteer filter --}}
-        <div class="w-full md:w-52 shrink-0">
-            <label class="block text-[11px] font-semibold text-slate-400 uppercase tracking-wider mb-1">Relawan</label>
-            <select id="filterVolunteer" class="w-full px-3 py-1.75 text-xs border border-slate-200 rounded-xl bg-slate-50 focus:bg-white focus:outline-none focus:border-blue-400 focus:ring-1 focus:ring-blue-500/20 text-slate-700 cursor-pointer transition-all duration-200">
-                <option value="">Semua Relawan</option>
-                @foreach($volunteers as $v)
-                    <option value="{{ $v->id }}">
-                        {{ $v->name }}
-                    </option>
-                @endforeach
-            </select>
-        </div>
+
 
     </div>
 </div>
@@ -182,7 +171,6 @@
         const reportSearch = document.getElementById('reportSearch');
         const filterSkill = document.getElementById('filterSkill');
         const filterDisaster = document.getElementById('filterDisaster');
-        const filterVolunteer = document.getElementById('filterVolunteer');
 
         const cards = document.querySelectorAll('.report-card');
         const noReportsFound = document.getElementById('noReportsFound');
@@ -191,22 +179,19 @@
             const query = (reportSearch.value || '').toLowerCase().trim();
             const skill = filterSkill.value;
             const disaster = filterDisaster.value;
-            const volunteer = filterVolunteer.value;
 
             let visibleCount = 0;
 
             cards.forEach(card => {
                 const cardSkill = card.getAttribute('data-skill') || '';
                 const cardDisaster = card.getAttribute('data-disaster') || '';
-                const cardVolunteer = card.getAttribute('data-volunteer') || '';
                 const cardText = card.getAttribute('data-search-text') || '';
 
                 const matchesSearch = !query || cardText.includes(query);
                 const matchesSkill = !skill || cardSkill === skill;
                 const matchesDisaster = !disaster || cardDisaster === disaster;
-                const matchesVolunteer = !volunteer || cardVolunteer === volunteer;
 
-                if (matchesSearch && matchesSkill && matchesDisaster && matchesVolunteer) {
+                if (matchesSearch && matchesSkill && matchesDisaster) {
                     card.style.display = '';
                     visibleCount++;
                 } else {
@@ -224,7 +209,6 @@
         reportSearch?.addEventListener('input', filterReports);
         filterSkill?.addEventListener('change', filterReports);
         filterDisaster?.addEventListener('change', filterReports);
-        filterVolunteer?.addEventListener('change', filterReports);
 
         reportSearch?.addEventListener('keydown', (e) => {
             if (e.key === 'Enter') e.preventDefault();

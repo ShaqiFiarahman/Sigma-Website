@@ -113,30 +113,6 @@
         </div>
 
         @if($volunteer->status === 'APPROVED')
-
-            {{-- Stats --}}
-            <div class="grid grid-cols-3 gap-4 animate-fade-up" style="animation-delay: 0.08s;">
-                <div class="bg-white/80 backdrop-blur-md rounded-2xl border border-white/60 p-5 shadow-sm hover:shadow-md transition-all">
-                    <div class="flex items-end justify-between">
-                        <div>
-                            <p class="text-3xl font-extrabold text-slate-900 tabular-nums leading-none">{{ $totalReports }}</p>
-                            <p class="text-[12px] text-slate-500 mt-2">Laporan terkirim</p>
-                        </div>
-                        @if($reportsThisMonth > 0)
-                            <span class="text-[10px] font-bold text-emerald-600 bg-emerald-50 px-2 py-1 rounded-lg border border-emerald-100">+{{ $reportsThisMonth }}</span>
-                        @endif
-                    </div>
-                </div>
-                <div class="bg-white/80 backdrop-blur-md rounded-2xl border border-white/60 p-5 shadow-sm hover:shadow-md transition-all">
-                    <p class="text-3xl font-extrabold text-slate-900 tabular-nums leading-none">{{ $volunteer->assignment ? '1' : '0' }}</p>
-                    <p class="text-[12px] text-slate-500 mt-2">Penugasan aktif</p>
-                </div>
-                <div class="bg-white/80 backdrop-blur-md rounded-2xl border border-white/60 p-5 shadow-sm hover:shadow-md transition-all">
-                    <p class="text-3xl font-extrabold text-slate-900 tabular-nums leading-none">{{ $teamMembers->count() }}</p>
-                    <p class="text-[12px] text-slate-500 mt-2">Anggota tim</p>
-                </div>
-            </div>
-
             {{-- Main Layout Grid --}}
             <div class="grid grid-cols-1 lg:grid-cols-5 gap-6 animate-fade-up" style="animation-delay: 0.1s;">
                 {{-- Left Sektor: Penugasan & Riwayat (3/5) --}}
