@@ -20,6 +20,9 @@ class AppServiceProvider extends ServiceProvider
         // Tambahkan ini untuk Vercel Serverless
         if (env('VERCEL')) {
             config(['view.compiled' => '/tmp']);
+            config(['logging.default' => 'stderr']);
+            config(['session.driver' => 'cookie']);
+            config(['cache.default' => 'array']);
         }
     }
 }
