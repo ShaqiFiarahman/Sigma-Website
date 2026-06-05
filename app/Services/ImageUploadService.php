@@ -15,7 +15,7 @@ class ImageUploadService
     public function __construct()
     {
         $this->supabaseUrl = rtrim(config('services.supabase.url'), '/');
-        $this->supabaseKey = config('services.supabase.key') ?? '';
+        $this->supabaseKey = config('services.supabase.service_key') ?? config('services.supabase.key') ?? '';
     }
 
     /**

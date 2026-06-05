@@ -37,18 +37,6 @@ class DashboardController extends Controller
         // ─── Chart: 7 hari terakhir (1 query instead of 21) ──
         $startDate = now()->subDays(6)->startOfDay();
 
-        $dailyStats = Disaster::where('created_at', '>=', $startDate)
-            ->select(
-                DB::raw('DATE(created_at) as date'),
-                DB::raw('count(*) as total'),
-                DB::raw("sum(case when status NOT IN ('PENDING','DECLINE') then 1 else 0 end) as verified"),
-                DB::raw("sum(case when status = 'PENDING' then 1 else 0 end) as pending_count")
-            )
-            ->groupBy(DB::raw('DATE(created_at)'))
-            ->pluck('total', 'date')
-            ->toArray();
-
-        // Re-query to get all columns we need
         $dailyStatsRaw = Disaster::where('created_at', '>=', $startDate)
             ->select(
                 DB::raw('DATE(created_at) as date'),
@@ -116,34 +104,55 @@ class DashboardController extends Controller
      */
     public function stats(): JsonResponse
     {
-        $disasters = Disaster::all();
-        $statusCounts = $disasters->groupBy('status')->map->count();
+        // Retrieve only columns needed for all_disasters list and grouping to optimize memory usage
+        $disasters = Disaster::select('id', 'status', 'created_at')->get();
+        $statusCounts = $disasters->groupBy('status')->map(fn($group) => $group->count());
+
+        $total = $disasters->count();
+        $pending = $statusCounts->get('PENDING', 0);
+        $decline = $statusCounts->get('DECLINE', 0);
+        $awas = $statusCounts->get('AWAS', 0);
+        $siaga1 = $statusCounts->get('SIAGA_1', 0);
+        $siaga2 = $statusCounts->get('SIAGA_2', 0);
+        $selesai = $total - $pending - $decline;
+
+        // Optimize whereDate to standard >= operator to utilize created_at index
+        $todayCount = Disaster::where('created_at', '>=', today())->count();
+
+        $weekVerified = Disaster::where('created_at', '>=', now()->subWeek())
+            ->whereNotIn('status', ['PENDING', 'DECLINE'])
+            ->count();
+
+        // Limit columns retrieved for pending items
+        $pendingItems = Disaster::where('status', 'PENDING')
+            ->latest()
+            ->limit(5)
+            ->get(['id', 'title', 'location', 'created_at'])
+            ->map(fn($d) => [
+                'id'         => $d->id,
+                'judul'      => $d->title,
+                'lokasi'     => $d->location ?? '',
+                'tanggal'    => $d->created_at?->format('d M Y'),
+                'created_at' => $d->created_at?->toISOString(),
+            ]);
 
         return response()->json([
-            'total'          => $disasters->count(),
-            'pending'        => $statusCounts->get('PENDING', 0),
-            'selesai'        => $disasters->whereNotIn('status', ['PENDING', 'DECLINE'])->count(),
-            'decline'        => $statusCounts->get('DECLINE', 0),
-            'awas'           => $statusCounts->get('AWAS', 0),
-            'siaga1'         => $statusCounts->get('SIAGA_1', 0),
-            'siaga2'         => $statusCounts->get('SIAGA_2', 0),
-            'verified_total' => $disasters->whereNotIn('status', ['PENDING', 'DECLINE'])->count(),
-            'week_verified'  => Disaster::where('created_at', '>=', now()->subWeek())
-                ->whereNotIn('status', ['PENDING', 'DECLINE'])->count(),
-            'today_count'    => Disaster::whereDate('created_at', today())->count(),
+            'total'          => $total,
+            'pending'        => $pending,
+            'selesai'        => $selesai,
+            'decline'        => $decline,
+            'awas'           => $awas,
+            'siaga1'         => $siaga1,
+            'siaga2'         => $siaga2,
+            'verified_total' => $selesai,
+            'week_verified'  => $weekVerified,
+            'today_count'    => $todayCount,
             'all_disasters'  => $disasters->map(fn($d) => [
                 'id'     => $d->id,
                 'status' => $d->status,
                 'date'   => $d->created_at?->toIso8601String(),
             ]),
-            'pending_items'  => Disaster::where('status', 'PENDING')
-                ->latest()->limit(5)->get()->map(fn($d) => [
-                    'id'         => $d->id,
-                    'judul'      => $d->title,
-                    'lokasi'     => $d->location ?? '',
-                    'tanggal'    => $d->created_at?->format('d M Y'),
-                    'created_at' => $d->created_at?->toISOString(),
-                ]),
+            'pending_items'  => $pendingItems,
         ]);
     }
 }
