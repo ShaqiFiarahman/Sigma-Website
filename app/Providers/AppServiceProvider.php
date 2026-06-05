@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use App\View\Composers\VolunteerNotificationComposer;
+use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
 
@@ -23,6 +24,9 @@ class AppServiceProvider extends ServiceProvider
             config(['logging.default' => 'stderr']);
             config(['session.driver' => 'cookie']);
             config(['cache.default' => 'array']);
+            
+            // Paksa skema HTTPS untuk menghindari Mixed Content Error
+            URL::forceScheme('https');
         }
     }
 }
