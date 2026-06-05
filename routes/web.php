@@ -97,3 +97,12 @@ Route::middleware('auth')->group(function () {
         });
     });
 });
+
+Route::fallback(function (\Illuminate\Http\Request $request) {
+    return response()->json([
+        'path' => $request->path(),
+        'uri' => $request->getRequestUri(),
+        'url' => $request->fullUrl(),
+        'server_request_uri' => $_SERVER['REQUEST_URI'] ?? null,
+    ]);
+});
