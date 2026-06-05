@@ -16,5 +16,10 @@ class AppServiceProvider extends ServiceProvider
     {
         // Bind volunteer notification data to the partial view
         View::composer('volunteer._notification', VolunteerNotificationComposer::class);
+
+        // Tambahkan ini untuk Vercel Serverless
+        if (env('VERCEL')) {
+            config(['view.compiled' => '/tmp']);
+        }
     }
 }
