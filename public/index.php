@@ -25,6 +25,12 @@ $app = require_once __DIR__.'/../bootstrap/app.php';
 
 echo "Checkpoint 4 - Laravel App Bootstrapped\n";
 
-$app->handleRequest(Request::capture());
+try {
+    $app->handleRequest(Request::capture());
+} catch (\Throwable $e) {
+    echo "CRITICAL ERROR: " . $e->getMessage() . "\n";
+    echo "File: " . $e->getFile() . " on line " . $e->getLine() . "\n";
+    echo "Trace: \n" . $e->getTraceAsString() . "\n";
+}
 
 echo "Checkpoint 5 - Request Handled\n";
