@@ -20,5 +20,9 @@ putenv('APP_CONFIG_CACHE=' . $cachePath . '/config.php');
 putenv('APP_ROUTES_CACHE=' . $cachePath . '/routes.php');
 putenv('APP_EVENTS_CACHE=' . $cachePath . '/events.php');
 
+// Paksa nama script ke /index.php agar Laravel tidak memotong prefix '/api' pada Vercel
+$_SERVER['SCRIPT_NAME'] = '/index.php';
+$_SERVER['PHP_SELF'] = '/index.php';
+
 // Forward request to Laravel's public/index.php
 require __DIR__ . '/../public/index.php';
