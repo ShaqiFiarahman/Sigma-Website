@@ -84,6 +84,12 @@ class Shelter extends Model
         $needs = [];
         foreach ($reports as $report) {
             $data = $report->report_data;
+            if (is_string($data)) {
+                $data = json_decode($data, true);
+            }
+            if (!is_array($data)) {
+                continue;
+            }
             $rawItems = '';
 
             if ($report->skill_type === 'MEDIS' && !empty($data['kebutuhan_medis'])) {

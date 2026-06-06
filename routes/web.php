@@ -11,8 +11,34 @@ use App\Http\Controllers\NewsController;
 Route::get('/', [AuthController::class, 'showAuth'])->name('login');
 Route::get('/register', [AuthController::class, 'showRegister'])->name('register');
 Route::post('/login', [AuthController::class, 'login'])->name('login.post');
-Route::post('/register', [AuthController::class, 'register'])->name('register.post');
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+
+// Cron job endpoint for Vercel Cron to fetch news automatically
+Route::get('/api/cron/fetch-news', function (\App\Services\NewsService $newsService) {
+    $authHeader = request()->header('Authorization');
+    $cronSecret = env('CRON_SECRET');
+    
+    // Validate authorization if not in local environment
+    if (!app()->environment('local')) {
+        if (empty($cronSecret) || $authHeader !== 'Bearer ' . $cronSecret) {
+            return response()->json(['error' => 'Unauthorized'], 401);
+        }
+    }
+
+    try {
+        $newsService->fetchNews();
+        return response()->json([
+            'status' => 'success',
+            'message' => 'News fetched successfully'
+        ]);
+    } catch (\Exception $e) {
+        \Illuminate\Support\Facades\Log::error('Cron Fetch News Error: ' . $e->getMessage());
+        return response()->json([
+            'status' => 'error',
+            'message' => $e->getMessage()
+        ], 500);
+    }
+});
 
 // ─────────────────────────────────────────────
 //  AUTHENTICATED ROUTES

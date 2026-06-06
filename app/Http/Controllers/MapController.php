@@ -108,8 +108,16 @@ class MapController extends Controller
      */
     public function shelters()
     {
-        $shelters = Shelter::all()->map(fn($s) => $this->shelterToArray($s))->toArray();
-        return response()->json($shelters);
+        try {
+            $shelters = Shelter::all()->map(fn($s) => $this->shelterToArray($s))->toArray();
+            return response()->json($shelters);
+        } catch (\Exception $e) {
+            return response()->json([
+                'error' => true,
+                'message' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ], 500);
+        }
     }
 
     /**

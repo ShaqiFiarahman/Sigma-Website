@@ -12,7 +12,7 @@
       "dest": "/public/build/$1"
     },
     {
-      "src": "/(css|js|images|favicon.ico|robots.txt|assets)(.*)",
+      "src": "/(css|js|images|favicon.ico|robots.txt|assets|panduan-bencana.pdf)(.*)",
       "dest": "/public/$1$2"
     },
     {
@@ -22,6 +22,32 @@
     {
       "src": "/(.*)",
       "dest": "/api/index.php"
+    }
+  ],
+  "headers": [
+    {
+      "source": "/(css|js|images|favicon.ico|robots.txt|assets|panduan-bencana.pdf)(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=31536000, immutable"
+        }
+      ]
+    },
+    {
+      "source": "/build/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=31536000, immutable"
+        }
+      ]
+    }
+  ],
+  "crons": [
+    {
+      "path": "/api/cron/fetch-news",
+      "schedule": "0 * * * *"
     }
   ]
 }
