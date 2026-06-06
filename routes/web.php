@@ -11,6 +11,7 @@ use App\Http\Controllers\NewsController;
 Route::get('/', [AuthController::class, 'showAuth'])->name('login');
 Route::get('/register', [AuthController::class, 'showRegister'])->name('register');
 Route::post('/login', [AuthController::class, 'login'])->name('login.post');
+Route::post('/register', [AuthController::class, 'register'])->name('register.post');
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
 // Cron job endpoint for Vercel Cron to fetch news automatically
