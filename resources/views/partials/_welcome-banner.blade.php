@@ -14,7 +14,7 @@
     <div class="relative z-10 px-12 sm:px-16 py-14 flex flex-col sm:flex-row sm:items-center justify-between gap-12">
         <div class="max-w-3xl">
             <h2 class="text-xl sm:text-2xl font-extrabold text-white tracking-tight mb-3 welcome-text">Halo,
-                {{ auth()->user()->short_name ?? 'Pengguna' }}.
+                {{ auth()->check() ? auth()->user()->short_name : 'Masyarakat' }}.
             </h2>
             <p class="text-sm sm:text-base leading-relaxed welcome-text" style="color: rgba(228,240,246,0.7); animation-delay: 0.15s;">
                 Pantau informasi bencana dan laporkan kejadian di sekitar Anda secara cepat.

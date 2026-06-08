@@ -65,12 +65,12 @@
                     <span class="inline-block w-2 h-2 rounded-full bg-violet-500 mr-1"></span>Siaga 2
                 </button>
 
-                @if(strtolower(auth()->user()->role ?? '') === 'admin' || $disasters->contains('status', 'PENDING'))
+                @if(strtolower(auth()->user()?->role ?? '') === 'admin' || $disasters->contains('status', 'PENDING'))
                     <button type="button" data-filter="PENDING" class="filter-chip px-3.5 py-1.5 text-xs font-semibold rounded-full border transition-all duration-200">
                         <span class="inline-block w-2 h-2 rounded-full bg-amber-500 mr-1"></span>Pending
                     </button>
                 @endif
-                @if(strtolower(auth()->user()->role ?? '') === 'admin' || $disasters->contains('status', 'DECLINE'))
+                @if(strtolower(auth()->user()?->role ?? '') === 'admin' || $disasters->contains('status', 'DECLINE'))
                     <button type="button" data-filter="DECLINE" class="filter-chip px-3.5 py-1.5 text-xs font-semibold rounded-full border transition-all duration-200">
                         <span class="inline-block w-2 h-2 rounded-full bg-slate-400 mr-1"></span>Ditolak
                     </button>

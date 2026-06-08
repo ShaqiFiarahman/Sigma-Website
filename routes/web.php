@@ -8,7 +8,8 @@ use App\Http\Controllers\NewsController;
 // ─────────────────────────────────────────────
 //  PUBLIC / AUTH ROUTES
 // ─────────────────────────────────────────────
-Route::get('/', [AuthController::class, 'showAuth'])->name('login');
+Route::get('/', [\App\Http\Controllers\User\DashboardController::class, 'index'])->name('dashboard');
+Route::get('/login', [AuthController::class, 'showAuth'])->name('login');
 Route::get('/register', [AuthController::class, 'showRegister'])->name('register');
 Route::post('/login', [AuthController::class, 'login'])->name('login.post');
 Route::post('/register', [AuthController::class, 'register'])->name('register.post');
@@ -39,6 +40,27 @@ Route::get('/api/cron/fetch-news', function (\App\Services\NewsService $newsServ
             'message' => $e->getMessage()
         ], 500);
     }
+});
+
+// Public API Routes for Map
+Route::prefix('api')->group(function () {
+    Route::get('/disasters', [MapController::class, 'disasters'])->name('api.disasters');
+    Route::get('/shelters', [MapController::class, 'shelters'])->name('api.shelters');
+});
+
+// Public View Features
+Route::get('/berita', [NewsController::class, 'index'])->name('news.index');
+Route::get('/laporan', [MapController::class, 'search'])->name('laporan.index');
+Route::get('/laporan/detail/{id}', [\App\Http\Controllers\User\LaporanController::class, 'show'])->name('laporan.show');
+Route::get('/info-posko', [MapController::class, 'shelterPage'])->name('shelter');
+Route::get('/cari-bencana', [MapController::class, 'search'])->name('search');
+Route::get('/panduan-bencana', [\App\Http\Controllers\User\DashboardController::class, 'panduan'])->name('panduan');
+Route::get('/relawan/daftar', [\App\Http\Controllers\Volunteer\RegistrationController::class, 'create'])->name('volunteer.create');
+Route::get('/laporan/create', [\App\Http\Controllers\User\LaporanController::class, 'create'])->name('laporan.create');
+
+// Dashboard path fallback redirect
+Route::get('/dashboard', function () {
+    return redirect()->route('dashboard');
 });
 
 // ─────────────────────────────────────────────
@@ -78,13 +100,10 @@ Route::middleware('auth')->group(function () {
     //  USER / MASYARAKAT ROUTES
     // ═══════════════════════════════════════════
     Route::middleware('role:Masyarakat,Relawan')->group(function () {
-        // Dashboard
-        Route::get('/dashboard', [\App\Http\Controllers\User\DashboardController::class, 'index'])->name('dashboard');
-        Route::get('/panduan-bencana', [\App\Http\Controllers\User\DashboardController::class, 'panduan'])->name('panduan');
+        // Dashboard (handled at root /)
         Route::get('/peta-bencana', function () { return redirect()->route('dashboard'); })->name('map');
 
         // Volunteer Registration
-        Route::get('/relawan/daftar', [\App\Http\Controllers\Volunteer\RegistrationController::class, 'create'])->name('volunteer.create');
         Route::post('/relawan/daftar', [\App\Http\Controllers\Volunteer\RegistrationController::class, 'store'])->name('volunteer.store');
 
         // Volunteer Reports
@@ -105,19 +124,10 @@ Route::middleware('auth')->group(function () {
     // ═══════════════════════════════════════════
     Route::post('/profile/update', [AuthController::class, 'updateProfile'])->name('profile.update');
     Route::post('/profile/password', [AuthController::class, 'updatePassword'])->name('profile.password');
-    Route::get('/berita', [NewsController::class, 'index'])->name('news.index');
-    Route::get('/laporan', [MapController::class, 'search'])->name('laporan.index');
-    Route::get('/laporan/create', [\App\Http\Controllers\User\LaporanController::class, 'create'])->name('laporan.create');
     Route::post('/laporan/store', [\App\Http\Controllers\User\LaporanController::class, 'store'])->name('laporan.store');
-    Route::get('/laporan/detail/{id}', [\App\Http\Controllers\User\LaporanController::class, 'show'])->name('laporan.show');
-    Route::get('/info-posko', [MapController::class, 'shelterPage'])->name('shelter');
-    Route::get('/cari-bencana', [MapController::class, 'search'])->name('search');
 
-    // API Routes for Map & Dashboard (session authenticated)
+    // API Routes for Dashboard (session authenticated)
     Route::prefix('api')->group(function () {
-        Route::get('/disasters', [MapController::class, 'disasters'])->name('api.disasters');
-        Route::get('/shelters', [MapController::class, 'shelters'])->name('api.shelters');
-        
         Route::middleware('role:admin')->prefix('admin')->group(function () {
             Route::get('/pending-reports', [\App\Http\Controllers\Admin\DashboardController::class, 'pendingReports'])->name('api.pending_reports');
             Route::get('/stats', [\App\Http\Controllers\Admin\DashboardController::class, 'stats'])->name('api.admin_stats');

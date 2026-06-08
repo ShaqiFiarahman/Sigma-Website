@@ -325,7 +325,7 @@
     {{-- Kanan: Panel --}}
     <div class="lg:col-span-1 space-y-5">
 
-        {{-- Info Pelapor --}}
+        {{-- Info Pelapor & Aksi --}}
         <div class="bg-white border border-slate-200/80 rounded-2xl overflow-hidden"
              style="box-shadow: 0 1px 3px rgba(10,15,30,0.06);">
             <div class="px-5 py-4 border-b border-slate-100 bg-slate-50">
@@ -333,46 +333,43 @@
                     <i class="bi bi-person-circle" style="color: #3B6FE8;"></i> Informasi Pelapor
                 </h3>
             </div>
-            <div class="p-5 space-y-3">
-                <div class="flex justify-between text-xs">
-                    <span class="text-slate-500">Pelapor</span>
-                    <span class="font-semibold text-slate-800">{{ $laporan['reporter_name'] }}</span>
-                </div>
-                <div class="flex justify-between text-xs">
-                    <span class="text-slate-500">Dilaporkan</span>
-                    <span class="font-semibold text-slate-800">{{ $laporan['tanggal'] }}</span>
-                </div>
-                @if(!empty($laporan['tingkat_bencana']))
+            <div class="p-5 space-y-4">
+                <div class="space-y-3">
                     <div class="flex justify-between text-xs">
-                        <span class="text-slate-500">Tingkat</span>
-                        <span class="font-semibold text-slate-800">{{ $laporan['tingkat_bencana'] }}</span>
+                        <span class="text-slate-500">Pelapor</span>
+                        <span class="font-semibold text-slate-800">{{ $laporan['reporter_name'] }}</span>
                     </div>
-                @endif
-            </div>
-        </div>
+                    <div class="flex justify-between text-xs">
+                        <span class="text-slate-500">Dilaporkan</span>
+                        <span class="font-semibold text-slate-800">{{ $laporan['tanggal'] }}</span>
+                    </div>
+                    @if(!empty($laporan['tingkat_bencana']))
+                        <div class="flex justify-between text-xs">
+                            <span class="text-slate-500">Tingkat</span>
+                            <span class="font-semibold text-slate-800">{{ $laporan['tingkat_bencana'] }}</span>
+                        </div>
+                    @endif
+                </div>
 
-        {{-- Aksi Cepat --}}
-        <div class="bg-white border border-slate-200/80 rounded-2xl overflow-hidden"
-             style="box-shadow: 0 1px 3px rgba(10,15,30,0.06);">
-            <div class="px-5 py-4 border-b border-slate-100 bg-slate-50">
-                <h3 class="text-sm font-semibold text-slate-800">Aksi Cepat</h3>
-            </div>
-            <div class="p-5 space-y-2">
-                <button type="button"
-                        onclick="window.open('https://www.google.com/maps/dir/?api=1&destination={{ $laporan['latitude'] }},{{ $laporan['longitude'] }}', '_blank')"
-                        class="w-full flex items-center gap-2 px-4 py-2.5 text-xs font-medium text-slate-700 bg-white border border-slate-200 rounded-xl hover:bg-blue-50 hover:border-blue-200 hover:text-blue-700 transition-all cursor-pointer">
-                    <i class="bi bi-signpost-2 text-sm"></i> Petunjuk Arah
-                </button>
-                <button type="button"
-                        onclick="navigator.share ? navigator.share({title: '{{ addslashes($laporan['judul']) }}', url: window.location.href}) : navigator.clipboard.writeText(window.location.href).then(() => alert('Link disalin!'))"
-                        class="w-full flex items-center gap-2 px-4 py-2.5 text-xs font-medium text-slate-700 bg-white border border-slate-200 rounded-xl hover:bg-blue-50 hover:border-blue-200 hover:text-blue-700 transition-all cursor-pointer">
-                    <i class="bi bi-share text-sm"></i> Bagikan Laporan
-                </button>
+                <hr class="border-slate-100">
+
+                <div class="space-y-2">
+                    <button type="button"
+                            onclick="window.open('https://www.google.com/maps/dir/?api=1&destination={{ $laporan['latitude'] }},{{ $laporan['longitude'] }}', '_blank')"
+                            class="w-full flex items-center gap-2 px-4 py-2.5 text-xs font-medium text-slate-700 bg-white border border-slate-200 rounded-xl hover:bg-blue-50 hover:border-blue-200 hover:text-blue-700 transition-all cursor-pointer">
+                        <i class="bi bi-signpost-2 text-sm"></i> Petunjuk Arah
+                    </button>
+                    <button type="button"
+                            onclick="navigator.share ? navigator.share({title: '{{ addslashes($laporan['judul']) }}', url: window.location.href}) : navigator.clipboard.writeText(window.location.href).then(() => alert('Link disalin!'))"
+                            class="w-full flex items-center gap-2 px-4 py-2.5 text-xs font-medium text-slate-700 bg-white border border-slate-200 rounded-xl hover:bg-blue-50 hover:border-blue-200 hover:text-blue-700 transition-all cursor-pointer">
+                        <i class="bi bi-share text-sm"></i> Bagikan Laporan
+                    </button>
+                </div>
             </div>
         </div>
 
         {{-- Panel Tindakan (Admin only) --}}
-        @if(strtolower(auth()->user()->role) === 'admin')
+        @if(auth()->check() && strtolower(auth()->user()->role) === 'admin')
         <div class="bg-white border border-slate-200/80 rounded-2xl overflow-hidden"
              style="box-shadow: 0 1px 3px rgba(10,15,30,0.06);">
             <div class="px-5 py-4 border-b border-slate-100 bg-slate-50">

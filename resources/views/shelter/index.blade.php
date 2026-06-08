@@ -1,9 +1,9 @@
 @extends('layouts.app')
-@section('title', strtolower(auth()->user()->role ?? '') === 'admin' ? 'Kelola Posko' : 'Informasi Posko & Pengungsian')
-@section('subtitle', strtolower(auth()->user()->role ?? '') === 'admin' ? 'Manajemen data posko pengungsian dan shelter evakuasi.' : 'Temukan lokasi posko evakuasi terdekat dan informasi kapasitas terkini.')
+@section('title', (auth()->check() && strtolower(auth()->user()->role) === 'admin') ? 'Kelola Posko' : 'Informasi Posko & Pengungsian')
+@section('subtitle', (auth()->check() && strtolower(auth()->user()->role) === 'admin') ? 'Manajemen data posko pengungsian dan shelter evakuasi.' : 'Temukan lokasi posko evakuasi terdekat dan informasi kapasitas terkini.')
 
 @section('page-actions')
-    <x-ui.back-button :route="strtolower(auth()->user()->role ?? '') === 'admin' ? route('admin.dashboard') : route('dashboard')" />
+    <x-ui.back-button :route="auth()->check() && strtolower(auth()->user()->role) === 'admin' ? route('admin.dashboard') : route('dashboard')" />
 @endsection
 
 @section('content')
@@ -33,7 +33,7 @@
 
     {{-- Stats Summary --}}
     {{-- Stats (admin only) --}}
-    @if(strtolower(auth()->user()->role ?? '') === 'admin')
+    @if(auth()->check() && strtolower(auth()->user()->role) === 'admin')
     <div class="flex items-center justify-between mb-4">
         <div>
             <h3 class="text-sm font-bold text-slate-800">Statistik Posko</h3>
@@ -178,7 +178,7 @@
                            style="background: linear-gradient(135deg, #3B6FE8 0%, #1e3a8a 100%); box-shadow: 0 2px 8px rgba(30,58,138,0.2);">
                             <i class="bi bi-signpost-2-fill text-[11px]"></i> Petunjuk Arah
                         </button>
-                        @if(strtolower(auth()->user()->role ?? '') === 'admin')
+                        @if(auth()->check() && strtolower(auth()->user()->role) === 'admin')
                             <button type="button"
                                onclick="window.location.href='/admin/posko/{{ $shelter['id'] }}/edit'"
                                class="inline-flex items-center justify-center gap-1.5 w-full sm:w-40 px-4 py-2.5 text-xs font-semibold text-slate-700 bg-white border border-slate-200 rounded-xl transition-all duration-200 cursor-pointer hover:bg-slate-50 hover:border-slate-300">

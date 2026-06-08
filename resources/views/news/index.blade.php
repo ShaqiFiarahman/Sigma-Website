@@ -3,7 +3,7 @@
 @section('subtitle', 'Informasi dan peringatan bencana terbaru dari berbagai sumber.')
 
 @section('page-actions')
-    <x-ui.back-button :route="strtolower(auth()->user()->role ?? '') === 'admin' ? route('admin.dashboard') : route('dashboard')" />
+    <x-ui.back-button :route="auth()->check() && strtolower(auth()->user()->role) === 'admin' ? route('admin.dashboard') : route('dashboard')" />
 @endsection
 
 @section('content')

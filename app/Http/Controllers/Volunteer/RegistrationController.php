@@ -12,7 +12,7 @@ class RegistrationController extends Controller
     public function create()
     {
         $skills = Volunteer::getSkillOptions();
-        $existing = Volunteer::where('user_id', auth()->id())->first();
+        $existing = auth()->check() ? Volunteer::where('user_id', auth()->id())->first() : null;
         return view('user.register-volunteer', compact('skills', 'existing'));
     }
 

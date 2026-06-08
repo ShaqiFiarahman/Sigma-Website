@@ -18,10 +18,9 @@ class LaporanController extends Controller
 
     public function create()
     {
-        $riwayat = Disaster::where('user_id', auth()->id())
-            ->latest()
-            ->limit(5)
-            ->get();
+        $riwayat = auth()->check()
+            ? Disaster::where('user_id', auth()->id())->latest()->limit(5)->get()
+            : collect();
 
         return view('laporan.create', compact('riwayat'));
     }

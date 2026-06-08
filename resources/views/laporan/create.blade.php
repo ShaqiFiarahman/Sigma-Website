@@ -3,12 +3,27 @@
 @section('subtitle', 'Kirim laporan kejadian bencana di sekitar Anda.')
 
 @section('page-actions')
-    <x-ui.back-button :route="strtolower(auth()->user()->role ?? '') === 'admin' ? route('admin.dashboard') : route('dashboard')" />
+    <x-ui.back-button :route="auth()->check() && strtolower(auth()->user()->role) === 'admin' ? route('admin.dashboard') : route('dashboard')" />
 @endsection
 
 @section('content')
     <div class="max-w-7xl mx-auto mb-10">
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        @guest
+            {{-- PROMPT LOGIN UNTUK GUEST --}}
+            <div class="max-w-md mx-auto my-12 text-center animate-fade-up">
+                <div class="bg-white border border-slate-200/80 rounded-3xl p-8 shadow-sm overflow-hidden"
+                     style="box-shadow: 0 1px 3px rgba(10,15,30,0.06), 0 10px 30px -10px rgba(10,15,30,0.08);">
+                    <i class="bi bi-megaphone-fill text-4xl text-blue-600 mb-5 block"></i>
+                    <h2 class="text-xl font-bold text-slate-900 mb-2">Lapor Bencana</h2>
+                    <p class="text-sm text-slate-500 mb-8 leading-relaxed">Anda harus login ke dalam akun SIGMA Anda terlebih dahulu untuk membuat laporan bencana.</p>
+                    <a href="{{ route('login') }}" class="btn-primary w-full flex items-center justify-center gap-2 px-5 py-3 text-sm font-semibold text-white rounded-xl transition-all duration-200 hover:-translate-y-0.5"
+                       style="background: linear-gradient(135deg, #3B6FE8 0%, #1e3a8a 100%); box-shadow: 0 4px 12px rgba(30,58,138,0.25);">
+                        <i class="bi bi-arrow-right text-base"></i> Login
+                    </a>
+                </div>
+            </div>
+        @else
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
 
             {{-- KOLOM KIRI: FORM --}}
             <div class="lg:col-span-2">
@@ -159,7 +174,7 @@
 
             @include('laporan._tips')
             </div>
-        </div>
+        @endguest
     </div>
 @endsection
 
@@ -167,221 +182,228 @@
     <script src="https://maps.googleapis.com/maps/api/js?key={{ config('services.google_maps.key') }}&callback=initMap"
         async defer></script>
     <script>
-        let map, marker;
+        (function() {
+            const form = document.getElementById('laporanForm');
+            if (!form) return;
 
-        window.initMap = function () {
-            const defaultLocation = { lat: -7.5505, lng: 110.8063 }; // Surakarta
+            let map, marker;
 
-            map = new google.maps.Map(document.getElementById('mapContainer'), {
-                zoom: 13,
-                center: defaultLocation,
-                disableDefaultUI: true,
-                gestureHandling: 'greedy',
-                styles: [
-                    { featureType: "poi", stylers: [{ visibility: "off" }] },
-                    { featureType: "transit", stylers: [{ visibility: "off" }] },
-                ]
-            });
+            window.initMap = function () {
+                const mapEl = document.getElementById('mapContainer');
+                if (!mapEl) return;
 
-            map.addListener('click', (e) => {
-                const lat = e.latLng.lat();
-                const lng = e.latLng.lng();
-                placeMarker(lat, lng);
-                document.getElementById('latitude').value = lat;
-                document.getElementById('longitude').value = lng;
+                const defaultLocation = { lat: -7.5505, lng: 110.8063 }; // Surakarta
 
-                const locDisplay = document.getElementById('locationDisplay');
+                map = new google.maps.Map(mapEl, {
+                    zoom: 13,
+                    center: defaultLocation,
+                    disableDefaultUI: true,
+                    gestureHandling: 'greedy',
+                    styles: [
+                        { featureType: "poi", stylers: [{ visibility: "off" }] },
+                        { featureType: "transit", stylers: [{ visibility: "off" }] },
+                    ]
+                });
 
-                document.getElementById('coordLat').textContent = `Lat: ${lat.toFixed(4)}`;
-                document.getElementById('coordLong').textContent = `Long: ${lng.toFixed(4)}`;
-                locDisplay.classList.remove('hidden');
-                locDisplay.classList.add('flex');
+                map.addListener('click', (e) => {
+                    const lat = e.latLng.lat();
+                    const lng = e.latLng.lng();
+                    placeMarker(lat, lng);
+                    document.getElementById('latitude').value = lat;
+                    document.getElementById('longitude').value = lng;
 
-                // Reset warning styles
-                resetWarning();
-            });
-        };
+                    const locDisplay = document.getElementById('locationDisplay');
 
-        // Button Gunakan Lokasi Saya
-        document.getElementById('btnMyLocation')?.addEventListener('click', function() {
-            if (navigator.geolocation) {
-                const originalText = this.innerHTML;
-                this.innerHTML = '<i class="bi bi-arrow-repeat animate-spin"></i> Mendeteksi...';
-                this.disabled = true;
-                
-                navigator.geolocation.getCurrentPosition(
-                    (position) => {
-                        const lat = position.coords.latitude;
-                        const lng = position.coords.longitude;
-                        
-                        placeMarker(lat, lng);
-                        document.getElementById('latitude').value = lat;
-                        document.getElementById('longitude').value = lng;
-                        
-                        const locDisplay = document.getElementById('locationDisplay');
+                    document.getElementById('coordLat').textContent = `Lat: ${lat.toFixed(4)}`;
+                    document.getElementById('coordLong').textContent = `Long: ${lng.toFixed(4)}`;
+                    locDisplay.classList.remove('hidden');
+                    locDisplay.classList.add('flex');
 
-                        document.getElementById('coordLat').textContent = `Lat: ${lat.toFixed(4)}`;
-                        document.getElementById('coordLong').textContent = `Long: ${lng.toFixed(4)}`;
-                        locDisplay.classList.remove('hidden');
-                        locDisplay.classList.add('flex');
-                        
-                        // Reset warning styles
-                        resetWarning();
-                        
-                        this.innerHTML = originalText;
-                        this.disabled = false;
-                    },
-                    (error) => {
-                        alert('Gagal mendeteksi lokasi: ' + error.message);
-                        this.innerHTML = originalText;
-                        this.disabled = false;
-                    }
-                );
-            } else {
-                alert('Browser Anda tidak mendukung geolokasi.');
-            }
-        });
+                    // Reset warning styles
+                    resetWarning();
+                });
+            };
 
-        function placeMarker(lat, lng) {
-            if (marker) marker.setMap(null);
-            marker = new google.maps.Marker({
-                position: { lat, lng },
-                map,
-                title: 'Lokasi Kejadian',
-                animation: google.maps.Animation.DROP,
-            });
-            map.panTo({ lat, lng });
-        }
+            // Button Gunakan Lokasi Saya
+            document.getElementById('btnMyLocation')?.addEventListener('click', function() {
+                if (navigator.geolocation) {
+                    const originalText = this.innerHTML;
+                    this.innerHTML = '<i class="bi bi-arrow-repeat animate-spin"></i> Mendeteksi...';
+                    this.disabled = true;
+                    
+                    navigator.geolocation.getCurrentPosition(
+                        (position) => {
+                            const lat = position.coords.latitude;
+                            const lng = position.coords.longitude;
+                            
+                            placeMarker(lat, lng);
+                            document.getElementById('latitude').value = lat;
+                            document.getElementById('longitude').value = lng;
+                            
+                            const locDisplay = document.getElementById('locationDisplay');
 
-        function resetWarning() {
-            const mapContainer = document.getElementById('mapContainer');
-            const mapHelpText = document.getElementById('mapHelpText');
-            const mapHelpIcon = document.getElementById('mapHelpIcon');
-            const mapHelpSpan = document.getElementById('mapHelpSpan');
-
-            if (mapContainer.classList.contains('shake-highlight')) {
-                mapContainer.classList.remove('shake-highlight');
-            }
-            if (mapHelpText && mapHelpIcon && mapHelpSpan) {
-                mapHelpText.className = "text-xs text-slate-400 mt-1.5 flex items-center gap-1 transition-all duration-300";
-                mapHelpIcon.className = "bi bi-info-circle";
-                mapHelpSpan.textContent = "Klik pada peta untuk menentukan lokasi kejadian";
-            }
-        }
-
-        const fileInput = document.getElementById('foto');
-        const placeholder = document.getElementById('uploadPlaceholder');
-        const previewBox = document.getElementById('uploadPreview');
-        const previewName = document.getElementById('previewName');
-
-        fileInput?.addEventListener('change', function () {
-            const files = this.files;
-            const photoUploadBox = document.getElementById('photoUploadBox');
-            const photoHelpText = document.getElementById('photoHelpText');
-            const photoHelpIcon = document.getElementById('photoHelpIcon');
-            const photoHelpSpan = document.getElementById('photoHelpSpan');
-
-            // Reset warnings
-            if (photoUploadBox.classList.contains('shake-highlight')) {
-                photoUploadBox.classList.remove('shake-highlight');
-            }
-            if (photoHelpText && photoHelpIcon && photoHelpSpan) {
-                photoHelpText.className = "text-xs text-slate-400 mt-1.5 flex items-center gap-1 transition-all duration-300";
-                photoHelpIcon.className = "bi bi-info-circle";
-                photoHelpSpan.textContent = "Pilih berkas foto dokumentasi kejadian yang valid";
-            }
-
-            if (files.length > 3) {
-                this.value = ''; // Reset
-                placeholder.classList.remove('hidden');
-                previewBox.classList.add('hidden');
-                previewBox.classList.remove('flex');
-
-                // Shake and highlight border
-                photoUploadBox.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                photoUploadBox.classList.remove('shake-highlight');
-                void photoUploadBox.offsetWidth; // trigger reflow
-                photoUploadBox.classList.add('shake-highlight');
-
-                // Set warning helper text
-                if (photoHelpText && photoHelpIcon && photoHelpSpan) {
-                    photoHelpText.className = "text-xs text-red-500 font-bold mt-1.5 flex items-center gap-1.5 animate-pulse transition-all duration-300";
-                    photoHelpIcon.className = "bi bi-exclamation-triangle-fill text-red-500";
-                    photoHelpSpan.textContent = "Maksimal 3 foto yang boleh diunggah!";
+                            document.getElementById('coordLat').textContent = `Lat: ${lat.toFixed(4)}`;
+                            document.getElementById('coordLong').textContent = `Long: ${lng.toFixed(4)}`;
+                            locDisplay.classList.remove('hidden');
+                            locDisplay.classList.add('flex');
+                            
+                            // Reset warning styles
+                            resetWarning();
+                            
+                            this.innerHTML = originalText;
+                            this.disabled = false;
+                        },
+                        (error) => {
+                            alert('Gagal mendeteksi lokasi: ' + error.message);
+                            this.innerHTML = originalText;
+                            this.disabled = false;
+                        }
+                    );
+                } else {
+                    alert('Browser Anda tidak mendukung geolokasi.');
                 }
-                return;
-            }
-            
-            let totalSize = 0;
-            for (let i = 0; i < files.length; i++) {
-                totalSize += files[i].size;
-            }
-            
-            const totalSizeMB = totalSize / (1024 * 1024);
-            if (totalSizeMB > 25) {
-                this.value = ''; // Reset
-                placeholder.classList.remove('hidden');
-                previewBox.classList.add('hidden');
-                previewBox.classList.remove('flex');
+            });
 
-                // Shake and highlight border
-                photoUploadBox.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                photoUploadBox.classList.remove('shake-highlight');
-                void photoUploadBox.offsetWidth; // trigger reflow
-                photoUploadBox.classList.add('shake-highlight');
-
-                // Set warning helper text
-                if (photoHelpText && photoHelpIcon && photoHelpSpan) {
-                    photoHelpText.className = "text-xs text-red-500 font-extrabold mt-1.5 flex items-center gap-1.5 animate-pulse transition-all duration-300";
-                    photoHelpIcon.className = "bi bi-exclamation-triangle-fill text-red-500";
-                    photoHelpSpan.textContent = "Total ukuran file melebihi 25MB!";
-                }
-                return;
+            function placeMarker(lat, lng) {
+                if (marker) marker.setMap(null);
+                marker = new google.maps.Marker({
+                    position: { lat, lng },
+                    map,
+                    title: 'Lokasi Kejadian',
+                    animation: google.maps.Animation.DROP,
+                });
+                map.panTo({ lat, lng });
             }
-            
-            if (files.length > 0) {
-                previewName.textContent = `${files.length} file terpilih (${totalSizeMB.toFixed(2)} MB)`;
-                placeholder.classList.add('hidden');
-                previewBox.classList.remove('hidden');
-                previewBox.classList.add('flex');
-            } else {
-                placeholder.classList.remove('hidden');
-                previewBox.classList.add('hidden');
-                previewBox.classList.remove('flex');
-            }
-        });
 
-        const form = document.getElementById('laporanForm');
-        const submitBtn = document.getElementById('submitBtn');
-        form?.addEventListener('submit', (e) => {
-            const lat = document.getElementById('latitude').value;
-            const lng = document.getElementById('longitude').value;
-            if (!lat || !lng) {
-                e.preventDefault();
-                
+            function resetWarning() {
                 const mapContainer = document.getElementById('mapContainer');
                 const mapHelpText = document.getElementById('mapHelpText');
                 const mapHelpIcon = document.getElementById('mapHelpIcon');
                 const mapHelpSpan = document.getElementById('mapHelpSpan');
 
-                // Scroll to map smoothly
-                mapContainer.scrollIntoView({ behavior: 'smooth', block: 'center' });
-
-                // Trigger shake and highlight border
-                mapContainer.classList.remove('shake-highlight');
-                void mapContainer.offsetWidth; // trigger reflow
-                mapContainer.classList.add('shake-highlight');
-
-                // Update instruction text to red pulsing warning
-                if (mapHelpText && mapHelpIcon && mapHelpSpan) {
-                    mapHelpText.className = "text-xs text-red-500 font-extrabold mt-1.5 flex items-center gap-1.5 animate-pulse transition-all duration-300";
-                    mapHelpIcon.className = "bi bi-exclamation-triangle-fill text-red-500";
-                    mapHelpSpan.textContent = "Silakan klik pada peta untuk menentukan lokasi kejadian terlebih dahulu!";
+                if (mapContainer.classList.contains('shake-highlight')) {
+                    mapContainer.classList.remove('shake-highlight');
                 }
-                return;
+                if (mapHelpText && mapHelpIcon && mapHelpSpan) {
+                    mapHelpText.className = "text-xs text-slate-400 mt-1.5 flex items-center gap-1 transition-all duration-300";
+                    mapHelpIcon.className = "bi bi-info-circle";
+                    mapHelpSpan.textContent = "Klik pada peta untuk menentukan lokasi kejadian";
+                }
             }
-            submitBtn.innerHTML = '<i class="bi bi-hourglass-split"></i> Mengirim...';
-            submitBtn.disabled = true;
-        });
+
+            const fileInput = document.getElementById('foto');
+            const placeholder = document.getElementById('uploadPlaceholder');
+            const previewBox = document.getElementById('uploadPreview');
+            const previewName = document.getElementById('previewName');
+
+            fileInput?.addEventListener('change', function () {
+                const files = this.files;
+                const photoUploadBox = document.getElementById('photoUploadBox');
+                const photoHelpText = document.getElementById('photoHelpText');
+                const photoHelpIcon = document.getElementById('photoHelpIcon');
+                const photoHelpSpan = document.getElementById('photoHelpSpan');
+
+                // Reset warnings
+                if (photoUploadBox.classList.contains('shake-highlight')) {
+                    photoUploadBox.classList.remove('shake-highlight');
+                }
+                if (photoHelpText && photoHelpIcon && photoHelpSpan) {
+                    photoHelpText.className = "text-xs text-slate-400 mt-1.5 flex items-center gap-1 transition-all duration-300";
+                    photoHelpIcon.className = "bi bi-info-circle";
+                    photoHelpSpan.textContent = "Pilih berkas foto dokumentasi kejadian yang valid";
+                }
+
+                if (files.length > 3) {
+                    this.value = ''; // Reset
+                    placeholder.classList.remove('hidden');
+                    previewBox.classList.add('hidden');
+                    previewBox.classList.remove('flex');
+
+                    // Shake and highlight border
+                    photoUploadBox.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    photoUploadBox.classList.remove('shake-highlight');
+                    void photoUploadBox.offsetWidth; // trigger reflow
+                    photoUploadBox.classList.add('shake-highlight');
+
+                    // Set warning helper text
+                    if (photoHelpText && photoHelpIcon && photoHelpSpan) {
+                        photoHelpText.className = "text-xs text-red-500 font-bold mt-1.5 flex items-center gap-1.5 animate-pulse transition-all duration-300";
+                        photoHelpIcon.className = "bi bi-exclamation-triangle-fill text-red-500";
+                        photoHelpSpan.textContent = "Maksimal 3 foto yang boleh diunggah!";
+                    }
+                    return;
+                }
+                
+                let totalSize = 0;
+                for (let i = 0; i < files.length; i++) {
+                    totalSize += files[i].size;
+                }
+                
+                const totalSizeMB = totalSize / (1024 * 1024);
+                if (totalSizeMB > 25) {
+                    this.value = ''; // Reset
+                    placeholder.classList.remove('hidden');
+                    previewBox.classList.add('hidden');
+                    previewBox.classList.remove('flex');
+
+                    // Shake and highlight border
+                    photoUploadBox.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    photoUploadBox.classList.remove('shake-highlight');
+                    void photoUploadBox.offsetWidth; // trigger reflow
+                    photoUploadBox.classList.add('shake-highlight');
+
+                    // Set warning helper text
+                    if (photoHelpText && photoHelpIcon && photoHelpSpan) {
+                        photoHelpText.className = "text-xs text-red-500 font-extrabold mt-1.5 flex items-center gap-1.5 animate-pulse transition-all duration-300";
+                        photoHelpIcon.className = "bi bi-exclamation-triangle-fill text-red-500";
+                        photoHelpSpan.textContent = "Total ukuran file melebihi 25MB!";
+                    }
+                    return;
+                }
+                
+                if (files.length > 0) {
+                    previewName.textContent = `${files.length} file terpilih (${totalSizeMB.toFixed(2)} MB)`;
+                    placeholder.classList.add('hidden');
+                    previewBox.classList.remove('hidden');
+                    previewBox.classList.add('flex');
+                } else {
+                    placeholder.classList.remove('hidden');
+                    previewBox.classList.add('hidden');
+                    previewBox.classList.remove('flex');
+                }
+            });
+
+            const submitBtn = document.getElementById('submitBtn');
+            form.addEventListener('submit', (e) => {
+                const lat = document.getElementById('latitude').value;
+                const lng = document.getElementById('longitude').value;
+                if (!lat || !lng) {
+                    e.preventDefault();
+                    
+                    const mapContainer = document.getElementById('mapContainer');
+                    const mapHelpText = document.getElementById('mapHelpText');
+                    const mapHelpIcon = document.getElementById('mapHelpIcon');
+                    const mapHelpSpan = document.getElementById('mapHelpSpan');
+
+                    // Scroll to map smoothly
+                    mapContainer.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+                    // Trigger shake and highlight border
+                    mapContainer.classList.remove('shake-highlight');
+                    void mapContainer.offsetWidth; // trigger reflow
+                    mapContainer.classList.add('shake-highlight');
+
+                    // Update instruction text to red pulsing warning
+                    if (mapHelpText && mapHelpIcon && mapHelpSpan) {
+                        mapHelpText.className = "text-xs text-red-500 font-extrabold mt-1.5 flex items-center gap-1.5 animate-pulse transition-all duration-300";
+                        mapHelpIcon.className = "bi bi-exclamation-triangle-fill text-red-500";
+                        mapHelpSpan.textContent = "Silakan klik pada peta untuk menentukan lokasi kejadian terlebih dahulu!";
+                    }
+                    return;
+                }
+                submitBtn.innerHTML = '<i class="bi bi-hourglass-split"></i> Mengirim...';
+                submitBtn.disabled = true;
+            });
+        })();
     </script>
 @endsection

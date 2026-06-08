@@ -14,11 +14,18 @@ class DashboardController extends Controller
     {
         $user = auth()->user();
 
-        // If user is an approved volunteer, redirect to volunteer dashboard
-        $volunteerData = Volunteer::where('user_id', $user->id)->first();
+        $volunteerData = null;
+        if ($user) {
+            // If user is an admin, redirect to admin dashboard
+            if (strtolower($user->role) === 'admin') {
+                return redirect()->route('admin.dashboard');
+            }
 
-        if ($volunteerData && $volunteerData->status === Volunteer::STATUS_APPROVED) {
-            return redirect()->route('volunteer.dashboard');
+            // If user is an approved volunteer, redirect to volunteer dashboard
+            $volunteerData = Volunteer::where('user_id', $user->id)->first();
+            if ($volunteerData && $volunteerData->status === Volunteer::STATUS_APPROVED) {
+                return redirect()->route('volunteer.dashboard');
+            }
         }
 
         $news = $this->getNews();
