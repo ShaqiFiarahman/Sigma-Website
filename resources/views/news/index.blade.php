@@ -1,6 +1,7 @@
 @extends('layouts.app')
-@section('title', 'Berita Terkini')
+@section('title', 'Berita Kebencanaan Terkini & Info Mitigasi')
 @section('subtitle', 'Informasi dan peringatan bencana terbaru dari berbagai sumber.')
+@section('meta_description', 'Baca berita kebencanaan terkini dan info mitigasi darurat terupdate di sekitar Surakarta dan wilayah Indonesia melalui SIGMA.')
 
 @section('page-actions')
     <x-ui.back-button :route="auth()->check() && strtolower(auth()->user()->role) === 'admin' ? route('admin.dashboard') : route('dashboard')" />

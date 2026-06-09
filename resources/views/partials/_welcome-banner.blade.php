@@ -20,6 +20,7 @@
                 Pantau informasi bencana dan laporkan kejadian di sekitar Anda secara cepat.
             </p>
         </div>
+        {{-- Desktop / Tablet Info --}}
         <div class="shrink-0 hidden sm:flex flex-col items-end gap-1 welcome-info">
             <p class="text-2xl font-bold text-white" id="liveClock">--:--</p>
             <p class="text-xs" style="color: rgba(228,240,246,0.45);" id="liveDate">—</p>
@@ -30,6 +31,15 @@
                 <i id="weatherIcon" class="bi bi-cloud text-[10px]"></i> <span id="userWeather">Memuat cuaca...</span>
             </p>
         </div>
+
+        {{-- Mobile Info (Compact single line horizontal bar below welcome text) --}}
+        <div class="sm:hidden flex flex-wrap items-center gap-x-2 gap-y-1 text-xs font-medium text-white/75 mt-2.5 pb-1">
+            <span id="liveClockMobile">--:--</span>
+            <span class="text-white/40">&middot;</span>
+            <span id="userCityMobile">Mencari lokasi...</span>
+            <span class="text-white/40">&middot;</span>
+            <span id="userWeatherMobile">Memuat cuaca...</span>
+        </div>
     </div>
 </div>
 
@@ -39,8 +49,11 @@
             const now = new Date();
             const hours = String(now.getHours()).padStart(2, '0');
             const minutes = String(now.getMinutes()).padStart(2, '0');
+            
             const clockEl = document.getElementById('liveClock');
             if (clockEl) clockEl.textContent = `${hours}:${minutes}`;
+            const clockMobileEl = document.getElementById('liveClockMobile');
+            if (clockMobileEl) clockMobileEl.textContent = `${hours}:${minutes}`;
 
             const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
             const dateEl = document.getElementById('liveDate');
@@ -54,8 +67,13 @@
         } else {
             const cityEl = document.getElementById('userCity');
             if (cityEl) cityEl.textContent = 'Geolocation tidak didukung';
+            const cityMobileEl = document.getElementById('userCityMobile');
+            if (cityMobileEl) cityMobileEl.textContent = 'Geolocation tidak didukung';
+
             const weatherEl = document.getElementById('userWeather');
             if (weatherEl) weatherEl.textContent = 'Cuaca tidak tersedia';
+            const weatherMobileEl = document.getElementById('userWeatherMobile');
+            if (weatherMobileEl) weatherMobileEl.textContent = 'Cuaca tidak tersedia';
         }
 
         function successCallback(position) {
@@ -66,13 +84,19 @@
                 .then(response => response.json())
                 .then(data => {
                     const city = data.address.city || data.address.town || data.address.municipality || data.address.suburb || data.address.village || data.address.state || 'Lokasi tidak diketahui';
+                    
                     const cityEl = document.getElementById('userCity');
                     if (cityEl) cityEl.textContent = city;
+                    const cityMobileEl = document.getElementById('userCityMobile');
+                    if (cityMobileEl) cityMobileEl.textContent = city;
+                    
                     window.userCityName = city;
                 })
                 .catch(() => {
                     const cityEl = document.getElementById('userCity');
                     if (cityEl) cityEl.textContent = 'Gagal memuat lokasi';
+                    const cityMobileEl = document.getElementById('userCityMobile');
+                    if (cityMobileEl) cityMobileEl.textContent = 'Gagal memuat lokasi';
                 });
 
             if (typeof checkNearbyDisasters === 'function') {
@@ -85,14 +109,20 @@
                     const weather = data.current_weather;
                     const temp = Math.round(weather.temperature);
                     const code = weather.weathercode;
+                    
                     const weatherEl = document.getElementById('userWeather');
                     const iconEl = document.getElementById('weatherIcon');
                     if (weatherEl) weatherEl.textContent = `${temp}°C · ${getWeatherDesc(code)}`;
                     if (iconEl) iconEl.className = `bi ${getWeatherIcon(code)} text-[10px]`;
+                    
+                    const weatherMobileEl = document.getElementById('userWeatherMobile');
+                    if (weatherMobileEl) weatherMobileEl.textContent = `${temp}°C · ${getWeatherDesc(code)}`;
                 })
                 .catch(() => {
                     const weatherEl = document.getElementById('userWeather');
                     if (weatherEl) weatherEl.textContent = 'Gagal memuat cuaca';
+                    const weatherMobileEl = document.getElementById('userWeatherMobile');
+                    if (weatherMobileEl) weatherMobileEl.textContent = 'Gagal memuat cuaca';
                 });
         }
 
@@ -116,8 +146,14 @@
         function errorCallback() {
             const cityEl = document.getElementById('userCity');
             if (cityEl) cityEl.textContent = 'Akses lokasi ditolak';
+            const cityMobileEl = document.getElementById('userCityMobile');
+            if (cityMobileEl) cityMobileEl.textContent = 'Akses lokasi ditolak';
+
             const weatherEl = document.getElementById('userWeather');
             if (weatherEl) weatherEl.textContent = 'Cuaca tidak tersedia';
+            const weatherMobileEl = document.getElementById('userWeatherMobile');
+            if (weatherMobileEl) weatherMobileEl.textContent = 'Cuaca tidak tersedia';
+            
             if (typeof updateWarningBanner === 'function') updateWarningBanner(0);
         }
     })();

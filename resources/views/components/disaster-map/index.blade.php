@@ -73,29 +73,27 @@
 
     function buildDisasterPopup(d, badgeBg, badgeColor, shortReporter, displayDate) {
         const photoHtml = d.photo ? `
-            <div style="height: 110px; overflow: hidden; position: relative; margin: 0;">
-                <img src="${d.photo}" style="width: 100%; height: 100%; display: block; object-fit: cover;" alt="Thumbnail">
-                <div style="position: absolute; bottom: 0; left: 0; right: 0; height: 35px; background: linear-gradient(to top, rgba(0,0,0,0.35) 0%, transparent 100%);"></div>
+            <div class="popup-photo-wrap">
+                <img src="${d.photo}" class="popup-photo" alt="Thumbnail">
+                <div class="popup-photo-overlay"></div>
             </div>` : '';
 
         return `
-            <div class="disaster-popup-content" style="width: 240px; font-family: sans-serif; padding: 0; margin: 0; overflow: hidden;">
+            <div class="disaster-popup-content popup-card ${d.photo ? 'has-photo' : 'no-photo'}">
                 ${photoHtml}
-                <div style="padding: 12px;">
-                    <div style="margin-bottom: 6px;">
-                        <span style="display:inline-block; font-size:9px; font-weight:600; padding:2px 7px; border-radius:6px; background:${badgeBg}; color:${badgeColor}; text-transform: uppercase; letter-spacing: 0.3px;">
+                <div class="popup-body">
+                    <div class="popup-badge-row">
+                        <span class="popup-badge" style="background:${badgeBg}; color:${badgeColor};">
                             ${d.statusLabel}
                         </span>
                     </div>
-                    <p style="font-weight: 600; font-size: 12.5px; color: #0F172A; margin: 0 0 5px 0; line-height: 1.35; letter-spacing: -0.01em;">${d.title}</p>
-                    <p style="font-size: 11px; color: #475569; margin: 0 0 8px 0; line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; text-overflow: ellipsis;">
-                        ${d.description}
-                    </p>
-                    <p style="font-size: 9.5px; color: #94a3b8; margin: 0 0 8px 0; display: flex; align-items: center; gap: 4px; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                    <p class="popup-title">${d.title}</p>
+                    <p class="popup-desc">${d.description}</p>
+                    <p class="popup-meta">
                         <i class="bi bi-person-fill"></i> ${shortReporter} &middot;
                         <i class="bi bi-clock-fill"></i> ${displayDate}
                     </p>
-                    <a href="/laporan/detail/${d.id}" class="popup-detail-link" style="font-size: 11px; font-weight: 700; color: #2563EB; text-decoration: none; display: inline-flex; align-items: center; gap: 3px;">
+                    <a href="/laporan/detail/${d.id}" class="popup-link">
                         Lihat Detail
                     </a>
                 </div>
@@ -106,37 +104,37 @@
         const statusColor = s.status === 'Penuh' ? '#B91C1C' : '#15803D';
         const statusDot = s.status === 'Penuh' ? '#EF4444' : '#10B981';
         const logisticsHtml = (s.logistics || []).map(l =>
-            `<span style="display:inline-block; background:#F0FDFA; color:#0D9488; font-size:9px; font-weight:600; padding:2px 6px; border-radius:4px; border:1px solid #CCFBF1;">${l}</span>`
+            `<span class="popup-logistics-tag">${l}</span>`
         ).join('');
 
         const photoHtml = s.photo_url ? `
-            <div style="height:100px; overflow:hidden; position:relative; margin:0;">
-                <img src="${s.photo_url}" style="width:100%; height:100%; display:block; object-fit:cover;" alt="${s.name}">
-                <div style="position:absolute; bottom:0; left:0; right:0; height:30px; background:linear-gradient(to top, rgba(0,0,0,0.3) 0%, transparent 100%);"></div>
+            <div class="popup-photo-wrap shelter-photo-wrap">
+                <img src="${s.photo_url}" class="popup-photo" alt="${s.name}">
+                <div class="popup-photo-overlay"></div>
             </div>` : '';
 
         return `
-            <div class="shelter-popup-content" style="width:240px; font-family:sans-serif; padding:0; margin:0; overflow:hidden;">
+            <div class="shelter-popup-content popup-card ${s.photo_url ? 'has-photo' : 'no-photo'}">
                 ${photoHtml}
-                <div style="padding:${s.photo_url ? '12px' : '18px'} 14px 14px;">
-                    <div style="display:flex; align-items:center; gap:10px; margin-bottom:8px;">
-                        <div style="width:32px;height:32px;border-radius:8px;background:#ECFDF5;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                <div class="popup-body ${s.photo_url ? 'has-photo-body' : 'no-photo-body'}">
+                    <div class="popup-shelter-header">
+                        <div class="popup-shelter-icon-box">
                             <svg width="16" height="16" viewBox="0 0 16 16" fill="#10B981"><path d="M6.5 14.5v-3.505c0-.245.25-.495.5-.495h2c.25 0 .5.25.5.5v3.5a.5.5 0 0 0 .5.5h4a.5.5 0 0 0 .5-.5v-7a.5.5 0 0 0-.146-.354L13 5.793V2.5a.5.5 0 0 0-.5-.5h-1a.5.5 0 0 0-.5.5v1.293L8.354 1.146a.5.5 0 0 0-.708 0l-6 6A.5.5 0 0 0 1.5 7.5v7a.5.5 0 0 0 .5.5h4a.5.5 0 0 0 .5-.5z"/></svg>
                         </div>
-                        <div style="flex:1;min-width:0;">
-                            <p style="font-weight:600;font-size:12.5px;color:#0F172A;margin:0;line-height:1.35;">${s.name}</p>
-                            <div style="display:flex;align-items:center;gap:5px;margin-top:3px;">
-                                ${(s.status !== 'Penuh' && s.status !== 'Tersedia') ? `<span style="width:6px;height:6px;border-radius:50%;background:${statusDot};"></span>` : ''}
-                                <span style="font-size:9.5px;font-weight:600;color:${statusColor};">${s.status}</span>
-                                <span style="font-size:9.5px;color:#94A3B8;">·</span>
-                                <span style="font-size:9.5px;color:#64748B;">${s.capacity} orang</span>
+                        <div class="popup-shelter-info">
+                            <p class="popup-title">${s.name}</p>
+                            <div class="popup-shelter-sub">
+                                ${(s.status !== 'Penuh' && s.status !== 'Tersedia') ? `<span class="popup-status-dot" style="background:${statusDot};"></span>` : ''}
+                                <span class="popup-status-text" style="color:${statusColor};">${s.status}</span>
+                                <span class="popup-status-sep">·</span>
+                                <span class="popup-capacity-text">${s.capacity} orang</span>
                             </div>
                         </div>
                     </div>
-                    ${logisticsHtml ? `<div style="display:flex;flex-wrap:wrap;gap:4px;margin-bottom:8px;">${logisticsHtml}</div>` : ''}
+                    ${logisticsHtml ? `<div class="popup-logistics-row">${logisticsHtml}</div>` : ''}
                     <a href="https://www.google.com/maps/dir/?api=1&destination=${s.lat},${s.lng}"
                        target="_blank"
-                       style="font-size:11px;font-weight:700;color:#3B6FE8;text-decoration:none;display:inline-flex;align-items:center;gap:3px;">
+                       class="popup-link">
                         Petunjuk Arah
                     </a>
                 </div>

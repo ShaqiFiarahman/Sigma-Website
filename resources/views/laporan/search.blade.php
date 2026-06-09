@@ -1,6 +1,7 @@
 @extends('layouts.app')
-@section('title', 'Cari & Filter Bencana')
+@section('title', 'Cari & Filter Laporan Bencana')
 @section('subtitle', 'Temukan laporan berdasarkan lokasi atau jenis bencana.')
+@section('meta_description', 'Cari dan saring laporan kebencanaan masyarakat secara real-time berdasarkan tingkat status Awas, Siaga 1, dan Siaga 2.')
 
 @section('page-actions')
     <x-ui.back-button :useHistory="true" />

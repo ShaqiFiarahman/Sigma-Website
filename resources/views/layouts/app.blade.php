@@ -4,8 +4,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SIGMA — @yield('title')</title>
-    <meta name="description" content="SIGMA — Sistem Informasi Tanggap Bencana.">
+    <title>@yield('title') | SIGMA - Sistem Informasi Mitigasi Bencana</title>
+    <meta name="description" content="@yield('meta_description', 'SIGMA (Sistem Informasi Gawat Darurat dan Mitigasi Bencana) - Pantau peta bencana real-time, cari info posko shelter terdekat, dan kirim laporan darurat di sekitar Anda.')">
+    <meta name="keywords" content="SIGMA, mitigasi bencana, tanggap darurat, peta bencana, posko evakuasi, shelter bencana, info bencana indonesia">
     <link rel="preload" href="{{ Vite::asset('resources/fonts/PlusJakartaSans-Regular.ttf') }}" as="font" type="font/ttf" crossorigin>
     <link rel="preload" href="{{ Vite::asset('resources/fonts/PlusJakartaSans-Bold.ttf') }}" as="font" type="font/ttf" crossorigin>
     <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>

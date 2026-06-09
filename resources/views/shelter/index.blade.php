@@ -1,6 +1,7 @@
 @extends('layouts.app')
-@section('title', (auth()->check() && strtolower(auth()->user()->role) === 'admin') ? 'Kelola Posko' : 'Informasi Posko & Pengungsian')
+@section('title', (auth()->check() && strtolower(auth()->user()->role) === 'admin') ? 'Kelola Posko Evakuasi' : 'Informasi Posko Evakuasi & Shelter Terdekat')
 @section('subtitle', (auth()->check() && strtolower(auth()->user()->role) === 'admin') ? 'Manajemen data posko pengungsian dan shelter evakuasi.' : 'Temukan lokasi posko evakuasi terdekat dan informasi kapasitas terkini.')
+@section('meta_description', 'Temukan lokasi posko shelter evakuasi terdekat, kapasitas pengungsian yang tersedia, dan daftar logistik bantuan medis secara real-time di SIGMA.')
 
 @section('page-actions')
     <x-ui.back-button :route="auth()->check() && strtolower(auth()->user()->role) === 'admin' ? route('admin.dashboard') : route('dashboard')" />

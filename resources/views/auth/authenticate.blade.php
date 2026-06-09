@@ -3,7 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SIGMA — Autentikasi</title>
+    <title>Masuk & Daftar Akun | SIGMA - Sistem Informasi Mitigasi Bencana</title>
+    <meta name="description" content="Masuk atau daftarkan diri Anda di SIGMA (Sistem Informasi Gawat Darurat dan Mitigasi Bencana) untuk memantau kondisi terkini di sekitar Anda, melaporkan kejadian darurat, dan mendaftar relawan.">
+    <meta name="keywords" content="SIGMA, masuk akun, daftar relawan, login, registrasi, tanggap darurat, mitigasi bencana">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     <style>

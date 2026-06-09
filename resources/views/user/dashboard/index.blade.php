@@ -1,5 +1,5 @@
 @extends('layouts.app')
-@section('title', 'Dashboard')
+@section('title', 'Peta Bencana Real-Time & Informasi Mitigasi')
 
 @section('content')
 

@@ -1,6 +1,7 @@
 @extends('layouts.app')
-@section('title', 'Detail Laporan')
+@section('title', 'Laporan Bencana: ' . $laporan['judul'])
 @section('subtitle', 'Pantau detail laporan dan lokasi kejadian.')
+@section('meta_description', 'Detail kejadian: ' . \Illuminate\Support\Str::limit(strip_tags($laporan['deskripsi'] ?? 'Laporan bencana masyarakat'), 150) . ' - Lokasi: ' . ($laporan['location'] ?? 'tidak diketahui'))
 
 @section('page-actions')
     <x-ui.back-button :useHistory="true" />
