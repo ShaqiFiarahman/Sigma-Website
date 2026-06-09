@@ -30,7 +30,7 @@
                     <div class="w-14 h-14 rounded-2xl flex items-center justify-center text-white text-lg font-bold shadow-md"
                          style="background: linear-gradient(135deg, {{ $skillColor['from'] }}, {{ $skillColor['to'] }}); shadow-color: {{ $skillColor['from'] }}30;">
                         @if($volunteer->skill === 'SAR')
-                            <svg class="w-6.5 h-6.5 shrink-0 shadow-sm rounded-full" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <svg class="w-7 h-7 shrink-0 shadow-sm rounded-full" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                                 <!-- Basarnas Official Circle Emblem -->
                                 <circle cx="12" cy="12" r="11.5" fill="#facc15" />
                                 <circle cx="12" cy="12" r="11" fill="#0b3c1b" />
@@ -63,7 +63,7 @@
                                 <text x="12" y="21.3" fill="#facc15" font-size="0.95" font-weight="800" font-family="system-ui, -apple-system, sans-serif" text-anchor="middle" letter-spacing="0.1">AVIGNAM JAGAT SAMAGRAM</text>
                             </svg>
                         @elseif($volunteer->skill === 'KONSUMSI')
-                            <svg class="w-6.5 h-6.5 shrink-0 shadow-sm rounded-full" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="color: {{ $skillColor['from'] }};">
+                            <svg class="w-7 h-7 shrink-0 shadow-sm rounded-full" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="color: {{ $skillColor['from'] }};">
                                 <!-- Background Circle -->
                                 <circle cx="12" cy="12" r="11" fill="currentColor"/>
                                 <!-- Fork (White) -->
@@ -72,7 +72,7 @@
                                 <path d="M16.5 12v7c0 .6-.4 1-1 1s-1-.4-1-1v-7.2c-.8-.2-1.5-1-1.5-1.8V7.5c0-2 1.5-3.5 3-3.5.3 0 .5.2.5.5v11.7c0 .8-.5 1.5-1 1.8z" fill="#ffffff"/>
                             </svg>
                         @elseif($volunteer->skill === 'PSIKOSOSIAL')
-                            <svg class="w-6.5 h-6.5 shrink-0 shadow-sm rounded-full" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="color: {{ $skillColor['from'] }};">
+                            <svg class="w-7 h-7 shrink-0 shadow-sm rounded-full" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="color: {{ $skillColor['from'] }};">
                                 <!-- Background Purple Circle -->
                                 <circle cx="12" cy="12" r="11" fill="currentColor"/>
                                 <!-- Big White Hand (Adult Hand) -->
@@ -120,7 +120,7 @@
                     
                     {{-- Box Penugasan --}}
                     <div class="bg-white/80 backdrop-blur-md rounded-2xl border border-white/60 overflow-hidden shadow-sm">
-                        <div class="px-4.5 py-2.5 border-b border-slate-100/50">
+                        <div class="px-5 py-2.5 border-b border-slate-100/50">
                             <p class="text-xs font-bold text-slate-450 uppercase tracking-wider">Status Tugas Saat Ini</p>
                         </div>
                         <div class="p-3">

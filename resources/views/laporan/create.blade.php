@@ -96,7 +96,7 @@
                                     <i class="bi bi-cursor-fill"></i> Gunakan Lokasi Saya
                                 </button>
                                 <div id="mapContainer"
-                                    class="w-full h-96 rounded-xl border border-slate-200 overflow-hidden bg-slate-100 flex items-center justify-center"
+                                    class="w-full h-72 sm:h-96 rounded-xl border border-slate-200 overflow-hidden bg-slate-100 flex items-center justify-center"
                                     style="box-shadow: 0 1px 3px rgba(10,15,30,0.06);">
                                     <p class="text-slate-400 text-sm"><i class="bi bi-map me-1"></i> Memuat peta...</p>
                                 </div>
@@ -198,7 +198,7 @@
                     zoom: 13,
                     center: defaultLocation,
                     disableDefaultUI: true,
-                    gestureHandling: 'greedy',
+                    gestureHandling: 'cooperative',
                     styles: [
                         { featureType: "poi", stylers: [{ visibility: "off" }] },
                         { featureType: "transit", stylers: [{ visibility: "off" }] },

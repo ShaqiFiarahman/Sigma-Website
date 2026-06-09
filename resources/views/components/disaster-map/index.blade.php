@@ -9,8 +9,29 @@
         @include('components.disaster-map.legend')
 
         {{-- Map Container --}}
-        <div class="w-full rounded-2xl overflow-hidden border border-slate-200/60"
-            style="height: 550px; box-shadow: 0 4px 24px rgba(10,15,30,0.08);" id="map"></div>
+        <div class="w-full h-[350px] sm:h-[450px] lg:h-[550px] rounded-2xl overflow-hidden border border-slate-200/60"
+            style="box-shadow: 0 4px 24px rgba(10,15,30,0.08);" id="map"></div>
+    </div>
+
+    {{-- Mobile Legend (Horizontal row below map) --}}
+    <div class="sm:hidden mt-3 flex flex-wrap items-center justify-center gap-x-4 gap-y-2.5 p-3.5 bg-white border border-slate-200/60 rounded-2xl shadow-sm">
+        <div class="flex items-center gap-1.5 text-xs text-slate-700 font-semibold">
+            <div class="w-2.5 h-2.5 rounded-full" style="background: #D32F2F;"></div>
+            <span>Awas</span>
+        </div>
+        <div class="flex items-center gap-1.5 text-xs text-slate-700 font-semibold">
+            <div class="w-2.5 h-2.5 rounded-full" style="background: #EA580C;"></div>
+            <span>Siaga 1</span>
+        </div>
+        <div class="flex items-center gap-1.5 text-xs text-slate-700 font-semibold">
+            <div class="w-2.5 h-2.5 rounded-full" style="background: #7C3AED;"></div>
+            <span>Siaga 2</span>
+        </div>
+        <div class="w-px h-3.5 bg-slate-200"></div>
+        <div class="flex items-center gap-1.5 text-xs text-slate-700 font-semibold">
+            <i class="bi bi-house-door-fill text-[#10B981] text-xs"></i>
+            <span>Posko Shelter</span>
+        </div>
     </div>
 </section>
 
@@ -34,7 +55,7 @@
             center: center,
             mapTypeId: 'terrain', // Tipe peta fisik / medan (Terrain)
             disableDefaultUI: true,
-            gestureHandling: 'greedy',
+            gestureHandling: 'cooperative',
             styles: [
                 { featureType: "water", elementType: "geometry", stylers: [{ color: "#c8dff0" }] },
                 { featureType: "poi", stylers: [{ visibility: "off" }] },

@@ -51,21 +51,21 @@
             $tersedia = \App\Models\Shelter::where('status', 'Tersedia')->count();
             $penuh = \App\Models\Shelter::where('status', 'Penuh')->count();
         @endphp
-        <div class="bg-white border border-slate-200/80 rounded-xl px-4 py-3 flex items-center gap-3" style="box-shadow: 0 1px 3px rgba(10,15,30,0.04);">
+        <div class="bg-white border border-slate-200/80 rounded-xl px-2.5 py-2 sm:px-4 sm:py-3 flex items-center gap-3" style="box-shadow: 0 1px 3px rgba(10,15,30,0.04);">
             <i class="bi bi-buildings text-blue-500"></i>
             <div>
                 <p class="text-lg font-bold text-slate-900">{{ $totalPosko }}</p>
                 <p class="text-[10px] text-slate-500">Total Posko</p>
             </div>
         </div>
-        <div class="bg-white border border-slate-200/80 rounded-xl px-4 py-3 flex items-center gap-3" style="box-shadow: 0 1px 3px rgba(10,15,30,0.04);">
+        <div class="bg-white border border-slate-200/80 rounded-xl px-2.5 py-2 sm:px-4 sm:py-3 flex items-center gap-3" style="box-shadow: 0 1px 3px rgba(10,15,30,0.04);">
             <i class="bi bi-check-circle text-emerald-500"></i>
             <div>
                 <p class="text-lg font-bold text-emerald-600">{{ $tersedia }}</p>
                 <p class="text-[10px] text-slate-500">Tersedia</p>
             </div>
         </div>
-        <div class="bg-white border border-slate-200/80 rounded-xl px-4 py-3 flex items-center gap-3" style="box-shadow: 0 1px 3px rgba(10,15,30,0.04);">
+        <div class="bg-white border border-slate-200/80 rounded-xl px-2.5 py-2 sm:px-4 sm:py-3 flex items-center gap-3" style="box-shadow: 0 1px 3px rgba(10,15,30,0.04);">
             <i class="bi bi-x-circle text-red-500"></i>
             <div>
                 <p class="text-lg font-bold text-red-600">{{ $penuh }}</p>
@@ -171,7 +171,7 @@
                     <div class="hidden sm:block w-px bg-slate-200 self-stretch"></div>
 
                     {{-- Actions --}}
-                    <div class="flex sm:flex-col items-center justify-center gap-2 sm:shrink-0 sm:self-center sm:pl-2">
+                    <div class="flex flex-col sm:flex-col items-center justify-center gap-2 w-full sm:w-auto sm:shrink-0 sm:self-center sm:pl-2">
                         <button type="button"
                            onclick="window.open('https://www.google.com/maps/dir/?api=1&destination={{ $shelter['lat'] }},{{ $shelter['lng'] }}', '_blank')"
                            class="inline-flex items-center justify-center gap-1.5 w-full sm:w-40 px-4 py-2.5 text-xs font-semibold text-white rounded-xl transition-all duration-200 hover:-translate-y-0.5 shadow-sm hover:shadow-md cursor-pointer"

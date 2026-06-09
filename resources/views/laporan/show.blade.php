@@ -166,7 +166,7 @@
                     
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         {{-- Medis Update --}}
-                        <div class="bg-red-50/20 border border-red-100 rounded-xl p-4.5">
+                        <div class="bg-red-50/20 border border-red-100 rounded-xl p-5">
                             <div class="flex items-center gap-2 mb-3 text-red-700">
                                 <i class="bi bi-heart-pulse-fill text-sm"></i>
                                 <h4 class="text-xs font-bold uppercase tracking-wider">Kondisi Medis & Korban</h4>
@@ -231,9 +231,9 @@
                         </div>
 
                         {{-- SAR Update --}}
-                        <div class="bg-orange-50/20 border border-orange-100 rounded-xl p-4.5">
+                        <div class="bg-orange-50/20 border border-orange-100 rounded-xl p-5">
                              <div class="flex items-center gap-2 mb-3 text-orange-700">
-                                <svg class="w-5.5 h-5.5 shrink-0 shadow-sm rounded-full" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <svg class="w-6 h-6 shrink-0 shadow-sm rounded-full" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                                     <!-- Basarnas Official Circle Emblem -->
                                     <circle cx="12" cy="12" r="11.5" fill="#facc15" />
                                     <circle cx="12" cy="12" r="11" fill="#0b3c1b" />

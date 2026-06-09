@@ -71,6 +71,13 @@ body { font-family: 'Plus Jakarta Sans', ui-sans-serif, system-ui, sans-serif; -
     will-change: transform, opacity;
     backface-visibility: hidden;
 }
+@media (max-width: 768px) {
+    .profile-dropdown {
+        right: -10px !important;
+        width: calc(100vw - 20px) !important;
+        max-width: 320px !important;
+    }
+}
 .profile-dropdown.is-opening { animation: dropdown-in 0.34s cubic-bezier(0.22,1,0.36,1) both; }
 .profile-dropdown.is-closing { animation: dropdown-out 0.22s cubic-bezier(0.4,0,0.2,1) both; }
 

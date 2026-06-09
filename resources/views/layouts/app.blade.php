@@ -44,7 +44,7 @@
                     </div>
                     <div class="flex flex-col">
                         <span class="font-bold tracking-tight text-slate-900 text-lg leading-none">SIGMA</span>
-                        <span class="text-[10px] text-slate-500 font-medium leading-tight">Sistem Informasi Gawat
+                        <span class="text-[10px] text-slate-500 font-medium leading-tight hidden sm:block">Sistem Informasi Gawat
                             Darurat dan Mitigasi Bencana</span>
                     </div>
                 </a>
@@ -82,10 +82,10 @@
 
                 {{-- User profile (clickable to toggle dropdown) --}}
                 @auth
-                    <div class="hidden md:block relative pl-4 border-l border-slate-200">
+                    <div class="relative pl-2 md:pl-4 border-l border-slate-200">
                         <button type="button" id="profileDropdownBtn" aria-expanded="false" aria-haspopup="true"
                             class="flex items-center gap-3 cursor-pointer group focus:outline-none">
-                            <div class="text-right">
+                            <div class="text-right hidden md:block">
                                 <p class="text-sm font-semibold text-slate-900 leading-none group-hover:text-blue-800 transition-colors">{{ auth()->user()->short_name }}</p>
                                 <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1">
                                     {{ auth()->user()->role }}
@@ -101,9 +101,9 @@
                         <x-profile-dropdown />
                     </div>
                 @else
-                    <div class="hidden md:block pl-4 border-l border-slate-200">
+                    <div class="relative pl-2 md:pl-4 border-l border-slate-200">
                         <a href="{{ route('login') }}" class="flex items-center gap-3 cursor-pointer group focus:outline-none">
-                            <div class="text-right">
+                            <div class="text-right hidden md:block">
                                 <p class="text-sm font-semibold text-slate-900 leading-none group-hover:text-blue-800 transition-colors">Login</p>
                                 <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1">
                                     Masyarakat

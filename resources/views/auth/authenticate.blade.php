@@ -153,12 +153,13 @@
         .input-group input:focus {
             border-color: var(--accent);
             background: #fff;
-            box-shadow: 0 0 0 3px rgba(10, 15, 30, 0.08);
+            box-shadow: 0 0 0 3px rgba(59, 111, 232, 0.1);
             outline: none;
         }
 
         .submit-btn {
-            background: linear-gradient(135deg, var(--abyss) 0%, #1e3a8a 100%);
+            background: linear-gradient(135deg, #1e3a8a 0%, var(--accent) 100%);
+            box-shadow: 0 4px 12px rgba(59, 111, 232, 0.25);
             color: #fff;
             width: 100%;
             padding: 14px;
@@ -166,17 +167,24 @@
             font-weight: 700;
             margin-top: 10px;
             transition: all 0.3s;
+            cursor: pointer;
         }
         .submit-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(10, 15, 30, 0.2);
+            transform: translateY(-1px);
+            box-shadow: 0 6px 18px rgba(59, 111, 232, 0.35);
+        }
+        .submit-btn:active {
+            transform: translateY(0);
         }
 
         @media (max-width: 768px) {
             .auth-card {
                 flex-direction: column;
-                min-height: 700px;
+                min-height: auto;
                 max-width: 450px;
+                border-radius: 24px;
+                box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 16px -6px rgba(0, 0, 0, 0.05);
+                border: 1px solid rgba(10, 15, 30, 0.08);
             }
             .overlay-container {
                 display: none;
@@ -184,6 +192,7 @@
             .sign-in-container, .sign-up-container {
                 width: 100%;
                 position: relative;
+                height: auto;
             }
             .auth-card.right-panel-active .sign-in-container {
                 display: none;
@@ -207,11 +216,17 @@
     <div class="auth-card" id="authCard">
         {{-- Sign Up --}}
         <div class="form-container sign-up-container">
-            <form action="{{ route('register.post') }}" method="POST" class="h-full flex flex-col justify-center px-10 sm:px-16 bg-white">
+            <form action="{{ route('register.post') }}" method="POST" class="h-full flex flex-col justify-center px-6 py-10 sm:px-16 bg-white">
                 @csrf
-                <div class="mb-8 text-center sm:text-left">
-                    <h2 class="text-2xl font-bold text-slate-900">Buat Akun</h2>
-                    <p class="text-sm text-slate-500 mt-1">Bergabung dengan SIGMA hari ini.</p>
+                <div class="mb-8 text-center sm:text-left flex flex-col items-center sm:items-start gap-3">
+                    <div class="w-12 h-12 rounded-xl flex items-center justify-center text-white transition-all duration-300"
+                        style="background: linear-gradient(135deg, #0A0F1E 0%, #1e3a8a 100%); box-shadow: 0 4px 12px rgba(10,15,30,0.25);">
+                        <i class="bi bi-shield-check text-xl"></i>
+                    </div>
+                    <div>
+                        <h2 class="text-2xl font-bold text-slate-900 leading-tight">Buat Akun</h2>
+                        <p class="text-sm text-slate-500 mt-1">Bergabung dengan SIGMA hari ini.</p>
+                    </div>
                 </div>
 
                 <div class="space-y-4">
@@ -243,11 +258,17 @@
 
         {{-- Sign In --}}
         <div class="form-container sign-in-container">
-            <form action="{{ route('login.post') }}" method="POST" class="h-full flex flex-col justify-center px-10 sm:px-16 bg-white">
+            <form action="{{ route('login.post') }}" method="POST" class="h-full flex flex-col justify-center px-6 py-10 sm:px-16 bg-white">
                 @csrf
-                <div class="mb-8 text-center sm:text-left">
-                    <h2 class="text-2xl font-bold text-slate-900">Selamat Datang</h2>
-                    <p class="text-sm text-slate-500 mt-1">Masuk ke SIGMA Dashboard.</p>
+                <div class="mb-8 text-center sm:text-left flex flex-col items-center sm:items-start gap-3">
+                    <div class="w-12 h-12 rounded-xl flex items-center justify-center text-white transition-all duration-300"
+                        style="background: linear-gradient(135deg, #0A0F1E 0%, #1e3a8a 100%); box-shadow: 0 4px 12px rgba(10,15,30,0.25);">
+                        <i class="bi bi-shield-check text-xl"></i>
+                    </div>
+                    <div>
+                        <h2 class="text-2xl font-bold text-slate-900 leading-tight">Selamat Datang</h2>
+                        <p class="text-sm text-slate-500 mt-1">Masuk ke SIGMA Dashboard.</p>
+                    </div>
                 </div>
 
                 @if ($errors->any())

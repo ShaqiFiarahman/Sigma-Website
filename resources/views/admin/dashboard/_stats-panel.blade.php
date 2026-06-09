@@ -1,5 +1,5 @@
 {{-- Period Selector --}}
-<div class="flex items-center justify-between mb-4 px-1">
+<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4 px-1">
     <div>
         <h2 class="text-lg font-bold text-slate-900">Ringkasan Laporan</h2>
         <p class="text-xs text-slate-500 mt-0.5">Statistik laporan bencana</p>

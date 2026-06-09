@@ -11,7 +11,7 @@
             alt="" loading="lazy" decoding="async">
     </div>
 
-    <div class="relative z-10 px-12 sm:px-16 py-14 flex flex-col sm:flex-row sm:items-center justify-between gap-12">
+    <div class="relative z-10 px-6 sm:px-12 lg:px-16 py-8 sm:py-14 flex flex-col sm:flex-row sm:items-center justify-between gap-6 sm:gap-12">
         <div class="max-w-3xl">
             <h2 class="text-xl sm:text-2xl font-extrabold text-white tracking-tight mb-3 welcome-text">Halo,
                 {{ auth()->check() ? auth()->user()->short_name : 'Masyarakat' }}.
