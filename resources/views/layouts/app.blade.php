@@ -4,16 +4,24 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="google-site-verification" content="3W_tHhKZuwz5ezm514XgrspY6bgIn7p5cGe1aui6dhI" />
     <title>@yield('title') | SIGMA - Sistem Informasi Mitigasi Bencana</title>
-    <meta name="description" content="@yield('meta_description', 'SIGMA (Sistem Informasi Gawat Darurat dan Mitigasi Bencana) - Pantau peta bencana real-time, cari info posko shelter terdekat, dan kirim laporan darurat di sekitar Anda.')">
-    <meta name="keywords" content="SIGMA, mitigasi bencana, tanggap darurat, peta bencana, posko evakuasi, shelter bencana, info bencana indonesia">
-    <link rel="preload" href="{{ Vite::asset('resources/fonts/PlusJakartaSans-Regular.ttf') }}" as="font" type="font/ttf" crossorigin>
-    <link rel="preload" href="{{ Vite::asset('resources/fonts/PlusJakartaSans-Bold.ttf') }}" as="font" type="font/ttf" crossorigin>
+    <meta name="description"
+        content="@yield('meta_description', 'SIGMA (Sistem Informasi Gawat Darurat dan Mitigasi Bencana) - Pantau peta bencana real-time, cari info posko shelter terdekat, dan kirim laporan darurat di sekitar Anda.')">
+    <meta name="keywords"
+        content="SIGMA, mitigasi bencana, tanggap darurat, peta bencana, posko evakuasi, shelter bencana, info bencana indonesia">
+    <link rel="preload" href="{{ Vite::asset('resources/fonts/PlusJakartaSans-Regular.ttf') }}" as="font"
+        type="font/ttf" crossorigin>
+    <link rel="preload" href="{{ Vite::asset('resources/fonts/PlusJakartaSans-Bold.ttf') }}" as="font" type="font/ttf"
+        crossorigin>
     <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
     <link rel="preconnect" href="https://maps.googleapis.com" crossorigin>
     <link rel="preconnect" href="https://maps.gstatic.com" crossorigin>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet" media="print" onload="this.media='all'">
-    <noscript><link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet"></noscript>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet"
+        media="print" onload="this.media='all'">
+    <noscript>
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+    </noscript>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 
@@ -22,13 +30,19 @@
     {{-- Elemen Latar Belakang Ambient (Hanya visual belakang, tidak menghalangi interaksi) --}}
     <div class="fixed inset-0 -z-10 overflow-hidden pointer-events-none">
         <!-- Orb 1 (Biru-Indigo lembut di kanan atas) -->
-        <div class="absolute -top-[10%] -right-[10%] w-[55vw] h-[55vw] max-w-[650px] max-h-[650px] rounded-full bg-gradient-to-br from-blue-400/15 to-indigo-500/15 blur-[120px] animate-ambient-slow"></div>
-        
+        <div
+            class="absolute -top-[10%] -right-[10%] w-[55vw] h-[55vw] max-w-[650px] max-h-[650px] rounded-full bg-gradient-to-br from-blue-400/15 to-indigo-500/15 blur-[120px] animate-ambient-slow">
+        </div>
+
         <!-- Orb 2 (Teal-Sky lembut di tengah kiri) -->
-        <div class="absolute top-[30%] -left-[15%] w-[50vw] h-[50vw] max-w-[550px] max-h-[550px] rounded-full bg-gradient-to-tr from-teal-400/10 to-sky-400/10 blur-[100px] animate-ambient-slower"></div>
-        
+        <div
+            class="absolute top-[30%] -left-[15%] w-[50vw] h-[50vw] max-w-[550px] max-h-[550px] rounded-full bg-gradient-to-tr from-teal-400/10 to-sky-400/10 blur-[100px] animate-ambient-slower">
+        </div>
+
         <!-- Orb 3 (Biru Muda/Cyan di bawah kanan) -->
-        <div class="absolute bottom-[5%] right-[10%] w-[45vw] h-[45vw] max-w-[500px] max-h-[500px] rounded-full bg-gradient-to-tr from-sky-300/10 to-teal-400/10 blur-[110px] animate-ambient-slow"></div>
+        <div
+            class="absolute bottom-[5%] right-[10%] w-[45vw] h-[45vw] max-w-[500px] max-h-[500px] rounded-full bg-gradient-to-tr from-sky-300/10 to-teal-400/10 blur-[110px] animate-ambient-slow">
+        </div>
     </div>
 
     {{-- NAVBAR --}}
@@ -45,7 +59,8 @@
                     </div>
                     <div class="flex flex-col">
                         <span class="font-bold tracking-tight text-slate-900 text-lg leading-none">SIGMA</span>
-                        <span class="text-[10px] text-slate-500 font-medium leading-tight hidden sm:block">Sistem Informasi Gawat
+                        <span class="text-[10px] text-slate-500 font-medium leading-tight hidden sm:block">Sistem
+                            Informasi Gawat
                             Darurat dan Mitigasi Bencana</span>
                     </div>
                 </a>
@@ -87,7 +102,9 @@
                         <button type="button" id="profileDropdownBtn" aria-expanded="false" aria-haspopup="true"
                             class="flex items-center gap-3 cursor-pointer group focus:outline-none">
                             <div class="text-right hidden md:block">
-                                <p class="text-sm font-semibold text-slate-900 leading-none group-hover:text-blue-800 transition-colors">{{ auth()->user()->short_name }}</p>
+                                <p
+                                    class="text-sm font-semibold text-slate-900 leading-none group-hover:text-blue-800 transition-colors">
+                                    {{ auth()->user()->short_name }}</p>
                                 <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1">
                                     {{ auth()->user()->role }}
                                 </p>
@@ -103,9 +120,12 @@
                     </div>
                 @else
                     <div class="relative pl-2 md:pl-4 border-l border-slate-200">
-                        <a href="{{ route('login') }}" class="flex items-center gap-3 cursor-pointer group focus:outline-none">
+                        <a href="{{ route('login') }}"
+                            class="flex items-center gap-3 cursor-pointer group focus:outline-none">
                             <div class="text-right hidden md:block">
-                                <p class="text-sm font-semibold text-slate-900 leading-none group-hover:text-blue-800 transition-colors">Login</p>
+                                <p
+                                    class="text-sm font-semibold text-slate-900 leading-none group-hover:text-blue-800 transition-colors">
+                                    Login</p>
                                 <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1">
                                     Masyarakat
                                 </p>
@@ -139,7 +159,8 @@
             </a>
             <a href="{{ route('laporan.create') }}"
                 class="flex items-center gap-2 px-3 py-2.5 rounded-lg text-sm font-medium {{ Route::is('laporan.create') ? 'bg-blue-50 text-blue-700' : 'text-slate-600' }}">
-                <i class="bi bi-plus-circle"></i>{{ auth()->check() && strtolower(auth()->user()->role) === 'admin' ? 'Kelola Laporan' : 'Buat Laporan' }}
+                <i
+                    class="bi bi-plus-circle"></i>{{ auth()->check() && strtolower(auth()->user()->role) === 'admin' ? 'Kelola Laporan' : 'Buat Laporan' }}
             </a>
             <div class="border-t border-slate-100 mt-2 pt-2">
                 @auth
@@ -182,8 +203,10 @@
     @yield('footer')
 
     {{-- Toast Notification Container (Below navbar on the right) --}}
-    <div id="disaster-toast-container" class="fixed top-24 right-6 z-[9999] flex flex-col gap-3 pointer-events-none w-[calc(100%-2rem)] max-w-sm sm:w-80"></div>
-    
+    <div id="disaster-toast-container"
+        class="fixed top-24 right-6 z-[9999] flex flex-col gap-3 pointer-events-none w-[calc(100%-2rem)] max-w-sm sm:w-80">
+    </div>
+
     {{-- Reusable Toast HTML Template --}}
     <x-disaster-toast />
 
