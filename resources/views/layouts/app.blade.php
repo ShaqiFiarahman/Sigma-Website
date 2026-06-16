@@ -31,30 +31,25 @@
 
 <body class="text-slate-900 min-h-screen flex flex-col font-sans selection:bg-blue-100 selection:text-blue-900">
 
-    {{-- Elemen Latar Belakang Ambient (Hanya visual belakang, tidak menghalangi interaksi) --}}
+    {{-- background ambient buat hiasan --}}
     <div class="fixed inset-0 -z-10 overflow-hidden pointer-events-none">
-        <!-- Orb 1 (Biru-Indigo lembut di kanan atas) -->
         <div
             class="absolute -top-[10%] -right-[10%] w-[55vw] h-[55vw] max-w-[650px] max-h-[650px] rounded-full bg-gradient-to-br from-blue-400/15 to-indigo-500/15 blur-[120px] animate-ambient-slow">
         </div>
 
-        <!-- Orb 2 (Teal-Sky lembut di tengah kiri) -->
         <div
             class="absolute top-[30%] -left-[15%] w-[50vw] h-[50vw] max-w-[550px] max-h-[550px] rounded-full bg-gradient-to-tr from-teal-400/10 to-sky-400/10 blur-[100px] animate-ambient-slower">
         </div>
 
-        <!-- Orb 3 (Biru Muda/Cyan di bawah kanan) -->
         <div
             class="absolute bottom-[5%] right-[10%] w-[45vw] h-[45vw] max-w-[500px] max-h-[500px] rounded-full bg-gradient-to-tr from-sky-300/10 to-teal-400/10 blur-[110px] animate-ambient-slow">
         </div>
     </div>
 
-    {{-- NAVBAR --}}
     <nav id="mainNavbar" class="sticky top-0 z-50">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
 
             <div class="flex items-center gap-8">
-                {{-- Brand --}}
                 <a href="{{ auth()->check() && strtolower(auth()->user()->role) === 'admin' ? route('admin.dashboard') : route('dashboard') }}"
                     class="flex items-center gap-2.5 shrink-0 group">
                     <div
@@ -69,24 +64,20 @@
                     </div>
                 </a>
 
-                {{-- Desktop nav links — hanya untuk Admin/BNPB --}}
                 @if(strtolower(auth()->user()->role ?? '') === 'admin')
-                    {{-- Removed: Dashboard and Laporan links --}}
+                    {{-- Dihapus: tautan Dashboard dan Laporan --}}
                 @endif
             </div>
 
             <div class="flex items-center gap-4">
-                {{-- Tombol CTA berdasarkan role --}}
                 @auth
                     @if(strtolower(auth()->user()->role) === 'admin')
-                        {{-- Notifikasi --}}
                         @include('admin.dashboard._notification')
                         <button type="button" onclick="window.location.href='{{ route('admin.laporan') }}'"
                             class="btn-primary hidden md:inline-flex items-center justify-center px-4 py-2 text-sm font-medium text-white rounded-lg transition-all duration-200 cursor-pointer">
                             <i class="bi bi-file-earmark-text mr-1.5 text-xs"></i> Kelola Laporan
                         </button>
                     @else
-                        {{-- Notifikasi Relawan --}}
                         @include('volunteer._notification')
                         <button type="button" onclick="window.location.href='{{ route('laporan.create') }}'"
                             class="btn-primary hidden md:inline-flex items-center justify-center px-4 py-2 text-sm font-medium text-white rounded-lg transition-all duration-200 cursor-pointer">
@@ -100,7 +91,6 @@
                     </button>
                 @endauth
 
-                {{-- User profile (clickable to toggle dropdown) --}}
                 @auth
                     <div class="relative pl-2 md:pl-4 border-l border-slate-200">
                         <button type="button" id="profileDropdownBtn" aria-expanded="false" aria-haspopup="true"
@@ -119,7 +109,6 @@
                             </div>
                         </button>
 
-                        {{-- Profile Dropdown --}}
                         <x-profile-dropdown />
                     </div>
                 @else
@@ -142,7 +131,6 @@
                     </div>
                 @endauth
 
-                {{-- Mobile toggle --}}
                 <button id="mobileToggle" type="button"
                     class="md:hidden p-2 text-slate-600 hover:bg-slate-100 rounded-lg transition-colors">
                     <i class="bi bi-list text-xl" id="mobileIcon"></i>
@@ -150,7 +138,6 @@
             </div>
         </div>
 
-        {{-- Mobile dropdown --}}
         <div id="mobileMenu"
             class="md:hidden hidden border-t border-slate-200/80 bg-white/95 backdrop-blur-md px-4 py-3 space-y-1">
             <a href="{{ auth()->check() && strtolower(auth()->user()->role) === 'admin' ? route('admin.dashboard') : route('dashboard') }}"
@@ -185,10 +172,8 @@
         </div>
     </nav>
 
-    {{-- MAIN CONTENT --}}
     <main class="flex-1 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 pb-16 animate-fade-up">
 
-        {{-- Page Header --}}
         @if(!Route::is('dashboard') && !Route::is('admin.dashboard') && !Route::is('volunteer.dashboard'))
             <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
                 <div>
@@ -206,12 +191,11 @@
 
     @yield('footer')
 
-    {{-- Toast Notification Container (Below navbar on the right) --}}
+    {{-- container toast --}}
     <div id="disaster-toast-container"
         class="fixed top-24 right-6 z-[9999] flex flex-col gap-3 pointer-events-none w-[calc(100%-2rem)] max-w-sm sm:w-80">
     </div>
 
-    {{-- Reusable Toast HTML Template --}}
     <x-disaster-toast />
 
     <script>

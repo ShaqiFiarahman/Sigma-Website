@@ -1,4 +1,4 @@
-{{-- Period Selector --}}
+{{-- filter periode --}}
 <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4 px-1">
     <div>
         <h2 class="text-lg font-bold text-slate-900">Ringkasan Laporan</h2>
@@ -12,7 +12,7 @@
     </div>
 </div>
 
-{{-- Hero Stats --}}
+{{-- stats utama --}}
 <div class="grid grid-cols-1 sm:grid-cols-4 gap-4 mb-4">
     <div class="sm:col-span-2 bg-white rounded-2xl border border-slate-200/80 p-5 relative overflow-hidden hover:-translate-y-0.5 hover:shadow-md transition-all duration-200" style="box-shadow: 0 1px 3px rgba(10,15,30,0.05);">
         <i class="bi bi-file-earmark-text absolute top-4 right-4 text-slate-200 text-2xl"></i>
@@ -40,7 +40,7 @@
     </div>
 </div>
 
-{{-- Secondary Stats --}}
+{{-- stats tambahan --}}
 <div class="grid grid-cols-2 sm:grid-cols-5 gap-3 mb-8">
     <div class="bg-white rounded-xl border border-slate-200/80 px-4 py-3.5 hover:-translate-y-0.5 hover:shadow-md transition-all duration-200" style="box-shadow: 0 1px 2px rgba(10,15,30,0.04);">
         <p class="text-[10px] text-slate-500 font-bold uppercase tracking-wider mb-0.5">Awas</p>

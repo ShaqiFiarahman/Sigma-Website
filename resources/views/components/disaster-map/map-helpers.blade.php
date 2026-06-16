@@ -1,4 +1,5 @@
 <script>
+    // format tanggal iso ke string lokal (indonesia)
     function formatLocalDate(isoString) {
         if (!isoString) return '';
         try {
@@ -26,6 +27,7 @@
         }
     }
 
+    // potong teks alamat biar ga kepanjangan di popup
     function getShortLocation(location) {
         if (!location) return 'Lokasi';
         const parts = location.split(',');
@@ -36,6 +38,7 @@
         return short;
     }
 
+    // ambil nama depan dan tengah pelapor biar ga kepanjangan
     function getShortReporter(name) {
         if (!name) return '';
         const parts = name.trim().split(/\s+/);
@@ -45,6 +48,7 @@
         return name;
     }
 
+    // mapping warna hex sesuai tingkat status bencana
     const statusColors = {
         'AWAS': '#D32F2F',
         'SIAGA_1': '#EA580C',
@@ -54,6 +58,7 @@
         'DECLINE': '#64748B'
     };
 
+    // mapping path svg icon bencana sesuai tipenya
     const typePaths = {
         'flood': '<path d="M1 9c1.7 0 2.5-1.5 4.2-1.5S7.5 9 9.2 9s2.5-1.5 4.2-1.5S15.7 9 15 9" fill="none" stroke="#FFF" stroke-width="2" stroke-linecap="round"/><path d="M1 13c1.7 0 2.5-1.5 4.2-1.5S7.5 13 9.2 13s2.5-1.5 4.2-1.5" fill="none" stroke="#FFF" stroke-width="2" stroke-linecap="round"/>',
         'fire': '<path d="M8 2C8 2 4 6 4 10c0 2.2 1.8 4 4 4s4-1.8 4-4C12 6 8 2 8 2zM8 12.5c-1.4 0-2.5-1.1-2.5-2.5 0-1.5 2.5-4.5 2.5-4.5s2.5 3 2.5 4.5c0 1.4-1.1 2.5-2.5 2.5z" fill="#FFF"/>',

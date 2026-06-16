@@ -99,7 +99,6 @@
                 </div>
             @endif
 
-            {{-- Actions --}}
             <div class="flex flex-col sm:flex-row gap-2 mt-6 pt-5 border-t border-slate-100">
                 <button type="button" onclick="window.location.href='{{ route('dashboard') }}'"
                         class="flex-1 px-4 py-2.5 text-sm font-medium text-slate-700 bg-white border border-slate-200 rounded-xl hover:bg-slate-100 hover:border-slate-300 hover:-translate-y-0.5 hover:shadow-sm transition-all duration-200 cursor-pointer text-center">

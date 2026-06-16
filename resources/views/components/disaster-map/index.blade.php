@@ -5,15 +5,15 @@
     </div>
 
     <div class="relative">
-        {{-- Legend --}}
+        {{-- legend --}}
         @include('components.disaster-map.legend')
 
-        {{-- Map Container --}}
+        {{-- container map --}}
         <div class="w-full h-[350px] sm:h-[450px] lg:h-[550px] rounded-2xl overflow-hidden border border-slate-200/60"
             style="box-shadow: 0 4px 24px rgba(10,15,30,0.08);" id="map"></div>
     </div>
 
-    {{-- Mobile Legend (Horizontal row below map) --}}
+    {{-- legend mobile view --}}
     <div class="sm:hidden mt-3 flex flex-wrap items-center justify-center gap-x-4 gap-y-2.5 p-3.5 bg-white border border-slate-200/60 rounded-2xl shadow-sm">
         <div class="flex items-center gap-1.5 text-xs text-slate-700 font-semibold">
             <div class="w-2.5 h-2.5 rounded-full" style="background: #D32F2F;"></div>
@@ -36,7 +36,7 @@
 </section>
 
 
-{{-- Utility functions: formatLocalDate, getShortReporter, statusColors, typePaths --}}
+{{-- utility helper functions --}}
 @include('components.disaster-map.map-helpers')
 
 <script>
@@ -47,6 +47,7 @@
     let initialLoad = true;
     let hasZoomedToNewest = false;
 
+    // inisialisasi google maps dengan koordinat default
     function initMap() {
         const center = { lat: -7.5505, lng: 110.8063 };
 
@@ -67,10 +68,11 @@
         loadDisasters();
         loadShelters();
 
-        // Start polling disasters every 10 seconds for real-time updates
+        // polling data bencana tiap 10 detik biar realtime
         setInterval(loadDisasters, 10000);
     }
 
+    // bikin template popup html buat marker bencana
     function buildDisasterPopup(d, badgeBg, badgeColor, shortReporter, displayDate) {
         const photoHtml = d.photo ? `
             <div class="popup-photo-wrap">
@@ -100,6 +102,7 @@
             </div>`;
     }
 
+    // bikin template popup html buat marker posko shelter
     function buildShelterPopup(s) {
         const statusColor = s.status === 'Penuh' ? '#B91C1C' : '#15803D';
         const statusDot = s.status === 'Penuh' ? '#EF4444' : '#10B981';
@@ -141,6 +144,7 @@
             </div>`;
     }
 
+    // pasang zoom map otomatis biar pas dengan sebaran marker yang ada
     function fitBounds() {
         const allMarkers = [...Object.values(disasterMarkers).map(dm => dm.marker), ...shelterMarkers];
         if (allMarkers.length > 0) {
@@ -155,12 +159,14 @@
         }
     }
 
+    // tampilin toast notifikasi bencana baru
     function showDisasterToast(d) {
         if (typeof window.showDisasterToast === 'function') {
             window.showDisasterToast(d);
         }
     }
 
+    // arahin map dan zoom ke marker bencana tertentu pas diklik
     function focusOnDisaster(id) {
         const item = disasterMarkers[id];
         if (item) {
@@ -178,7 +184,7 @@
     }
 </script>
 
-{{-- API Loaders: loadDisasters, loadShelters --}}
+{{-- map loader functions --}}
 @include('components.disaster-map.map-loaders')
 
 <script src="https://maps.googleapis.com/maps/api/js?key={{ config('services.google_maps.key') }}&callback=initMap"

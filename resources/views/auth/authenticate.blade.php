@@ -262,7 +262,7 @@
 <body class="min-h-screen flex items-center justify-center p-6">
 
     <div class="auth-card" id="authCard">
-        {{-- Sign Up --}}
+        {{-- section form registrasi --}}
         <div class="form-container sign-up-container">
             <form action="{{ route('register.post') }}" method="POST"
                 class="h-full flex flex-col justify-center px-6 py-10 sm:px-16 bg-white">
@@ -306,7 +306,7 @@
             </form>
         </div>
 
-        {{-- Sign In --}}
+        {{-- section form login --}}
         <div class="form-container sign-in-container">
             <form action="{{ route('login.post') }}" method="POST"
                 class="h-full flex flex-col justify-center px-6 py-10 sm:px-16 bg-white">
@@ -366,9 +366,6 @@
 
                 <button type="submit" class="submit-btn">Masuk Sekarang</button>
 
-
-
-
                 <p class="mobile-toggle hidden mt-6 text-center text-sm text-slate-500">
                     Belum punya akun? <button type="button" class="text-accent font-bold"
                         onclick="togglePanel()">Daftar</button>
@@ -376,10 +373,10 @@
             </form>
         </div>
 
-        {{-- Overlay --}}
+        {{-- overlay container untuk slide panel --}}
         <div class="overlay-container">
             <div class="overlay">
-                <!-- Premium Background Patterns -->
+                <!-- pattern background overlay -->
                 <div class="absolute inset-0 opacity-[0.03] pointer-events-none"
                     style="background-image: radial-gradient(white 1.5px, transparent 1.5px); background-size: 24px 24px;">
                 </div>
@@ -437,18 +434,22 @@
     </div>
 
     <script>
+        // ambil element button switch dan container auth card
         const signUpButton = document.getElementById('signUp');
         const signInButton = document.getElementById('signIn');
         const container = document.getElementById('authCard');
 
+        // slide panel ke kanan pas button sign-up diklik buat nampilin form register
         signUpButton.addEventListener('click', () => {
             container.classList.add("right-panel-active");
         });
 
+        // slide panel ke kiri pas button sign-in diklik buat nampilin form login
         signInButton.addEventListener('click', () => {
             container.classList.remove("right-panel-active");
         });
 
+        // toggle panel login/register pas di mobile view
         function togglePanel() {
             container.classList.toggle("right-panel-active");
         }

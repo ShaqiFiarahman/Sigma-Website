@@ -6,7 +6,7 @@
     @include('admin.dashboard._stats-panel')
     @include('admin.dashboard._chart-panel')
 
-    {{-- Quick Access --}}
+    {{-- section menu akses cepat --}}
     <div class="mb-4 px-1">
         <h2 class="section-title">Akses Cepat Administrator</h2>
         <p class="text-xs text-slate-500 mt-0.5">Menu kelola fitur dan layanan utama SIGMA</p>

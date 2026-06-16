@@ -38,34 +38,29 @@
     <div class="max-w-6xl mx-auto relative z-10 mb-10">
         <div class="grid grid-cols-1 lg:grid-cols-5 gap-6">
 
-            {{-- Left: Form (3/5) --}}
+            {{-- kolom formulir (kiri) --}}
             <div class="lg:col-span-3">
                 <div class="bg-white border border-slate-200/80 rounded-2xl shadow-sm overflow-hidden animate-fade-up"
                     style="box-shadow: 0 1px 3px rgba(10,15,30,0.06), 0 4px 16px rgba(10,15,30,0.04);">
 
-                    {{-- Form header --}}
                     <div class="pl-6 pr-8 py-5 border-l-4 border-l-[#3B6FE8] border-b border-slate-100 bg-white">
                         <div class="flex items-center gap-2.5">
                             @if($volunteer->skill === 'SAR')
                                 <svg class="w-5.5 h-5.5 shrink-0 shadow-sm rounded-full" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                    <!-- Basarnas Official Circle Emblem -->
                                     <circle cx="12" cy="12" r="11.5" fill="#facc15" />
                                     <circle cx="12" cy="12" r="11" fill="#0b3c1b" />
                                     <circle cx="12" cy="12" r="8" fill="#facc15" />
-                                    <!-- Map of Indonesia -->
                                     <path d="M4.6 11.2c.2-.4.7-.2.9.1.4.5.8 1.1 1.2 1.6.2.3 0 .6-.3.6-.4 0-.8-.5-1.2-1-.3-.4-.6-.9-.4-1.3z" fill="#0b3c1b" />
                                     <path d="M9.4 10c.5-.2 1.1.1 1.3.5.2.4-.1.9-.4 1.1-.3.2-.9-.1-1.1-.4-.2-.4.1-.6.2-.8z" fill="#0b3c1b" />
                                     <path d="M7.4 14.3c.7-.1 1.4 0 2.1.1.2 0 .2.2 0 .2-.7 0-1.4-.1-2.1-.2-.2 0-.2-.1 0-.1z" fill="#0b3c1b" />
                                     <path d="M12.6 10.5c.2-.2.7-.1.6.2 0 .3-.3.4-.3.7s.4.4.3.7c-.1.2-.3.1-.4-.1 0-.2.2-.4.1-.7 0-.3-.3-.3-.3-.6 0-.1 0-.2 0-.2z" fill="#0b3c1b" />
                                     <path d="M16.8 11.8c.3-.3.7-.3 1.1-.2.3.2.7.2 1.1-.1.2-.1.3 0 .2.2-.2.3-.5.5-.9.4-.3 0-.5-.2-.6-.3z" fill="#0b3c1b" />
-                                    <!-- Minor Islands -->
                                     <circle cx="10.8" cy="14.3" r="0.3" fill="#0b3c1b" />
                                     <circle cx="11.6" cy="14.3" r="0.3" fill="#0b3c1b" />
                                     <circle cx="12.4" cy="14.2" r="0.3" fill="#0b3c1b" />
                                     <circle cx="13.2" cy="13.8" r="0.3" fill="#0b3c1b" />
                                     <circle cx="14.5" cy="12.8" r="0.3" fill="#0b3c1b" />
                                     <circle cx="15.2" cy="12.0" r="0.3" fill="#0b3c1b" />
-                                    <!-- Stars -->
                                     <polygon points="12,2.2 12.2,2.7 12.8,2.7 12.3,3.1 12.5,3.6 12,3.3 11.5,3.6 11.7,3.1 11.2,2.7 11.8,2.7" fill="#facc15" />
                                     <polygon points="9.5,2.6 9.7,3.1 10.3,3.1 9.8,3.5 10,4 9.5,3.7 9,4 9.2,3.5 8.7,3.1 9.3,3.1" fill="#facc15" />
                                     <polygon points="14.5,2.6 14.7,3.1 15.3,3.1 14.8,3.5 15,4 14.5,3.7 14,4 14.2,3.5 13.7,3.1 14.3,3.1" fill="#facc15" />
@@ -73,28 +68,21 @@
                                     <polygon points="16.8,3.6 17,4.1 17.6,4.1 17.1,4.5 17.3,5 16.8,4.7 16.3,5 16.5,4.5 16,4.1 16.6,4.1" fill="#facc15" />
                                     <polygon points="5.2,5.2 5.4,5.7 6,5.7 5.5,6.1 5.7,6.6 5.2,6.3 4.7,6.6 4.9,6.1 4.4,5.7 5,5.7" fill="#facc15" />
                                     <polygon points="18.8,5.2 19,5.7 19.6,5.7 19.1,6.1 19.3,6.6 18.8,6.3 18.3,6.6 18.5,6.1 18,5.7 18.6,5.7" fill="#facc15" />
-                                    <!-- Red Text -->
                                     <text x="12" y="8" fill="#dc2626" font-size="2.6" font-weight="900" font-family="system-ui, -apple-system, sans-serif" text-anchor="middle" letter-spacing="0.1">SAR</text>
                                     <text x="12" y="16.8" fill="#dc2626" font-size="1.8" font-weight="900" font-family="system-ui, -apple-system, sans-serif" text-anchor="middle" letter-spacing="0.1">NASIONAL</text>
-                                    <!-- Bottom Text -->
+                                    <!-- Teks Bawah -->
                                     <text x="12" y="21.3" fill="#facc15" font-size="0.95" font-weight="800" font-family="system-ui, -apple-system, sans-serif" text-anchor="middle" letter-spacing="0.1">AVIGNAM JAGAT SAMAGRAM</text>
                                 </svg>
                             @elseif($volunteer->skill === 'KONSUMSI')
                                 <svg class="w-5.5 h-5.5 shrink-0 shadow-sm rounded-full" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="color: {{ $skillColor['from'] }};">
-                                    <!-- Background Circle -->
                                     <circle cx="12" cy="12" r="11" fill="currentColor"/>
-                                    <!-- Fork (White) -->
                                     <path d="M8.5 12v7c0 .6-.4 1-1 1s-1-.4-1-1v-7c-1.2-.3-2-1.3-2-2.5V5c0-.6.4-1 1-1s1 .4 1 1v4h.8V5c0-.6.4-1 1-1s1 .4 1 1v4h.8V5c0-.6.4-1 1-1s1 .4 1 1v4.5c0 1.2-.8 2.2-2 2.5z" fill="#ffffff"/>
-                                    <!-- Knife (White) -->
                                     <path d="M16.5 12v7c0 .6-.4 1-1 1s-1-.4-1-1v-7.2c-.8-.2-1.5-1-1.5-1.8V7.5c0-2 1.5-3.5 3-3.5.3 0 .5.2.5.5v11.7c0 .8-.5 1.5-1 1.8z" fill="#ffffff"/>
                                 </svg>
                             @elseif($volunteer->skill === 'PSIKOSOSIAL')
                                 <svg class="w-5.5 h-5.5 shrink-0 shadow-sm rounded-full" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="color: {{ $skillColor['from'] }};">
-                                    <!-- Background Purple Circle -->
                                     <circle cx="12" cy="12" r="11" fill="currentColor"/>
-                                    <!-- Big White Hand (Adult Hand) -->
                                     <path d="M21.5 14.5c-2.5-1-5-2.8-7.2-5-1.5-1.5-3.5-5-5.2-7.2-0.5-0.6-1.3-0.7-1.8-0.2c-0.5 0.5-0.4 1.3 0.1 1.8c1.5 1.8 3.5 5 4.8 7 -2.2-1.8-4.5-4-6.2-5.5-0.5-0.5-1.3-0.5-1.8 0c-0.5 0.5-0.5 1.3 0 1.8c1.6 1.6 3.8 4 5.8 5.5 -2.8-1.8-5.8-3.2-7.5-4-0.6-0.3-1.4 0-1.7 0.6c-0.3 0.6 0 1.4 0.6 1.7c2 1 4.8 2.5 7.5 4 -3.2-1-6.2-1.5-8-1.5 -0.7 0-1.3 0.6-1.3 1.3c0 0.7 0.6 1.3 1.3 1.3c2.2 0 5.2 0.6 8 1.8 -1.8 0.3-3.5 1.4-4.5 2.5 -0.5 0.6-0.4 1.4 0.2 1.9c0.6 0.5 1.4 0.4 1.9-0.2c1-1.2 2.5-2.2 4.5-2.5 1.4 1.2 2.8 2.8 4.2 4.2c1.4 1.4 3.2 2.2 4.8 2.8h3L21.5 14.5z" fill="#ffffff" />
-                                    <!-- Small Purple Hand (Child Hand) -->
                                     <path d="M16 16.5c-1.5-0.6-3-1.8-4.3-3.2-0.9-0.9-2.1-3-3.1-4.3-0.3-0.4-0.8-0.4-1.1-0.1c-0.3 0.3-0.2 0.8 0.1 1.1c0.9 1.1 2.1 3 2.9 4.2 -1.3-1.1-2.7-2.4-3.7-3.3-0.3-0.3-0.8-0.3-1.1 0c-0.3 0.3-0.3 0.8 0 1.1c1 1 2.3 2.4 3.5 3.3 -1.7-1.1-3.5-1.9-4.5-2.4-0.4-0.2-0.8 0-1 0.4s0 0.8 0.4 1c1.2 0.6 2.9 1.5 4.5 2.4 -1.9-0.6-3.7-0.9-4.8-0.9-0.4 0-0.8 0.4-0.8 0.8s0.4 0.8 0.8 0.8c1.3 0 3.1 0.4 4.8 1.1 -1.1 0.2-2.1 0.8-2.7 1.5 -0.3 0.4-0.2 0.8 0.1 1.1s0.8 0.1 1.1-0.2c0.6-0.7 1.5-1.3 2.7-1.5 0.8 0.7 1.7 1.7 2.5 2.5 0.8 0.8 1.9 1.3 2.9 1.7h1.8L16 16.5z" fill="#7c3aed" />
                                 </svg>
                             @else
@@ -108,12 +96,12 @@
                         </div>
                     </div>
 
-                    {{-- Form --}}
+                    {{-- form laporan --}}
                     <form action="{{ route('volunteer.report.store') }}" method="POST" enctype="multipart/form-data">
                         @csrf
 
                         <div class="p-6 space-y-5">
-                            {{-- Pilih Bencana --}}
+                            {{-- pilih bencana --}}
                             <div>
                                 <label class="block text-xs font-bold text-slate-700 mb-2 uppercase tracking-wider">
                                     Terkait Bencana <span class="text-red-500 font-bold">*</span>
@@ -129,7 +117,7 @@
                                 </select>
                             </div>
 
-                            {{-- Dynamic Fields per Skill --}}
+                            {{-- input dinamis berdasarkan spesialisasi keahlian --}}
                             <div class="border-t border-slate-100/60 pt-5">
                                 <p class="text-xs font-bold text-slate-700 uppercase tracking-wider mb-4">Data Laporan</p>
 
@@ -190,7 +178,7 @@
                                 </div>
                             </div>
 
-                            {{-- Catatan Tambahan --}}
+                            {{-- catatan tambahan (opsional) --}}
                             <div class="border-t border-slate-100/60 pt-5">
                                 <label class="block text-xs font-bold text-slate-700 mb-2 uppercase tracking-wider">
                                     Catatan Tambahan <span
@@ -202,7 +190,7 @@
                             </div>
                         </div>
 
-                        {{-- Actions/Footer --}}
+                        {{-- tombol aksi --}}
                         <div class="px-6 py-4.5 border-t border-slate-100 flex items-center justify-end gap-3 rounded-b-2xl"
                             style="background: #FAFBFD;">
                             <a href="{{ route('dashboard') }}"
@@ -219,18 +207,17 @@
                 </div>
             </div>
 
-            {{-- Right: Sidebar (2/5) --}}
+            {{-- kolom bilah samping (kanan) --}}
             <div class="lg:col-span-2">
                 <div class="space-y-4 lg:sticky lg:top-24">
 
-                    {{-- 1. Statistik Laporan --}}
+                    {{-- box statistik laporan --}}
                     @php
                         $totalReportsCount = \App\Models\VolunteerReport::where('volunteer_id', $volunteer->id)->count();
                         $monthReportsCount = \App\Models\VolunteerReport::where('volunteer_id', $volunteer->id)->whereMonth('created_at', now()->month)->count();
                     @endphp
                     <div class="bg-white border border-slate-200/80 rounded-2xl shadow-sm overflow-hidden"
                         style="box-shadow: 0 1px 3px rgba(10,15,30,0.06);">
-                        {{-- Statistik Laporan --}}
                         <div class="px-5 py-3 border-b border-slate-100 bg-slate-50">
                             <h3 class="font-bold text-slate-800 flex items-center gap-2 text-sm">
                                 <i class="bi bi-bar-chart-fill" style="color: #3B6FE8;"></i> Statistik Laporan Anda
@@ -247,7 +234,7 @@
                             </div>
                         </div>
 
-                        {{-- Divider + Riwayat Laporan Tugas --}}
+                        {{-- box riwayat laporan --}}
                         <div class="border-t border-slate-100"></div>
                         <div class="px-5 py-3 border-b border-slate-100 bg-slate-50">
                             <h3 class="font-bold text-slate-800 flex items-center gap-2 text-sm">
@@ -298,7 +285,7 @@
                         </div>
                     </div>
 
-                    {{-- 3. Panduan Cepat --}}
+                    {{-- box panduan cepat --}}
                     <div class="bg-white border border-slate-200/80 rounded-2xl shadow-sm overflow-hidden"
                         style="box-shadow: 0 1px 3px rgba(10,15,30,0.06);">
                         <div class="px-5 py-3 border-b border-slate-100 bg-slate-50">

@@ -10,7 +10,7 @@
 @section('content')
 <div class="max-w-5xl mx-auto">
 
-    {{-- Flash Messages --}}
+    {{-- flash message --}}
     @if(session('msg'))
         <div class="mb-6 p-4 rounded-2xl flex items-center gap-3 text-sm font-medium backdrop-blur-sm animate-fade-up
             {{ session('msg') == 'approved' ? 'bg-emerald-50/80 text-emerald-800 border border-emerald-200/60' : '' }}
@@ -37,12 +37,11 @@
         </div>
     @endif
 
-    {{-- Search & Filter --}}
     <div class="bg-white border border-slate-200/80 rounded-2xl shadow-sm overflow-hidden mb-5"
          style="box-shadow: 0 1px 3px rgba(10,15,30,0.06), 0 4px 16px rgba(10,15,30,0.04);">
         <div class="p-4 sm:p-5 space-y-4">
 
-            {{-- Search Bar --}}
+            {{-- search bar --}}
             <div class="relative">
                 <i class="bi bi-search absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
                 <input type="text" id="searchInput"
@@ -51,7 +50,6 @@
                        class="w-full pl-10 pr-4 py-2.5 text-sm border border-slate-200 rounded-xl focus:outline-none focus:border-blue-400 focus:ring-2 focus:ring-blue-500/20 transition-all placeholder:text-slate-400 text-slate-800 bg-slate-50 focus:bg-white">
             </div>
 
-            {{-- Filter Chips --}}
             <div class="flex items-center gap-2 flex-wrap">
                 <button type="button" data-filter="all" class="filter-chip active px-3.5 py-1.5 text-xs font-semibold rounded-full border transition-all duration-200">
                     Semua
@@ -80,14 +78,14 @@
         </div>
     </div>
 
-    {{-- Result Count --}}
+    {{-- info total hasil pencarian --}}
     <div class="flex items-center justify-between mb-4 px-1">
         <p class="text-sm text-slate-500" id="resultCount">
             <span class="font-semibold text-slate-700">{{ $disasters->count() }}</span> Laporan ditemukan
         </p>
     </div>
 
-    {{-- List View --}}
+    {{-- list view --}}
     <div id="listView" class="space-y-3">
         @forelse($disasters as $d)
             @php
@@ -176,7 +174,7 @@
         @endforelse
     </div>
 
-    {{-- No results (JS filtered) --}}
+    {{-- alert kalo hasil filter kosong --}}
     <div id="noResults" class="hidden bg-white border border-slate-200/80 rounded-2xl p-14 text-center" style="box-shadow: 0 1px 3px rgba(10,15,30,0.06);">
         <div class="mb-4">
             <i class="bi bi-emoji-frown text-3xl" style="color: #1e3a8a;"></i>

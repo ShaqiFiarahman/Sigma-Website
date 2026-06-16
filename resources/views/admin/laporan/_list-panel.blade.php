@@ -1,7 +1,7 @@
-{{-- Admin Laporan: Left Panel - List --}}
+{{-- sidebar daftar laporan --}}
 <div class="w-[340px] shrink-0 flex flex-col bg-white border border-slate-200/80 rounded-2xl overflow-hidden sticky top-24 self-start" style="box-shadow: 0 1px 3px rgba(10,15,30,0.06); max-height: calc(100vh - 140px);">
 
-    {{-- Search --}}
+    {{-- search bar dan filter status --}}
     <div class="p-3 border-b border-slate-100">
         <div class="relative mb-2">
             <i class="bi bi-search absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
@@ -16,7 +16,7 @@
         </div>
     </div>
 
-    {{-- List --}}
+    {{-- list item laporan --}}
     <div class="flex-1 overflow-y-auto" id="laporanList">
         @foreach($disasters as $d)
             @php

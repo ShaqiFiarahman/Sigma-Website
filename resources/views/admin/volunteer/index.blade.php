@@ -27,7 +27,7 @@
         </div>
     @endif
 
-    {{-- Mini Stats Panel --}}
+    {{-- section stats singkat --}}
     <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6 animate-fade-up" style="animation-delay: 0.1s;">
         <button type="button" data-filter="ALL" 
            class="filter-btn text-left bg-white border rounded-2xl p-4.5 flex items-center gap-4 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 cursor-pointer ring-2 ring-blue-500/20 border-blue-500 shadow-blue-500/5 focus:outline-none">
@@ -94,7 +94,7 @@
     <div class="bg-white border border-slate-200/80 rounded-2xl shadow-sm overflow-hidden"
          style="box-shadow: 0 1px 3px rgba(10,15,30,0.06), 0 4px 16px rgba(10,15,30,0.04);">
 
-        {{-- Header --}}
+        {{-- header list relawan --}}
         <div class="px-6 py-4 border-b border-slate-100 bg-white border-l-4 border-l-[#3B6FE8]">
             <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 w-full">
                 <div>
@@ -102,7 +102,7 @@
                     <p class="text-xs text-slate-500 mt-0.5">Kelola pendaftaran dan persetujuan relawan</p>
                 </div>
                 
-                {{-- Search Bar --}}
+                {{-- search bar nama relawan --}}
                 <div class="relative w-full sm:w-64">
                     <i class="bi bi-search absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
                     <input type="text" id="volunteerSearch" placeholder="Cari nama relawan..."
@@ -114,7 +114,7 @@
             </div>
         </div>
 
-        {{-- Table --}}
+        {{-- table data relawan --}}
         <div class="overflow-x-auto">
             <table class="w-full text-left text-sm">
                 <thead class="border-b border-slate-100/80 bg-slate-50/50">
@@ -216,7 +216,7 @@
                         </tr>
                     @endforelse
 
-                    {{-- Row for empty search/filter results --}}
+                    {{-- row fallback pas pencarian/filter kosong --}}
                     <tr id="emptyRow" class="hidden">
                         <td colspan="6" class="px-6 py-20 text-center text-slate-400">
                             <div class="mx-auto mb-4 text-blue-500 flex items-center justify-center shrink-0">
@@ -235,7 +235,7 @@
             </table>
         </div>
 
-        {{-- Footer --}}
+        {{-- footer table --}}
         <div class="px-6 py-4 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500 bg-slate-50/50">
             <span>Menampilkan <span id="visibleCount" class="font-bold text-slate-700">{{ $volunteers->count() }}</span> dari <span class="font-bold text-slate-700">{{ $volunteers->count() }}</span> relawan</span>
         </div>
@@ -265,7 +265,7 @@
                 const status = row.getAttribute('data-status');
                 const isAssigned = row.getAttribute('data-assigned') === 'true';
 
-                // Status match logic
+                // pencocokan status filter
                 let matchesStatus = false;
                 if (currentStatusFilter === 'ALL') {
                     matchesStatus = true;
@@ -277,7 +277,7 @@
                     matchesStatus = (status === 'APPROVED' && !isAssigned);
                 }
 
-                // Search match logic (Case-insensitive)
+                // pencocokan keyword search bar (case-insensitive)
                 const matchesSearch = name.includes(currentSearchQuery.toLowerCase());
 
                 if (matchesStatus && matchesSearch) {
@@ -288,20 +288,20 @@
                 }
             });
 
-            // Show empty search fallback if no rows visible
+            // tampilkan fallback baris kosong kalo ga ada baris yang cocok
             if (visibleCount === 0 && totalCount > 0) {
                 emptyRow.classList.remove('hidden');
             } else {
                 emptyRow.classList.add('hidden');
             }
 
-            // Update footer visible count
+            // update teks jumlah data yang lolos filter di footer table
             if (visibleCountEl) {
                 visibleCountEl.textContent = visibleCount;
             }
         }
 
-        // Search Input listener
+        // pasang event listener buat search input
         searchInput?.addEventListener('input', (e) => {
             currentSearchQuery = e.target.value.trim();
             if (clearSearchBtn) {
@@ -314,14 +314,14 @@
             filterVolunteers();
         });
 
-        // Prevent Enter reloading
+        // hindari reload page pas user klik enter di search input
         searchInput?.addEventListener('keydown', (e) => {
             if (e.key === 'Enter') {
                 e.preventDefault();
             }
         });
 
-        // Clear search listener
+        // pasang event listener buat clear search button
         clearSearchBtn?.addEventListener('click', () => {
             searchInput.value = '';
             currentSearchQuery = '';
@@ -329,19 +329,19 @@
             filterVolunteers();
         });
 
-        // Filter button listeners
+        // pasang event listener klik buat tombol filter status
         filterButtons.forEach(btn => {
             btn.addEventListener('click', (e) => {
                 e.preventDefault();
                 const filter = btn.getAttribute('data-filter');
                 currentStatusFilter = filter;
 
-                // Reset styles of all filter cards
+                // reset style glow aktif di semua button filter
                 filterButtons.forEach(b => {
                     b.className = "filter-btn text-left bg-white border rounded-2xl p-4.5 flex items-center gap-4 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 cursor-pointer border-slate-200/80 focus:outline-none";
                 });
 
-                // Apply active glow style to clicked card
+                // pasang class style glow aktif ke button filter yang diklik
                 if (filter === 'ALL') {
                     btn.className = "filter-btn text-left bg-white border rounded-2xl p-4.5 flex items-center gap-4 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 cursor-pointer ring-2 ring-blue-500/20 border-blue-500 shadow-blue-500/5 focus:outline-none";
                 } else if (filter === 'PENDING') {

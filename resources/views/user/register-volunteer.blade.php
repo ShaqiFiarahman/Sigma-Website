@@ -12,7 +12,7 @@
 <div class="max-w-7xl mx-auto">
 
 @if($existing)
-    {{-- STATUS PENDAFTARAN --}}
+    {{-- status pendaftaran --}}
     <div class="grid grid-cols-1 lg:grid-cols-5 gap-6">
         @include('user._volunteer-status')
         @include('user._volunteer-info')
@@ -20,7 +20,7 @@
 
 @else
     @guest
-        {{-- PROMPT LOGIN UNTUK GUEST --}}
+        {{-- prompt login buat guest --}}
         <div class="max-w-md mx-auto my-12 text-center animate-fade-up">
             <div class="bg-white border border-slate-200/80 rounded-3xl p-8 shadow-sm overflow-hidden"
                  style="box-shadow: 0 1px 3px rgba(10,15,30,0.06), 0 10px 30px -10px rgba(10,15,30,0.08);">
@@ -34,15 +34,14 @@
             </div>
         </div>
     @else
-        {{-- FORM PENDAFTARAN --}}
+        {{-- form pendaftaran --}}
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
 
-        {{-- KOLOM KIRI: FORM --}}
+        {{-- kolom formulir (kiri) --}}
         <div class="lg:col-span-2">
             <div class="bg-white border border-slate-200/80 rounded-2xl shadow-sm overflow-hidden"
                  style="box-shadow: 0 1px 3px rgba(10,15,30,0.06), 0 4px 16px rgba(10,15,30,0.04);">
 
-                {{-- Form Header --}}
                 <div class="pl-6 pr-8 py-5 border-l-4 border-l-[#3B6FE8] border-b border-slate-100 bg-white">
                     <div class="flex items-center gap-3">
                         <div class="w-8 h-8 rounded-lg flex items-center justify-center bg-blue-50 text-blue-600 border border-blue-100/50 shrink-0">
@@ -55,10 +54,9 @@
                     </div>
                 </div>
 
-                {{-- Step Progress --}}
+                {{-- progress bar wizard --}}
                 <div class="px-7 pt-6 pb-2">
                     <div class="flex items-center justify-between">
-                        {{-- Step 1 --}}
                         <div class="flex items-center gap-2 step-indicator" data-step="1">
                             <div class="step-dot w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold transition-all duration-300"
                                  style="background: linear-gradient(135deg, #3B6FE8 0%, #1e3a8a 100%); color: white; box-shadow: 0 2px 8px rgba(30,58,138,0.3);">
@@ -67,12 +65,10 @@
                             <span class="step-label text-xs font-semibold text-slate-800 hidden sm:inline">Data Diri</span>
                         </div>
 
-                        {{-- Line --}}
                         <div class="flex-1 mx-3 h-0.5 rounded-full bg-slate-200 overflow-hidden">
                             <div class="step-line-1 h-full rounded-full transition-all duration-500" style="width: 0%; background: linear-gradient(90deg, #3B6FE8, #1e3a8a);"></div>
                         </div>
 
-                        {{-- Step 2 --}}
                         <div class="flex items-center gap-2 step-indicator" data-step="2">
                             <div class="step-dot w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold border-2 border-slate-200 text-slate-400 bg-white transition-all duration-300">
                                 2
@@ -80,12 +76,10 @@
                             <span class="step-label text-xs font-medium text-slate-400 hidden sm:inline">Keahlian</span>
                         </div>
 
-                        {{-- Line --}}
                         <div class="flex-1 mx-3 h-0.5 rounded-full bg-slate-200 overflow-hidden">
                             <div class="step-line-2 h-full rounded-full transition-all duration-500" style="width: 0%; background: linear-gradient(90deg, #3B6FE8, #1e3a8a);"></div>
                         </div>
 
-                        {{-- Step 3 --}}
                         <div class="flex items-center gap-2 step-indicator" data-step="3">
                             <div class="step-dot w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold border-2 border-slate-200 text-slate-400 bg-white transition-all duration-300">
                                 3
@@ -95,7 +89,7 @@
                     </div>
                 </div>
 
-                {{-- Validation errors --}}
+                {{-- alert error validasi --}}
                 @if($errors->any())
                     <div class="mx-7 mt-4 p-4 rounded-xl bg-red-50 border border-red-200 text-sm text-red-700">
                         <p class="font-bold mb-1 flex items-center gap-2"><i class="bi bi-exclamation-circle-fill"></i> Terdapat kesalahan:</p>
@@ -117,7 +111,7 @@
                 <form action="{{ route('volunteer.store') }}" method="POST" id="volunteerForm">
                     @csrf
 
-                    {{-- STEP 1: Data Diri --}}
+                    {{-- langkah 1: data diri --}}
                     <div class="step-content p-7 space-y-5" data-step="1">
                         <div>
                             <label for="name" class="block text-xs font-bold text-slate-700 mb-2 uppercase tracking-wider">
@@ -149,7 +143,7 @@
                         </div>
                     </div>
 
-                    {{-- STEP 2: Keahlian --}}
+                    {{-- langkah 2: keahlian --}}
                     <div class="step-content p-7 space-y-5 hidden" data-step="2">
                         <div>
                             <label for="skill" class="block text-xs font-bold text-slate-700 mb-2 uppercase tracking-wider">
@@ -188,7 +182,7 @@
                         </div>
                     </div>
 
-                    {{-- STEP 3: Konfirmasi --}}
+                    {{-- langkah 3: konfirmasi data --}}
                     <div class="step-content p-7 space-y-5 hidden" data-step="3">
                         <div class="text-center mb-2">
                             <div class="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-3" style="background: #E4F0F6;">
@@ -217,7 +211,6 @@
                             </div>
                         </div>
 
-                        {{-- Warning --}}
                         <div class="p-3 rounded-xl bg-red-50 border border-red-100">
                             <p class="text-xs text-center font-semibold text-red-700">
                                 <i class="bi bi-exclamation-triangle-fill mr-1"></i>
@@ -226,7 +219,7 @@
                         </div>
                     </div>
 
-                    {{-- Footer Navigation --}}
+                    {{-- tombol navigasi wizard --}}
                     <div class="px-7 py-5 border-t border-slate-100 flex items-center justify-between rounded-b-2xl"
                          style="background: #FAFBFD;">
                         <button type="button" id="prevBtn"
@@ -252,10 +245,10 @@
             </div>
         </div>
 
-        {{-- KOLOM KANAN: Info --}}
+        {{-- kolom info bantuan (kanan) --}}
         <div class="space-y-5 lg:sticky lg:top-24 self-start">
 
-            {{-- Tentang Relawan --}}
+            {{-- info singkat relawan --}}
             <div class="bg-white border border-slate-200/80 rounded-2xl shadow-sm overflow-hidden"
                  style="box-shadow: 0 1px 3px rgba(10,15,30,0.06);">
                 <div class="px-6 py-4 border-b border-slate-100 bg-slate-50">
@@ -301,7 +294,6 @@
                 </div>
             </div>
 
-            {{-- Keahlian yang Dibutuhkan - removed --}}
         </div>
     </div>
     @endguest
@@ -316,25 +308,24 @@
         const nextBtn = document.getElementById('nextBtn');
         const finalBtn = document.getElementById('finalSubmitBtn');
 
-        // Only run form wizard script if form elements exist (authenticated user)
+        // jalanin form wizard cuma kalo elemen form ada (udah login)
         if (prevBtn && nextBtn && finalBtn) {
             let currentStep = 1;
             const totalSteps = 3;
 
             function showStep(step) {
-                // Hide all steps
+                // sembunyiin semua langkah
                 document.querySelectorAll('.step-content').forEach(el => el.classList.add('hidden'));
-                // Show current
+                // tampilin langkah yang aktif
                 document.querySelector(`.step-content[data-step="${step}"]`).classList.remove('hidden');
 
-                // Update progress indicators
+                // update status indikator progress
                 document.querySelectorAll('.step-indicator').forEach(ind => {
                     const s = parseInt(ind.dataset.step);
                     const dot = ind.querySelector('.step-dot');
                     const label = ind.querySelector('.step-label');
 
                     if (s < step) {
-                        // Completed
                         dot.style.background = 'linear-gradient(135deg, #3B6FE8 0%, #1e3a8a 100%)';
                         dot.style.color = 'white';
                         dot.style.border = 'none';
@@ -342,7 +333,6 @@
                         dot.innerHTML = '<i class="bi bi-check text-xs"></i>';
                         if (label) { label.className = 'step-label text-xs font-semibold text-slate-800 hidden sm:inline'; }
                     } else if (s === step) {
-                        // Active
                         dot.style.background = 'linear-gradient(135deg, #3B6FE8 0%, #1e3a8a 100%)';
                         dot.style.color = 'white';
                         dot.style.border = 'none';
@@ -350,7 +340,6 @@
                         dot.innerHTML = s;
                         if (label) { label.className = 'step-label text-xs font-semibold text-slate-800 hidden sm:inline'; }
                     } else {
-                        // Upcoming
                         dot.style.background = 'white';
                         dot.style.color = '#94a3b8';
                         dot.style.border = '2px solid #e2e8f0';
@@ -360,16 +349,16 @@
                     }
                 });
 
-                // Update progress lines
+                // update garis progress wizard
                 document.querySelector('.step-line-1').style.width = step > 1 ? '100%' : '0%';
                 document.querySelector('.step-line-2').style.width = step > 2 ? '100%' : '0%';
 
-                // Update buttons
+                // update sembunyiin/tampilin tombol sesuai langkah aktif
                 prevBtn.classList.toggle('hidden', step === 1);
                 nextBtn.classList.toggle('hidden', step === totalSteps);
                 finalBtn.classList.toggle('hidden', step !== totalSteps);
 
-                // Populate confirmation on step 3
+                // isi data konfirmasi di langkah 3
                 if (step === 3) {
                     document.getElementById('confirmName').textContent = document.getElementById('name').value || '—';
                     document.getElementById('confirmAddress').textContent = document.getElementById('address').value || '—';
@@ -379,7 +368,7 @@
                 }
             }
 
-            // Validate current step before proceeding
+            // validasi input langkah saat ini sebelum lanjut
             function validateStep(step) {
                 if (step === 1) {
                     const name = document.getElementById('name');
@@ -405,7 +394,7 @@
                 if (currentStep > 1) { currentStep--; showStep(currentStep); }
             });
 
-            // Skill card selection
+            // handle event pas milih kartu keahlian
             document.querySelectorAll('.skill-card').forEach(card => {
                 card.addEventListener('click', () => {
                     document.querySelectorAll('.skill-card').forEach(c => {
@@ -426,7 +415,7 @@
                 });
             });
 
-            // Init: highlight pre-selected skill
+            // inisialisasi: sorot keahlian yang udah terpilih sebelumnya
             const preSelected = document.querySelector('input[name="skill"]:checked');
             if (preSelected) preSelected.closest('.skill-card').click();
 

@@ -1,7 +1,7 @@
-{{-- Admin Laporan: Right Panel - Detail --}}
+{{-- panel detail laporan --}}
 <div class="flex-1 min-w-0" id="detailPanel">
 
-    {{-- Empty state --}}
+    {{-- placeholder pas belum ada laporan terpilih --}}
     <div class="bg-white border border-slate-200/80 rounded-2xl flex items-center justify-center py-32" id="detailEmpty" style="box-shadow: 0 1px 3px rgba(10,15,30,0.06);">
         <div class="text-center">
             <i class="bi bi-file-earmark-text text-3xl text-slate-200 block mb-2"></i>
@@ -9,18 +9,18 @@
         </div>
     </div>
 
-    {{-- Detail content --}}
+    {{-- info detail laporan --}}
     <div class="hidden" id="detailContent">
         <div class="bg-white border border-slate-200/80 rounded-2xl overflow-hidden" style="box-shadow: 0 1px 3px rgba(10,15,30,0.06);">
 
-            {{-- Photo --}}
+            {{-- preview foto laporan --}}
             <div id="detailPhoto" class="h-44 bg-slate-100 overflow-hidden relative hidden">
                 <img id="detailImg" src="" class="w-full h-full object-cover" alt="">
             </div>
 
             <div class="p-5 space-y-5">
 
-                {{-- Title --}}
+                {{-- section info judul --}}
                 <div>
                     <div class="flex items-start justify-between gap-3 mb-1">
                         <h2 class="text-lg font-bold text-slate-900" id="detailTitle"></h2>
@@ -29,7 +29,7 @@
                     <p class="text-xs text-slate-500" id="detailMeta"></p>
                 </div>
 
-                {{-- Info --}}
+                {{-- section info lokasi dan pelapor --}}
                 <div class="grid grid-cols-2 gap-4">
                     <div>
                         <p class="text-[10px] text-slate-400 font-medium mb-1">Lokasi</p>
@@ -43,13 +43,13 @@
                     </div>
                 </div>
 
-                {{-- Description --}}
+                {{-- section deskripsi laporan --}}
                 <div>
                     <p class="text-[10px] text-slate-400 font-medium mb-1">Deskripsi</p>
                     <p class="text-xs text-slate-600 leading-relaxed" id="detailDesc"></p>
                 </div>
 
-                {{-- Action --}}
+                {{-- section tindakan admin --}}
                 <div class="border-t border-slate-100 pt-4">
                     <p class="text-xs font-bold text-slate-700 mb-3">Tindakan</p>
                     <div class="grid grid-cols-2 gap-3 mb-3">
@@ -89,7 +89,7 @@
                     </button>
                 </div>
 
-                {{-- Mini Map --}}
+                {{-- mini map lokasi kejadian --}}
                 <div id="detailMiniMap" class="w-full h-72 rounded-xl border border-slate-100 overflow-hidden bg-slate-100"></div>
             </div>
         </div>

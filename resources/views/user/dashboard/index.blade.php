@@ -3,15 +3,15 @@
 
 @section('content')
 
-    {{-- WELCOME BANNER --}}
+    {{-- banner selamat datang --}}
     @include('partials._welcome-banner')
 
     <div class="space-y-8 pb-6">
 
-        {{-- Warning Banner --}}
+        {{-- banner peringatan --}}
         @include('partials._warning-banner')
 
-        {{-- VOLUNTEER SECTION --}}
+        {{-- section relawan --}}
         @if($volunteerData)
             @if($volunteerData->status === 'PENDING')
                 <section class="animate-fade-up" style="animation-delay: 0.05s;">
@@ -56,13 +56,13 @@
             @endif
         @endif
 
-        {{-- News Section --}}
+        {{-- section berita --}}
         @include('partials._news-section')
 
-        {{-- Menu Layanan --}}
+        {{-- section menu layanan --}}
         @include('partials._menu-section')
 
-        {{-- Peta Bencana Section --}}
+        {{-- section peta bencana --}}
         <x-disaster-map />
     </div>
 

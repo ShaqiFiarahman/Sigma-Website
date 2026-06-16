@@ -9,7 +9,7 @@
 @section('content')
     <div class="max-w-7xl mx-auto mb-10">
         @guest
-            {{-- PROMPT LOGIN UNTUK GUEST --}}
+            {{-- prompt login buat guest --}}
             <div class="max-w-md mx-auto my-12 text-center animate-fade-up">
                 <div class="bg-white border border-slate-200/80 rounded-3xl p-8 shadow-sm overflow-hidden"
                      style="box-shadow: 0 1px 3px rgba(10,15,30,0.06), 0 10px 30px -10px rgba(10,15,30,0.08);">
@@ -25,15 +25,10 @@
         @else
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
 
-            {{-- KOLOM KIRI: FORM --}}
             <div class="lg:col-span-2">
-                {{-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-                FORM LAPORAN
-                â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• --}}
                 <div class="bg-white border border-slate-200/80 rounded-2xl shadow-sm overflow-hidden"
                     style="box-shadow: 0 1px 3px rgba(10,15,30,0.06), 0 4px 16px rgba(10,15,30,0.04);">
 
-                    {{-- Form header --}}
                     <div class="pl-6 pr-8 py-5 border-l-4 border-l-[#3B6FE8] border-b border-slate-100 bg-white">
                         <div class="flex items-center gap-2.5">
                             <i class="bi bi-megaphone-fill text-lg text-blue-600 shrink-0"></i>
@@ -44,7 +39,7 @@
                         </div>
                     </div>
 
-                    {{-- Validation errors --}}
+                    {{-- error validasi --}}
                     @if($errors->any())
                         <div class="mx-7 mt-6 p-4 rounded-xl bg-red-50 border border-red-200 text-sm text-red-700">
                             <p class="font-bold mb-1 flex items-center gap-2"><i class="bi bi-exclamation-circle-fill"></i>
@@ -57,14 +52,13 @@
                         </div>
                     @endif
 
-                    {{-- enctype WAJIB untuk file upload --}}
+                    {{-- wajib pake enctype buat upload file --}}
                     <form action="{{ route('laporan.store') }}" method="POST" id="laporanForm"
                         enctype="multipart/form-data">
                         @csrf
 
                         <div class="p-7 space-y-6">
 
-                            {{-- Judul --}}
                             <div>
                                 <label for="judul"
                                     class="block text-xs font-bold text-slate-700 mb-2 uppercase tracking-wider">
@@ -76,7 +70,6 @@
                                     class="w-full px-4 py-3 text-sm border border-slate-200 rounded-xl focus:outline-none focus:border-blue-400 focus:ring-2 focus:ring-blue-500/20 transition-all placeholder:text-slate-300 text-slate-800 bg-slate-50 focus:bg-white">
                             </div>
 
-                            {{-- Deskripsi --}}
                             <div>
                                 <label for="deskripsi"
                                     class="block text-xs font-bold text-slate-700 mb-2 uppercase tracking-wider">
@@ -87,7 +80,6 @@
                                     class="w-full px-4 py-3 text-sm border border-slate-200 rounded-xl focus:outline-none focus:border-blue-400 focus:ring-2 focus:ring-blue-500/20 transition-all resize-y placeholder:text-slate-300 text-slate-800 bg-slate-50 focus:bg-white">{{ old('deskripsi') }}</textarea>
                             </div>
 
-                            {{-- Map Picker --}}
                             <div>
                                 <label class="block text-xs font-bold text-slate-700 mb-2 uppercase tracking-wider">
                                     Pilih Lokasi di Peta <span class="text-red-500">*</span>
@@ -116,12 +108,10 @@
                                 </p>
                             </div>
 
-                            {{-- Hidden Latitude & Longitude --}}
                             <input type="hidden" name="latitude" id="latitude">
                             <input type="hidden" name="longitude" id="longitude">
 
-                            {{-- Upload Foto --}}
-                             <div>
+                            <div>
                                 <label class="block text-xs font-bold text-slate-700 mb-2 uppercase tracking-wider">
                                     Dokumentasi Foto <span class="text-red-500">*</span>
                                 </label>
@@ -152,7 +142,6 @@
 
                         </div>
 
-                        {{-- Footer --}}
                         <div class="px-7 py-5 border-t border-slate-100 flex items-center justify-end gap-3 rounded-b-2xl"
                             style="background: #FAFBFD;">
                             <a href="{{ route('dashboard') }}"
@@ -219,12 +208,12 @@
                     locDisplay.classList.remove('hidden');
                     locDisplay.classList.add('flex');
 
-                    // Reset warning styles
+                    // reset styling warning
                     resetWarning();
                 });
             };
 
-            // Button Gunakan Lokasi Saya
+            // tombol buat gunain lokasi user saat ini
             document.getElementById('btnMyLocation')?.addEventListener('click', function() {
                 if (navigator.geolocation) {
                     const originalText = this.innerHTML;
@@ -247,7 +236,7 @@
                             locDisplay.classList.remove('hidden');
                             locDisplay.classList.add('flex');
                             
-                            // Reset warning styles
+                            // reset styling warning
                             resetWarning();
                             
                             this.innerHTML = originalText;
@@ -303,7 +292,7 @@
                 const photoHelpIcon = document.getElementById('photoHelpIcon');
                 const photoHelpSpan = document.getElementById('photoHelpSpan');
 
-                // Reset warnings
+                // reset warning alert
                 if (photoUploadBox.classList.contains('shake-highlight')) {
                     photoUploadBox.classList.remove('shake-highlight');
                 }
@@ -319,13 +308,13 @@
                     previewBox.classList.add('hidden');
                     previewBox.classList.remove('flex');
 
-                    // Shake and highlight border
+                    // efek getar dan highlight border
                     photoUploadBox.scrollIntoView({ behavior: 'smooth', block: 'center' });
                     photoUploadBox.classList.remove('shake-highlight');
                     void photoUploadBox.offsetWidth; // trigger reflow
                     photoUploadBox.classList.add('shake-highlight');
 
-                    // Set warning helper text
+                    // set teks bantuan buat warning
                     if (photoHelpText && photoHelpIcon && photoHelpSpan) {
                         photoHelpText.className = "text-xs text-red-500 font-bold mt-1.5 flex items-center gap-1.5 animate-pulse transition-all duration-300";
                         photoHelpIcon.className = "bi bi-exclamation-triangle-fill text-red-500";
@@ -346,13 +335,13 @@
                     previewBox.classList.add('hidden');
                     previewBox.classList.remove('flex');
 
-                    // Shake and highlight border
+                    // efek getar dan highlight border
                     photoUploadBox.scrollIntoView({ behavior: 'smooth', block: 'center' });
                     photoUploadBox.classList.remove('shake-highlight');
                     void photoUploadBox.offsetWidth; // trigger reflow
                     photoUploadBox.classList.add('shake-highlight');
 
-                    // Set warning helper text
+                    // set teks bantuan buat warning
                     if (photoHelpText && photoHelpIcon && photoHelpSpan) {
                         photoHelpText.className = "text-xs text-red-500 font-extrabold mt-1.5 flex items-center gap-1.5 animate-pulse transition-all duration-300";
                         photoHelpIcon.className = "bi bi-exclamation-triangle-fill text-red-500";
@@ -385,15 +374,15 @@
                     const mapHelpIcon = document.getElementById('mapHelpIcon');
                     const mapHelpSpan = document.getElementById('mapHelpSpan');
 
-                    // Scroll to map smoothly
+                    // scroll ke peta secara smooth
                     mapContainer.scrollIntoView({ behavior: 'smooth', block: 'center' });
 
-                    // Trigger shake and highlight border
+                    // trigger efek getar dan highlight border
                     mapContainer.classList.remove('shake-highlight');
                     void mapContainer.offsetWidth; // trigger reflow
                     mapContainer.classList.add('shake-highlight');
 
-                    // Update instruction text to red pulsing warning
+                    // ubah teks instruksi jadi warning merah kedip-kedip
                     if (mapHelpText && mapHelpIcon && mapHelpSpan) {
                         mapHelpText.className = "text-xs text-red-500 font-extrabold mt-1.5 flex items-center gap-1.5 animate-pulse transition-all duration-300";
                         mapHelpIcon.className = "bi bi-exclamation-triangle-fill text-red-500";

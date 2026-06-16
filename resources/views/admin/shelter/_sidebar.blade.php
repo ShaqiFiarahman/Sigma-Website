@@ -1,10 +1,10 @@
-{{-- Shelter Edit: Sidebar Info Panels --}}
+{{-- section sidebar info posko --}}
 <div class="lg:col-span-2 space-y-5">
 
-    {{-- Info Posko (gabungan Status, Relawan, Logistik) --}}
+    {{-- stats dan detail posko --}}
     <div class="bg-white border border-slate-200/80 rounded-2xl overflow-hidden" style="box-shadow: 0 1px 3px rgba(10,15,30,0.06);">
 
-        {{-- Status Posko --}}
+        {{-- status operasional posko --}}
         <div class="p-5">
             <p class="text-xs font-bold text-slate-700 mb-3">Status Posko</p>
             <div class="space-y-2.5">
@@ -27,10 +27,10 @@
             </div>
         </div>
 
-        {{-- Divider --}}
+        {{-- divider --}}
         <div class="border-t border-slate-100"></div>
 
-        {{-- Relawan Bertugas --}}
+        {{-- daftar relawan yang lagi bertugas --}}
         <div class="px-5 py-4 flex items-center justify-between">
             <p class="text-xs font-bold text-slate-700">Relawan Bertugas</p>
             <span class="text-[10px] font-bold text-slate-500 bg-slate-100 px-2 py-0.5 rounded">{{ $assignedVolunteers->count() }}</span>
@@ -56,7 +56,7 @@
             @endif
         </div>
 
-        {{-- Kebutuhan Logistik --}}
+        {{-- daftar kebutuhan logistik posko --}}
         @php($dynamicLogistics = $shelter->getDynamicLogistics())
         @if(!empty($dynamicLogistics))
             <div class="border-t border-slate-100"></div>
@@ -71,7 +71,7 @@
         @endif
     </div>
 
-    {{-- Hapus Posko --}}
+    {{-- section bahaya: hapus posko --}}
     <div class="bg-white border border-red-100/50 rounded-2xl p-5" style="box-shadow: 0 1px 3px rgba(10,15,30,0.04);">
         <p class="text-xs font-semibold text-slate-800 mb-2">Hapus Posko</p>
         <p class="text-[11px] text-slate-500 mb-3">Tindakan ini tidak bisa dibatalkan. Semua data posko akan dihapus permanen.</p>
@@ -80,7 +80,7 @@
             Hapus Posko Ini
         </button>
 
-        {{-- Inline confirmation --}}
+        {{-- input konfirmasi ketik nama posko --}}
         <div id="deleteSection" class="hidden mt-4 pt-4 border-t border-red-100">
             <p class="text-[11px] text-slate-500 mb-2">Ketik <strong class="text-slate-800">{{ $shelter->name }}</strong> untuk konfirmasi:</p>
             <input type="text" id="deleteConfirmInput" placeholder="Ketik nama posko..."

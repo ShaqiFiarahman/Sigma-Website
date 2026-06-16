@@ -1,4 +1,4 @@
-{{-- HTML Template for Dynamic Toast Notifications via JavaScript --}}
+{{-- template html buat toast notifikasi bencana dinamis via js --}}
 <template id="disaster-toast-template">
     <div class="toast-slide-in pointer-events-auto bg-[#FCFBF9]/95 backdrop-blur-md border border-[#EDEBE6]/80 shadow-[0_8px_30px_rgb(10,15,30,0.06)] rounded-2xl p-4 flex gap-3 transition-all duration-300 hover:shadow-[0_8px_30px_rgb(10,15,30,0.10)]">
         <div class="toast-icon-container flex-shrink-0 flex items-center justify-center w-10 h-10 rounded-full">

@@ -46,7 +46,6 @@
                 @endif
             @endforeach
 
-            {{-- Next --}}
             @if ($paginator->hasMorePages())
                 <a href="{{ $paginator->nextPageUrl() }}"
                     class="w-9 h-9 flex items-center justify-center rounded-lg border border-slate-200 text-slate-600 hover:bg-blue-50 hover:border-blue-300 hover:text-blue-700 transition-all duration-200 text-sm">

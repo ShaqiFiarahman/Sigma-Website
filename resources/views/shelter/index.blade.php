@@ -10,7 +10,7 @@
 @section('content')
 <div class="max-w-7xl mx-auto">
 
-    {{-- Search & Filter --}}
+    {{-- cari & filter --}}
     <div class="bg-white border border-slate-200/80 rounded-2xl shadow-sm overflow-hidden mb-6"
          style="box-shadow: 0 1px 3px rgba(10,15,30,0.06), 0 4px 16px rgba(10,15,30,0.04);">
         <div class="p-4 sm:p-5">
@@ -32,8 +32,8 @@
         </div>
     </div>
 
-    {{-- Stats Summary --}}
-    {{-- Stats (admin only) --}}
+    {{-- ringkasan statistik --}}
+    {{-- statistik khusus admin --}}
     @if(auth()->check() && strtolower(auth()->user()->role) === 'admin')
     <div class="flex items-center justify-between mb-4">
         <div>
@@ -76,7 +76,7 @@
     </div>
     @endif
 
-    {{-- Shelter Cards --}}
+    {{-- kartu posko --}}
     <div class="space-y-4" id="shelterList">
         @foreach($shelters as $shelter)
             @php
@@ -119,7 +119,7 @@
                 <div class="flex flex-col sm:flex-row sm:items-start gap-4">
                     <div class="flex-1 min-w-0">
 
-                        {{-- Name + Address + Distance --}}
+                        {{-- info nama, alamat, & jarak --}}
                         <div class="flex items-start justify-between gap-3 mb-2">
                             <div class="min-w-0">
                                 <h3 class="text-base font-bold text-slate-900 leading-tight truncate">{{ $shelter['name'] }}</h3>
@@ -142,7 +142,7 @@
                             </span>
                         </div>
 
-                        {{-- Capacity Progress --}}
+                        {{-- progress bar kapasitas --}}
                         <div class="mt-3 mb-3">
                             <div class="flex items-center justify-between mb-1.5">
                                 <span class="text-xs font-medium text-slate-600">Kapasitas</span>
@@ -153,7 +153,7 @@
                             </div>
                         </div>
 
-                        {{-- Logistik yang dibutuhkan --}}
+                        {{-- daftar logistik yang dibutuhkan --}}
                         @if(!empty($shelter['logistics']))
                             <div class="mt-3">
                                 <span class="text-[11px] font-semibold text-slate-500 block mb-1.5">Dibutuhkan:</span>
@@ -168,10 +168,8 @@
                         @endif
                     </div>
 
-                    {{-- Divider --}}
                     <div class="hidden sm:block w-px bg-slate-200 self-stretch"></div>
 
-                    {{-- Actions --}}
                     <div class="flex flex-col sm:flex-col items-center justify-center gap-2 w-full sm:w-auto sm:shrink-0 sm:self-center sm:pl-2">
                         <button type="button"
                            onclick="window.open('https://www.google.com/maps/dir/?api=1&destination={{ $shelter['lat'] }},{{ $shelter['lng'] }}', '_blank')"
@@ -201,14 +199,14 @@
         @endforeach
     </div>
 
-    {{-- Pagination --}}
+    {{-- pagination link --}}
     @if($shelters->hasPages())
         <div class="mt-6">
             {{ $shelters->links() }}
         </div>
     @endif
 
-    {{-- Empty State --}}
+    {{-- empty state kalo data ga ada --}}
     <div id="emptyState" class="hidden bg-white border border-slate-200/80 rounded-2xl p-12 text-center mt-4" style="box-shadow: 0 1px 3px rgba(10,15,30,0.06);">
         <div class="w-14 h-14 rounded-2xl mx-auto mb-4 flex items-center justify-center" style="background: #E4F0F6;">
             <i class="bi bi-building text-2xl" style="color: #1e3a8a;"></i>
@@ -218,7 +216,7 @@
     </div>
 </div>
 
-{{-- Logistics Modal --}}
+{{-- modal kebutuhan logistik --}}
 <div id="logisticsModal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4" style="background: rgba(10,15,30,0.5);">
     <div class="bg-white rounded-2xl max-w-sm w-full overflow-hidden shadow-2xl" style="box-shadow: 0 25px 50px rgba(10,15,30,0.25);">
         <div class="px-6 py-5 border-b border-slate-100 bg-white border-l-4 border-l-[#3B6FE8]">
@@ -257,7 +255,7 @@
     function closeLogistics() { document.getElementById('logisticsModal').classList.add('hidden'); }
     document.getElementById('logisticsModal')?.addEventListener('click', (e) => { if (e.target === document.getElementById('logisticsModal')) closeLogistics(); });
 
-    // Distance calculation
+    // hitung jarak pake formula haversine
     function getDistance(lat1, lon1, lat2, lon2) {
         const R = 6371, dLat = (lat2-lat1)*Math.PI/180, dLon = (lon2-lon1)*Math.PI/180;
         const a = Math.sin(dLat/2)**2 + Math.cos(lat1*Math.PI/180)*Math.cos(lat2*Math.PI/180)*Math.sin(dLon/2)**2;
@@ -281,11 +279,11 @@
         navigator.geolocation.getCurrentPosition(p => updateDistances(p.coords.latitude, p.coords.longitude), () => updateDistances(-7.5755, 110.8243));
     } else { updateDistances(-7.5755, 110.8243); }
 
-    // Search & Filter - now server-side, keep only distance + terdekat sort
+    // cari & filter - diurus server, di sini buat ngitung jarak & urut posko terdekat
     document.getElementById('btnTerdekat')?.addEventListener('click', function() {
         if (!navigator.geolocation) { alert('Browser tidak mendukung geolokasi.'); return; }
 
-        // Remove active from all filter chips
+        // hapus status aktif di semua chip filter
         document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
         this.classList.add('active');
 

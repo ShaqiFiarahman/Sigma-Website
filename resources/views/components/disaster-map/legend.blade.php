@@ -1,4 +1,4 @@
-{{-- Legend --}}
+{{-- legend status bencana --}}
 <div class="hidden sm:block absolute bottom-6 right-4 z-10 shadow-lg bg-white/90 backdrop-blur-sm border border-slate-200/60 rounded-2xl p-4">
     <p class="text-[10px] font-bold uppercase tracking-wider mb-2.5 text-slate-500">Tingkat Status</p>
     <div class="flex flex-col gap-y-2">

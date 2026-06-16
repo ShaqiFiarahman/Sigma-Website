@@ -1,5 +1,5 @@
-{{-- Volunteer Notification Bell (Navbar) --}}
-{{-- Data $volunteerNotif is provided by VolunteerNotificationComposer --}}
+{{-- lonceng notifikasi relawan (navbar) --}}
+{{-- data $volunteerNotif dari VolunteerNotificationComposer --}}
 
 @if($volunteerNotif)
 <div class="hidden md:block relative" id="volunteerNotifWrapper">
@@ -12,7 +12,6 @@
     <div id="volunteerNotifDropdown" class="hidden absolute right-0 top-full mt-2 w-96 bg-white border border-slate-200/80 rounded-2xl overflow-hidden z-50 notif-dropdown"
          style="box-shadow: 0 20px 40px -15px rgba(10, 15, 30, 0.25), 0 0 0 1px rgba(10, 15, 30, 0.045);">
         
-        {{-- Header --}}
         <div class="px-5 py-3 border-b border-slate-100 flex items-center justify-between notif-item" style="background: linear-gradient(180deg, #f8fafc 0%, #f1f5f9 100%);">
             <div class="flex items-center gap-1.5">
                 <i class="bi bi-bell-fill text-blue-500 text-xs"></i>
@@ -21,7 +20,6 @@
             <span class="text-[10px] font-bold text-amber-600 bg-amber-50 px-2 py-0.5 rounded-full border border-amber-100">Menunggu Konfirmasi</span>
         </div>
 
-        {{-- Content --}}
         <div class="p-5 notif-item">
             <div class="flex items-start gap-3 mb-4">
                 <div class="w-10 h-10 rounded-xl flex items-center justify-center shrink-0"
@@ -56,7 +54,7 @@
     </div>
 </div>
 
-{{-- Modal Tolak Penugasan (dari Navbar) --}}
+{{-- modal tolak penugasan (navbar) --}}
 <div id="rejectModalNavbar" class="fixed inset-0 z-[9999] flex items-center justify-center hidden">
     <div class="absolute inset-0 bg-slate-900/50 backdrop-blur-sm sigma-modal-backdrop" onclick="closeRejectModal()"></div>
     <div class="relative bg-white w-full max-w-md mx-4 rounded-3xl px-7 pt-8 pb-7 shadow-2xl sigma-modal-content">

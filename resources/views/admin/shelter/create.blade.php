@@ -13,7 +13,7 @@
         <form action="{{ route('admin.shelter.store') }}" method="POST" enctype="multipart/form-data">
             @csrf
 
-            {{-- Photo Banner --}}
+            {{-- Banner Foto --}}
             <div class="relative h-36 bg-slate-100 overflow-hidden group">
                 <div class="w-full h-full flex items-center justify-center" id="photoPlaceholder">
                     <div class="text-center">
@@ -30,7 +30,7 @@
 
             <div class="p-6 space-y-6">
 
-                {{-- Validation Errors --}}
+                {{-- Kesalahan Validasi --}}
                 @if($errors->any())
                     <div class="bg-red-50 border border-red-100 rounded-xl p-4">
                         <p class="text-xs font-semibold text-red-700 mb-1">Terdapat kesalahan:</p>
@@ -42,7 +42,7 @@
                     </div>
                 @endif
 
-                {{-- Section: Informasi Dasar --}}
+                {{-- section informasi dasar --}}
                 <div>
                     <p class="text-xs font-bold text-slate-700 mb-3">Informasi Dasar</p>
                     <div class="space-y-3">
@@ -57,11 +57,11 @@
                                    class="w-full px-3 py-2.5 text-sm border border-slate-200 rounded-xl focus:outline-none focus:border-blue-400 focus:ring-1 focus:ring-blue-500/20 bg-white text-slate-800">
                         </div>
 
-                        {{-- Hidden coordinates --}}
+                        {{-- Koordinat tersembunyi --}}
                         <input type="hidden" name="latitude" id="latitudeInput" value="{{ old('latitude', '-7.5755') }}">
                         <input type="hidden" name="longitude" id="longitudeInput" value="{{ old('longitude', '110.8243') }}">
 
-                        {{-- Map Location Picker --}}
+                        {{-- Pemilih Lokasi Peta --}}
                         <div>
                             <label class="block text-[11px] text-slate-500 mb-1">Pilih Lokasi Koordinat Posko</label>
                             <div id="mapPicker" class="w-full rounded-xl border border-slate-200 overflow-hidden" style="height: 220px; box-shadow: 0 2px 8px rgba(10,15,30,0.04);"></div>
@@ -78,7 +78,7 @@
                     </div>
                 </div>
 
-                {{-- Section: Kapasitas --}}
+                {{-- section kapasitas --}}
                 <div>
                     <p class="text-xs font-bold text-slate-700 mb-3">Kapasitas</p>
                     <div class="grid grid-cols-2 gap-3">
@@ -95,7 +95,7 @@
                     </div>
                 </div>
 
-                {{-- Section: Operasional --}}
+                {{-- section operasional --}}
                 <div>
                     <p class="text-xs font-bold text-slate-700 mb-3">Operasional</p>
                     <div class="space-y-3">
@@ -115,7 +115,7 @@
                 </div>
             </div>
 
-            {{-- Footer --}}
+            {{-- footer form --}}
             <div class="px-6 py-4 border-t border-slate-100 flex items-center justify-end gap-2" style="background: #FAFBFD;">
                 <button type="button" onclick="history.back()" class="px-4 py-2.5 text-sm font-medium text-slate-600 bg-white border border-slate-200 rounded-xl hover:bg-slate-50 cursor-pointer">Batal</button>
                 <button type="submit" class="px-6 py-2.5 text-sm font-semibold text-white rounded-xl cursor-pointer" style="background: linear-gradient(135deg, #3B6FE8 0%, #1e3a8a 100%); box-shadow: 0 2px 8px rgba(30,58,138,0.25);">
@@ -126,7 +126,7 @@
     </div>
 </div>
 
-{{-- Scripts --}}
+{{-- script untuk handle google maps map picker dan places autocomplete --}}
 <script>
     document.getElementById('photoInput')?.addEventListener('change', function() {
         const file = this.files[0];
@@ -143,7 +143,7 @@
         }
     });
 
-    // Google Map Picker
+    // setup google maps map picker
     let map, marker;
     const defaultLat = parseFloat(document.getElementById('latitudeInput')?.value) || -7.5755;
     const defaultLng = parseFloat(document.getElementById('longitudeInput')?.value) || 110.8243;
@@ -180,7 +180,7 @@
             updateCoordinates(event.latLng.lat(), event.latLng.lng(), true);
         });
 
-        // Places Autocomplete
+        // inisialisasi google places autocomplete untuk pencarian alamat
         const addressInput = document.getElementById('addressInput');
         if (addressInput && window.google && google.maps && google.maps.places) {
             const autocomplete = new google.maps.places.Autocomplete(addressInput, {

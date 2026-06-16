@@ -1,20 +1,17 @@
-{{-- ═══════════════════════════════════════════════════
-     PROFILE DROPDOWN COMPONENT
-     Anchored below the profile trigger in the navbar.
-═══════════════════════════════════════════════════ --}}
+{{-- dropdown profile component --}}
 <div id="profileDropdown"
     class="profile-dropdown hidden absolute right-0 top-full mt-2.5 w-[19.5rem] bg-white rounded-2xl overflow-hidden z-[9999] border border-slate-200/60"
     style="box-shadow: 0 18px 38px -16px rgba(10, 15, 30, 0.28), 0 0 0 1px rgba(10, 15, 30, 0.04);">
 
-    {{-- Header Gradient --}}
+    {{-- header gradient --}}
     <div class="relative px-6 pt-5 pb-5 text-center"
         style="background: linear-gradient(135deg, #0A0F1E 0%, #0f1f4a 100%);">
 
-        {{-- Subtle Dot Grid Pattern --}}
+        {{-- subtle dot grid pattern --}}
         <div class="absolute inset-0 opacity-[0.06] pointer-events-none"
             style="background-image: radial-gradient(rgba(255,255,255,0.15) 1px, transparent 1px); background-size: 10px 10px;"></div>
 
-        {{-- Subtle Topography Waves --}}
+        {{-- subtle topography waves --}}
         <div class="absolute inset-0 opacity-[0.04] pointer-events-none">
             <svg class="w-full h-full" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" preserveAspectRatio="none">
                 <path d="M0,35 Q25,15 50,35 T100,35" fill="none" stroke="white" stroke-width="0.35" />
@@ -23,12 +20,12 @@
             </svg>
         </div>
 
-        {{-- Avatar --}}
+        {{-- avatar --}}
         <div class="profile-avatar w-14 h-14 rounded-full mx-auto flex items-center justify-center bg-white text-slate-800 text-xl font-extrabold border-2 border-white/20 relative shadow-sm">
             {{ substr(auth()->user()->full_name ?? 'U', 0, 1) }}
         </div>
 
-        {{-- Name & Role --}}
+        {{-- nama dan role user --}}
         <h3 class="text-[15px] font-bold text-white mt-2.5 truncate px-2">{{ auth()->user()->full_name }}</h3>
         <div class="inline-flex items-center gap-1 mt-1.5 px-2.5 py-0.5 rounded-full"
             style="background: rgba(228,240,246,0.15); border: 1px solid rgba(228,240,246,0.2);">
@@ -53,13 +50,13 @@
         </div>
     </div>
 
-    {{-- Profile Details & Form Panels --}}
+    {{-- detail profil dan panel form --}}
     <div class="px-6 pt-5 pb-5">
 
-        {{-- PANEL 1: MAIN DETAILS VIEW --}}
+        {{-- panel 1: main details view --}}
         <div id="profileMainPanel">
             <div class="space-y-3">
-                {{-- Email --}}
+                {{-- email --}}
                 <div class="stagger-item flex items-center gap-3">
                     <div class="w-8 h-8 rounded-lg bg-slate-100 flex items-center justify-center shrink-0">
                         <i class="bi bi-envelope text-slate-500 text-sm"></i>
@@ -70,7 +67,7 @@
                     </div>
                 </div>
 
-                {{-- Total Reports --}}
+                {{-- total laporan --}}
                 @php
                     $roleType = strtolower(auth()->user()->role ?? '');
                     if ($roleType === 'admin') {
@@ -99,7 +96,7 @@
                     </div>
                 </div>
 
-                {{-- Member Since --}}
+                {{-- tanggal bergabung --}}
                 <div class="stagger-item flex items-center gap-3">
                     <div class="w-8 h-8 rounded-lg bg-slate-100 flex items-center justify-center shrink-0">
                         <i class="bi bi-calendar-check text-slate-500 text-sm"></i>
@@ -113,7 +110,7 @@
                 </div>
             </div>
 
-            {{-- Quick Actions --}}
+            {{-- menu aksi cepat --}}
             <div class="stagger-item grid grid-cols-2 gap-2 mt-4 pt-3.5 border-t border-slate-100">
                 <button type="button" onclick="showProfilePanel('profileEditPanel', 'forward')"
                     class="profile-action-btn flex items-center justify-center gap-1.5 py-2 px-2 text-[10px] font-bold text-slate-700 hover:text-slate-900 bg-white hover:bg-slate-50 border border-slate-200 hover:border-slate-300 rounded-lg uppercase tracking-wider">
@@ -125,7 +122,7 @@
                 </button>
             </div>
 
-            {{-- Logout --}}
+            {{-- form logout --}}
             <div class="stagger-item mt-2">
                 <form action="{{ route('logout') }}" method="POST">
                     @csrf
@@ -137,7 +134,7 @@
             </div>
         </div>
 
-        {{-- PANEL 2: EDIT PROFILE FORM --}}
+        {{-- panel 2: edit profile form --}}
         <div id="profileEditPanel" class="hidden">
             <h4 class="text-[11px] font-bold text-slate-800 uppercase tracking-wider mb-3.5 flex items-center gap-1.5">
                 <i class="bi bi-pencil-square text-slate-500 text-sm"></i> Edit Profil
@@ -168,7 +165,7 @@
             </form>
         </div>
 
-        {{-- PANEL 3: CHANGE PASSWORD FORM --}}
+        {{-- panel 3: change password form --}}
         <div id="profilePasswordPanel" class="hidden">
             <h4 class="text-[11px] font-bold text-slate-800 uppercase tracking-wider mb-3.5 flex items-center gap-1.5">
                 <i class="bi bi-key text-slate-500 text-sm"></i> Ubah Sandi
@@ -215,7 +212,8 @@
 </div>
 
 <script>
-    {{-- Profile form submissions (need Blade route URLs) --}}
+    {{-- handle submit form edit profil --}}
+    // handling submit form edit profil via fetch post
     function submitProfileEdit(event) {
         event.preventDefault();
         const form = event.target;
@@ -267,6 +265,7 @@
         });
     }
 
+    // handling submit form ubah password via fetch post
     function submitPasswordChange(event) {
         event.preventDefault();
         const form = event.target;

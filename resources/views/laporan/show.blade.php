@@ -25,7 +25,7 @@
     $typeName = $laporan['type_name'];
 @endphp
 
-{{-- Flash message --}}
+{{-- flash message --}}
 @if(session('msg'))
     <div class="mb-5 p-4 rounded-xl flex items-center gap-3 text-sm font-medium
         {{ session('msg') === 'approved' ? 'bg-emerald-50 text-emerald-800 border border-emerald-200' : 'bg-red-50 text-red-800 border border-red-200' }}">
@@ -40,14 +40,12 @@
 
 <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
 
-    {{-- Kiri: Detail Utama --}}
     <div class="lg:col-span-2 space-y-5">
 
-        {{-- Card Utama --}}
         <div class="bg-white border border-slate-200/80 border-l-4 {{ $borderColor }} rounded-2xl overflow-hidden"
              style="box-shadow: 0 1px 3px rgba(10,15,30,0.06), 0 4px 16px rgba(10,15,30,0.04);">
 
-            {{-- Header --}}
+            {{-- header detail laporan --}}
             <div class="px-6 sm:px-8 py-5 border-b border-slate-100">
                 <div class="flex items-start justify-between gap-3">
                     <div>
@@ -59,7 +57,7 @@
                             <span class="flex items-center gap-1"><i class="bi bi-person text-slate-400"></i> {{ $laporan['reporter_name'] }}</span>
                         </div>
                     </div>
-                    {{-- Status Badge --}}
+                    {{-- badge status laporan --}}
                     @if($s === 'PENDING')
                         <span class="inline-flex items-center px-3 py-1.5 rounded-full text-[11px] font-bold bg-amber-50 text-amber-700 border border-amber-200 shrink-0">
                             Pending
@@ -90,7 +88,7 @@
 
             <div class="p-6 sm:p-8 space-y-6">
 
-                {{-- Foto --}}
+
                 @php
                     $photos = [];
                     if (!empty($laporan['photo_url'])) {
@@ -105,14 +103,13 @@
 
                 @if(count($photos) > 0)
                     <div class="rounded-xl overflow-hidden border border-slate-100" style="box-shadow: 0 2px 8px rgba(10,15,30,0.05);">
-                        {{-- Main photo --}}
                         <img src="{{ $photos[0] }}"
                              alt="Dokumentasi Bencana"
                              class="w-full object-cover cursor-pointer"
                              style="max-height: 340px;"
                              loading="lazy"
                              onclick="window.open(this.src, '_blank')">
-                        {{-- Thumbnails if multiple --}}
+                        {{-- thumbnail foto kalo fotonya lebih dari satu --}}
                         @if(count($photos) > 1)
                             <div class="flex gap-2 p-2 bg-slate-50 border-t border-slate-100">
                                 @foreach($photos as $i => $photo)
@@ -132,7 +129,7 @@
                     </div>
                 @endif
 
-                {{-- Deskripsi --}}
+
                 <div>
                     <h3 class="text-xs font-bold text-slate-700 mb-2 uppercase tracking-wider flex items-center gap-1.5">
                         <i class="bi bi-text-paragraph text-slate-400"></i> Deskripsi
@@ -146,7 +143,7 @@
                     </div>
                 </div>
 
-                {{-- Lokasi --}}
+
                 <div>
                     <h3 class="text-xs font-bold text-slate-700 mb-2 uppercase tracking-wider flex items-center gap-1.5">
                         <i class="bi bi-geo-alt text-slate-400"></i> Lokasi Kejadian
@@ -159,14 +156,14 @@
                     </div>
                 </div>
 
-                {{-- Data Korban & Evakuasi (Relawan Update) --}}
+                {{-- data korban & evakuasi dari update relawan --}}
                 <div class="border-t border-slate-100/60 pt-5">
                     <h3 class="text-xs font-bold text-slate-700 mb-3 uppercase tracking-wider flex items-center gap-1.5">
                         <i class="bi bi-people-fill text-slate-400"></i> Kondisi Korban & Evakuasi <span class="text-[10px] font-bold text-blue-600 ml-1.5">Update Relawan</span>
                     </h3>
                     
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        {{-- Medis Update --}}
+                        {{-- update medis --}}
                         <div class="bg-red-50/20 border border-red-100 rounded-xl p-5">
                             <div class="flex items-center gap-2 mb-3 text-red-700">
                                 <i class="bi bi-heart-pulse-fill text-sm"></i>
@@ -231,28 +228,24 @@
                             @endif
                         </div>
 
-                        {{-- SAR Update --}}
+                        {{-- update sar --}}
                         <div class="bg-orange-50/20 border border-orange-100 rounded-xl p-5">
                              <div class="flex items-center gap-2 mb-3 text-orange-700">
                                 <svg class="w-6 h-6 shrink-0 shadow-sm rounded-full" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                    <!-- Basarnas Official Circle Emblem -->
                                     <circle cx="12" cy="12" r="11.5" fill="#facc15" />
                                     <circle cx="12" cy="12" r="11" fill="#0b3c1b" />
                                     <circle cx="12" cy="12" r="8" fill="#facc15" />
-                                    <!-- Map of Indonesia -->
                                     <path d="M4.6 11.2c.2-.4.7-.2.9.1.4.5.8 1.1 1.2 1.6.2.3 0 .6-.3.6-.4 0-.8-.5-1.2-1-.3-.4-.6-.9-.4-1.3z" fill="#0b3c1b" />
                                     <path d="M9.4 10c.5-.2 1.1.1 1.3.5.2.4-.1.9-.4 1.1-.3.2-.9-.1-1.1-.4-.2-.4.1-.6.2-.8z" fill="#0b3c1b" />
                                     <path d="M7.4 14.3c.7-.1 1.4 0 2.1.1.2 0 .2.2 0 .2-.7 0-1.4-.1-2.1-.2-.2 0-.2-.1 0-.1z" fill="#0b3c1b" />
                                     <path d="M12.6 10.5c.2-.2.7-.1.6.2 0 .3-.3.4-.3.7s.4.4.3.7c-.1.2-.3.1-.4-.1 0-.2.2-.4.1-.7 0-.3-.3-.3-.3-.6 0-.1 0-.2 0-.2z" fill="#0b3c1b" />
                                     <path d="M16.8 11.8c.3-.3.7-.3 1.1-.2.3.2.7.2 1.1-.1.2-.1.3 0 .2.2-.2.3-.5.5-.9.4-.3 0-.5-.2-.6-.3z" fill="#0b3c1b" />
-                                    <!-- Minor Islands -->
                                     <circle cx="10.8" cy="14.3" r="0.3" fill="#0b3c1b" />
                                     <circle cx="11.6" cy="14.3" r="0.3" fill="#0b3c1b" />
                                     <circle cx="12.4" cy="14.2" r="0.3" fill="#0b3c1b" />
                                     <circle cx="13.2" cy="13.8" r="0.3" fill="#0b3c1b" />
                                     <circle cx="14.5" cy="12.8" r="0.3" fill="#0b3c1b" />
                                     <circle cx="15.2" cy="12.0" r="0.3" fill="#0b3c1b" />
-                                    <!-- Stars -->
                                     <polygon points="12,2.2 12.2,2.7 12.8,2.7 12.3,3.1 12.5,3.6 12,3.3 11.5,3.6 11.7,3.1 11.2,2.7 11.8,2.7" fill="#facc15" />
                                     <polygon points="9.5,2.6 9.7,3.1 10.3,3.1 9.8,3.5 10,4 9.5,3.7 9,4 9.2,3.5 8.7,3.1 9.3,3.1" fill="#facc15" />
                                     <polygon points="14.5,2.6 14.7,3.1 15.3,3.1 14.8,3.5 15,4 14.5,3.7 14,4 14.2,3.5 13.7,3.1 14.3,3.1" fill="#facc15" />
@@ -260,10 +253,8 @@
                                     <polygon points="16.8,3.6 17,4.1 17.6,4.1 17.1,4.5 17.3,5 16.8,4.7 16.3,5 16.5,4.5 16,4.1 16.6,4.1" fill="#facc15" />
                                     <polygon points="5.2,5.2 5.4,5.7 6,5.7 5.5,6.1 5.7,6.6 5.2,6.3 4.7,6.6 4.9,6.1 4.4,5.7 5,5.7" fill="#facc15" />
                                     <polygon points="18.8,5.2 19,5.7 19.6,5.7 19.1,6.1 19.3,6.6 18.8,6.3 18.3,6.6 18.5,6.1 18,5.7 18.6,5.7" fill="#facc15" />
-                                    <!-- Red Text -->
                                     <text x="12" y="8" fill="#dc2626" font-size="2.6" font-weight="900" font-family="system-ui, -apple-system, sans-serif" text-anchor="middle" letter-spacing="0.1">SAR</text>
                                     <text x="12" y="16.8" fill="#dc2626" font-size="1.8" font-weight="900" font-family="system-ui, -apple-system, sans-serif" text-anchor="middle" letter-spacing="0.1">NASIONAL</text>
-                                    <!-- Bottom Text -->
                                     <text x="12" y="21.3" fill="#facc15" font-size="0.95" font-weight="800" font-family="system-ui, -apple-system, sans-serif" text-anchor="middle" letter-spacing="0.1">AVIGNAM JAGAT SAMAGRAM</text>
                                 </svg>
                                 <h4 class="text-xs font-bold uppercase tracking-wider">Pencarian & Evakuasi (SAR)</h4>
@@ -323,10 +314,9 @@
         </div>
     </div>
 
-    {{-- Kanan: Panel --}}
     <div class="lg:col-span-1 space-y-5">
 
-        {{-- Info Pelapor & Aksi --}}
+        {{-- info pelapor & button aksi --}}
         <div class="bg-white border border-slate-200/80 rounded-2xl overflow-hidden"
              style="box-shadow: 0 1px 3px rgba(10,15,30,0.06);">
             <div class="px-5 py-4 border-b border-slate-100 bg-slate-50">
@@ -369,7 +359,7 @@
             </div>
         </div>
 
-        {{-- Panel Tindakan (Admin only) --}}
+        {{-- panel tindakan khusus admin --}}
         @if(auth()->check() && strtolower(auth()->user()->role) === 'admin')
         <div class="bg-white border border-slate-200/80 rounded-2xl overflow-hidden"
              style="box-shadow: 0 1px 3px rgba(10,15,30,0.06);">
@@ -422,7 +412,7 @@
                         </button>
                     </form>
 
-                    {{-- Tombol Selesai terpisah --}}
+                    {{-- button tandai selesai terpisah --}}
                     @if($currentStatus !== 'RESOLVED')
                         <form id="resolveForm" action="{{ route('laporan.update_status', $laporan['id']) }}" method="POST" class="mt-3">
                             @csrf
@@ -442,7 +432,7 @@
     </div>
 </div>
 
-{{-- Custom Confirm Modal --}}
+{{-- modal konfirmasi custom --}}
 <div id="confirmModal" class="fixed inset-0 z-[9999] flex items-center justify-center p-4 hidden">
     <div class="absolute inset-0 bg-slate-900/60 backdrop-blur-sm sigma-modal-backdrop"></div>
     <div class="relative bg-white rounded-2xl w-full max-w-sm overflow-hidden shadow-2xl border border-slate-100/80 sigma-modal-content">

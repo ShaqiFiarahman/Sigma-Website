@@ -1,10 +1,10 @@
-{{-- Admin Laporan: Scripts --}}
+{{-- script pendukung pengelolaan laporan --}}
 <script src="https://maps.googleapis.com/maps/api/js?key={{ config('services.google_maps.key') }}" async defer></script>
 <script>
     let currentId = null;
     let miniMap = null, miniMarker = null;
 
-    // Tabs - click same tab to deselect (show all)
+    // kelola klik tab filter (klik tab aktif buat reset filter dan nampilin semua)
     document.querySelectorAll('.tab-btn').forEach(btn => {
         btn.addEventListener('click', () => {
             if (btn.classList.contains('active')) {
@@ -22,6 +22,7 @@
         if (e.key === 'Enter') e.preventDefault();
     });
 
+    // filter data laporan di client-side berdasarkan keyword search bar dan tab status
     function filterList() {
         const query = document.getElementById('adminSearch').value.toLowerCase().trim();
         const activeTab = document.querySelector('.tab-btn.active');
@@ -37,7 +38,7 @@
         });
     }
 
-    // Click item
+    // pasang event listener klik pada list item buat nampilin detail laporan
     document.querySelectorAll('.laporan-item').forEach(item => {
         item.addEventListener('click', () => {
             document.querySelectorAll('.laporan-item').forEach(i => i.classList.remove('active'));
@@ -46,6 +47,7 @@
         });
     });
 
+    // fetch detail data laporan dari api
     function loadDetail(id) {
         currentId = id;
         fetch(`/admin/api/laporan/${id}`)
@@ -54,7 +56,7 @@
                 document.getElementById('detailEmpty').classList.add('hidden');
                 document.getElementById('detailContent').classList.remove('hidden');
 
-                // Photo
+                // parsing url foto pendukung laporan (format json atau string tunggal)
                 const photoDiv = document.getElementById('detailPhoto');
                 let photos = [];
                 try { photos = d.photo_url ? JSON.parse(d.photo_url) : []; } catch(e) { photos = d.photo_url ? [d.photo_url] : []; }
@@ -65,7 +67,7 @@
                     photoDiv.classList.add('hidden');
                 }
 
-                // Info
+                // tampilkan info teks detail laporan
                 document.getElementById('detailTitle').textContent = d.title;
                 document.getElementById('detailMeta').textContent = `${d.type_name} · ${d.time_ago}`;
                 document.getElementById('detailLocation').textContent = d.location || 'Tidak diketahui';
@@ -74,17 +76,17 @@
                 document.getElementById('detailTime').textContent = d.created_at;
                 document.getElementById('detailDesc').textContent = d.description || 'Tidak ada deskripsi.';
 
-                // Badge
+                // cocokin kelas css badge status laporan
                 const badge = document.getElementById('detailBadge');
                 const styles = { PENDING:'bg-amber-50 text-amber-700', AWAS:'bg-red-50 text-red-700', SIAGA_1:'bg-orange-50 text-orange-700', SIAGA_2:'bg-violet-50 text-violet-700', RESOLVED:'bg-emerald-50 text-emerald-700', DECLINE:'bg-slate-100 text-slate-600' };
                 badge.className = `text-[10px] font-bold px-2 py-0.5 rounded-full shrink-0 ${styles[d.status] || ''}`;
                 badge.textContent = d.status_label;
 
-                // Selects
+                // pasang value status dan tipe bencana ke elemen select form
                 document.getElementById('actionStatus').value = d.status;
                 document.getElementById('actionType').value = d.disaster_type || 'unknown';
 
-                // Map
+                // setup atau update lokasi koordinat di google maps
                 if (d.latitude && d.longitude && typeof google !== 'undefined') {
                     const pos = { lat: parseFloat(d.latitude), lng: parseFloat(d.longitude) };
                     if (!miniMap) {
@@ -101,18 +103,19 @@
             });
     }
 
+    // tampilin modal konfirmasi sebelum aksi dilanjutin
     function showConfirmModal(callback) {
         window.showConfirmModal('confirmModal', callback);
     }
 
-    // Save
+    // simpan perubahan status dan tipe bencana pas button save diklik
     document.getElementById('btnSaveAction').addEventListener('click', () => {
         if (!currentId) return;
         const statusVal = document.getElementById('actionStatus').value;
         submitSaveForm(statusVal);
     });
 
-    // Tandai Selesai
+    // ubah status laporan jadi resolved (selesai) via modal konfirmasi
     document.getElementById('btnResolveAction').addEventListener('click', () => {
         if (!currentId) return;
         showConfirmModal((confirmed) => {
@@ -120,6 +123,7 @@
         });
     });
 
+    // kirim data update via post menggunakan form dinamis
     function submitSaveForm(statusVal) {
         const form = document.createElement('form');
         form.method = 'POST';

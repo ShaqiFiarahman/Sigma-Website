@@ -8,11 +8,11 @@
 
 @section('content')
 
-{{-- Filters & Search --}}
+{{-- filter dan pencarian --}}
 <div class="bg-white rounded-2xl border border-slate-200/80 p-4.5 mb-6 shadow-sm"
      style="box-shadow: 0 1px 3px rgba(10,15,30,0.06);">
     <div class="flex flex-col md:flex-row md:items-end gap-3.5">
-        {{-- Search Input --}}
+        {{-- search bar input --}}
         <div class="flex-1 min-w-[200px]">
             <label class="block text-[11px] font-semibold text-slate-400 uppercase tracking-wider mb-1">Cari Laporan</label>
             <div class="relative">
@@ -21,7 +21,7 @@
                        class="w-full pl-8.5 pr-3 py-1.75 text-xs border border-slate-200 rounded-xl focus:outline-none focus:border-blue-400 focus:ring-1 focus:ring-blue-500/20 bg-slate-50 focus:bg-white text-slate-800 placeholder:text-slate-400 transition-all duration-200">
             </div>
         </div>
-        {{-- Skill filter --}}
+        {{-- filter skill --}}
         <div class="w-full md:w-44 shrink-0">
             <label class="block text-[11px] font-semibold text-slate-400 uppercase tracking-wider mb-1">Keahlian</label>
             <select id="filterSkill" class="w-full px-3 py-1.75 text-xs border border-slate-200 rounded-xl bg-slate-50 focus:bg-white focus:outline-none focus:border-blue-400 focus:ring-1 focus:ring-blue-500/20 text-slate-700 cursor-pointer transition-all duration-200">
@@ -31,7 +31,7 @@
                 @endforeach
             </select>
         </div>
-        {{-- Disaster filter --}}
+        {{-- filter bencana --}}
         <div class="w-full md:w-56 shrink-0">
             <label class="block text-[11px] font-semibold text-slate-400 uppercase tracking-wider mb-1">Bencana</label>
             <select id="filterDisaster" class="w-full px-3 py-1.75 text-xs border border-slate-200 rounded-xl bg-slate-50 focus:bg-white focus:outline-none focus:border-blue-400 focus:ring-1 focus:ring-blue-500/20 text-slate-700 cursor-pointer transition-all duration-200">
@@ -43,12 +43,10 @@
                 @endforeach
             </select>
         </div>
-
-
     </div>
 </div>
 
-{{-- Reports --}}
+{{-- list card laporan tugas relawan --}}
 <div class="space-y-4" id="reportsContainer">
     @forelse($reports as $report)
         <div class="report-card bg-white rounded-2xl border border-slate-200/80 overflow-hidden transition-all duration-200"
@@ -58,7 +56,7 @@
              data-volunteer="{{ $report->volunteer_id }}"
              data-search-text="{{ strtolower($report->volunteer->name ?? '') }} {{ strtolower($report->disaster->title ?? '') }} {{ strtolower($report->notes ?? '') }} {{ strtolower($report->skill_type ?? '') }}">
             
-            {{-- Header --}}
+            {{-- header card --}}
             <div class="px-5 py-3.5 border-b border-slate-100 flex items-center justify-between">
                 <div class="flex items-center gap-3">
                     <div class="w-8 h-8 rounded-full bg-slate-800 flex items-center justify-center text-[10px] font-bold text-white shrink-0">
@@ -92,7 +90,7 @@
                 </div>
             </div>
 
-            {{-- Data --}}
+            {{-- grid data laporan --}}
             <div class="p-5">
                 <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
                     @foreach($report->report_data ?? [] as $key => $value)
@@ -153,7 +151,7 @@
         </div>
     @endforelse
 
-    {{-- Fallback empty state for JS filtering --}}
+    {{-- fallback panel pas filter ga nemu kecocokan --}}
     <div id="noReportsFound" class="hidden bg-white rounded-2xl border border-slate-200/80 p-14 text-center shadow-sm">
         <div class="mb-4">
             <i class="bi bi-search text-3xl text-blue-600"></i>
@@ -213,8 +211,6 @@
         reportSearch?.addEventListener('keydown', (e) => {
             if (e.key === 'Enter') e.preventDefault();
         });
-
-
     });
 </script>
 @endsection

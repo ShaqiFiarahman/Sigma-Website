@@ -9,7 +9,7 @@
 @section('content')
 <div class="max-w-7xl mx-auto">
 
-    {{-- Mini Stats --}}
+    {{-- stats singkat --}}
     <div class="flex items-center gap-6 mb-5 text-sm">
         <div class="flex items-center gap-2">
             <span class="w-2 h-2 rounded-full bg-red-500"></span>
@@ -30,8 +30,6 @@
 </div>
 
 @include('admin.laporan._confirm-modal')
-
-
 @endsection
 
 @section('scripts')

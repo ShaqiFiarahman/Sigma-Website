@@ -15,13 +15,13 @@
             const disasters = await response.json();
             console.log('loadDisasters: Fetched disasters count:', disasters.length, disasters);
 
-            // Set of active disaster IDs from the API response
+            // simpen id bencana yang aktif dari api response
             const activeIds = new Set(disasters.map(d => Number(d.id)));
 
             disasters.forEach(d => {
                 const color = statusColors[d.status] || '#FFA000';
 
-                // Detect type from disaster_type or fallback from title
+                // deteksi tipe bencana dari disaster_type atau fallback dari title
                 let dtype = (d.disaster_type || 'unknown').toLowerCase();
                 if (dtype === 'unknown') {
                     const t = d.title.toLowerCase();
@@ -35,7 +35,7 @@
                 }
                 const iconPath = typePaths[dtype] || typePaths['unknown'];
 
-                // Badge and InfoWindow content setup
+                // setup warna badge sama konten infowindow
                 let badgeBg, badgeColor;
                 switch (d.status) {
                     case 'AWAS':    badgeBg = '#FEF2F2'; badgeColor = '#B91C1C'; break;
@@ -70,11 +70,11 @@
                     anchor: new google.maps.Point(22, 22),
                 };
 
-                // Check if marker already exists
+                // cek kalo marker udah dibikin sebelumnya
                 const existing = disasterMarkers[d.id];
                 if (!existing) {
                     console.log('loadDisasters: Creating marker for disaster ID:', d.id, 'at', d.lat, d.lng);
-                    // Create new marker
+                    // buat marker baru
                     const marker = new google.maps.Marker({
                         position: { lat: Number(d.lat), lng: Number(d.lng) },
                         map: map,
@@ -97,18 +97,18 @@
                         displayDate: displayDate
                     };
 
-                    // If not initial load, this is a new real-time disaster!
+                    // kalo bukan initial load, berarti ini bencana baru pas jalan (real-time)
                     if (!initialLoad && window.userRole !== 'admin') {
                         showDisasterToast(d);
                     }
                 } else {
-                    // Marker exists, check if status/data has changed
+                    // marker udah ada, cek kalo status atau datanya berubah
                     if (existing.data.status !== d.status || existing.data.title !== d.title || existing.data.description !== d.description) {
                         console.log('loadDisasters: Updating marker for disaster ID:', d.id);
                         existing.marker.setIcon(markerIcon);
                         existing.marker.setTitle(d.title);
 
-                        // Re-register listener with updated content
+                        // daftarin ulang click listener pake konten yang paling baru
                         google.maps.event.clearInstanceListeners(existing.marker);
                         existing.marker.addListener('click', () => {
                             infoWindow.setContent(buildDisasterPopup(d, badgeBg, badgeColor, shortReporter, displayDate));
@@ -124,7 +124,7 @@
                 }
             });
 
-            // Remove disaster markers that are no longer active
+            // hapus marker bencana yang udah ga aktif
             Object.keys(disasterMarkers).forEach(id => {
                 const numId = Number(id);
                 if (!activeIds.has(numId)) {
@@ -134,10 +134,10 @@
                 }
             });
 
-            // Handle initial load zoom to newest disaster
+            // zoom ke bencana paling baru pas awal load
             if (initialLoad) {
                 if (disasters.length > 0) {
-                    const newest = disasters[0]; // first item is newest due to latest() sorting
+                    const newest = disasters[0]; // data pertama adalah yang paling baru karena diurutkan pake latest()
                     console.log('loadDisasters: Initial load zoom to newest disaster at:', newest.lat, newest.lng);
                     map.setCenter({ lat: Number(newest.lat), lng: Number(newest.lng) });
                     map.setZoom(14);

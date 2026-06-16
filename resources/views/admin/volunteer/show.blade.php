@@ -7,18 +7,15 @@
 @endsection
 
 @section('content')
-
-
-
 <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
 
-    {{-- Kiri: Detail --}}
+    {{-- section detail relawan --}}
     <div class="lg:col-span-2 space-y-6">
 
         <div class="bg-white border border-slate-200/80 rounded-2xl shadow-sm overflow-hidden"
              style="box-shadow: 0 1px 3px rgba(10,15,30,0.06), 0 4px 16px rgba(10,15,30,0.04);">
 
-            {{-- Header --}}
+            {{-- header profil relawan --}}
             <div class="pl-6 pr-8 py-5 border-l-4 border-l-[#3B6FE8] border-b border-slate-100 bg-white">
                 <div class="flex items-start justify-between gap-4">
                     <div>
@@ -41,7 +38,7 @@
 
             <div class="p-6 sm:p-8 space-y-6">
 
-                {{-- Data Diri --}}
+                {{-- section data diri relawan --}}
                 <div>
                     <h3 class="text-sm font-semibold text-slate-900 mb-4 flex items-center gap-2">
                         <i class="bi bi-person-vcard" style="color: #3B6FE8;"></i> Data Diri
@@ -102,7 +99,7 @@
                     </div>
                 </div>
 
-                {{-- Keahlian --}}
+                {{-- section skill relawan --}}
                 <div>
                     <h3 class="text-sm font-semibold text-slate-900 mb-3 flex items-center gap-2">
                         <i class="bi bi-star-fill" style="color: #3B6FE8;"></i> Keahlian / Spesialisasi
@@ -120,7 +117,7 @@
 
     </div>
 
-    {{-- Kanan: Panel Aksi --}}
+    {{-- sidebar tindakan admin --}}
     @if(strtolower(auth()->user()->role) === 'admin')
         <div class="lg:col-span-1 space-y-6">
 
@@ -162,7 +159,7 @@
                             Status: Nonaktif
                         </div>
 
-                        {{-- Aktifkan Kembali --}}
+                        {{-- form aktifkan kembali relawan --}}
                         <form action="{{ route('volunteer.update_status', $volunteer->id) }}" method="POST" class="mb-2">
                             @csrf
                             <input type="hidden" name="status" value="APPROVED">
@@ -173,7 +170,7 @@
                             </button>
                         </form>
 
-                        {{-- Reset ke Pending --}}
+                        {{-- form reset status relawan ke pending --}}
                         <form action="{{ route('volunteer.update_status', $volunteer->id) }}" method="POST">
                             @csrf
                             <input type="hidden" name="status" value="PENDING">
@@ -187,7 +184,7 @@
                             Status: Approved
                         </div>
 
-                        {{-- Reset to Pending --}}
+                        {{-- form reset status relawan ke pending --}}
                         <form action="{{ route('volunteer.update_status', $volunteer->id) }}" method="POST">
                             @csrf
                             <input type="hidden" name="status" value="PENDING">
@@ -197,7 +194,7 @@
                             </button>
                         </form>
 
-                        {{-- Nonaktifkan Relawan --}}
+                        {{-- form nonaktifkan relawan --}}
                         <form id="formNonaktifkan" action="{{ route('volunteer.update_status', $volunteer->id) }}" method="POST" class="mt-2">
                             @csrf
                             <input type="hidden" name="status" value="FIRED">
@@ -210,7 +207,7 @@
                         </form>
 
                         @if($volunteer->disaster_id || $volunteer->assignment)
-                            {{-- Hapus Penugasan --}}
+                            {{-- form hapus penugasan relawan --}}
                             <form id="formHapusPenugasan" action="{{ route('volunteer.assign', $volunteer->id) }}" method="POST" class="mt-2">
                                 @csrf
                                 <input type="hidden" name="disaster_id" value="">
@@ -228,7 +225,7 @@
                             Status: Rejected
                         </div>
 
-                        {{-- Reset to Pending --}}
+                        {{-- form reset status relawan ke pending --}}
                         <form action="{{ route('volunteer.update_status', $volunteer->id) }}" method="POST">
                             @csrf
                             <input type="hidden" name="status" value="PENDING">
@@ -239,7 +236,7 @@
                         </form>
                     @endif
 
-                    {{-- Penugasan --}}
+                    {{-- form penugasan relawan --}}
                     @if($volunteer->status === 'APPROVED')
                         <div class="border-t border-slate-100 pt-4.5 mt-4.5">
                             <form action="{{ route('volunteer.assign', $volunteer->id) }}" method="POST" class="space-y-4">
@@ -249,7 +246,7 @@
                                 </label>
 
                                 <div class="space-y-3.5">
-                                    {{-- Custom Searchable Disaster Select --}}
+                                    {{-- custom select bencana aktif --}}
                                     <div class="relative" id="customDisasterSelect">
                                         <label class="block text-[10px] font-extrabold text-slate-400 uppercase tracking-wider mb-1">Bencana Aktif</label>
                                         <button type="button" class="select-trigger w-full px-3 py-2 text-xs border border-slate-200 rounded-xl bg-slate-50/50 focus:bg-white text-slate-750 text-left flex items-center justify-between cursor-pointer transition-all duration-200 focus:outline-none focus:border-blue-400 focus:ring-1 focus:ring-blue-500/20">
@@ -296,7 +293,7 @@
                                         </div>
                                     </div>
                                     
-                                    {{-- Custom Searchable Posko Select --}}
+                                    {{-- custom select posko evakuasi --}}
                                     <div class="relative" id="customShelterSelect">
                                         <label class="block text-[10px] font-extrabold text-slate-400 uppercase tracking-wider mb-1">Posko Evakuasi</label>
                                         <button type="button" class="select-trigger w-full px-3 py-2 text-xs border border-slate-200 rounded-xl bg-slate-50/50 focus:bg-white text-slate-750 text-left flex items-center justify-between cursor-pointer transition-all duration-200 focus:outline-none focus:border-blue-400 focus:ring-1 focus:ring-blue-500/20">
@@ -364,16 +361,16 @@
 
 </div>
 
-{{-- ═══ CUSTOM CONFIRMATION MODAL ═══ --}}
+{{-- modal konfirmasi tindakan --}}
 <div id="confirmModal" class="fixed inset-0 z-[9999] flex items-center justify-center p-4 hidden">
-    {{-- Backdrop --}}
+    {{-- backdrop modal --}}
     <div class="absolute inset-0 bg-slate-900/50 backdrop-blur-sm sigma-modal-backdrop" onclick="closeModal()"></div>
 
-    {{-- Modal Panel --}}
+    {{-- content modal --}}
     <div class="relative bg-white w-full max-w-[380px] rounded-3xl px-7 pt-8 pb-7 sigma-modal-content"
          style="box-shadow: 0 -4px 40px rgba(10,15,30,0.10), 0 16px 50px rgba(10,15,30,0.15);">
 
-        {{-- Icon --}}
+        {{-- icon modal --}}
         <div id="modalIconWrap" class="mb-5 text-rose-500 sigma-modal-icon">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"
                  stroke-linecap="round" stroke-linejoin="round" class="w-9 h-9">
@@ -383,16 +380,16 @@
             </svg>
         </div>
 
-        {{-- Title + Desc --}}
+        {{-- judul dan deskripsi modal --}}
         <h4 id="modalTitle" class="text-[17px] font-bold text-slate-900 leading-snug mb-1.5">Nonaktifkan Relawan</h4>
         <p id="modalDesc" class="text-sm text-slate-500 leading-relaxed mb-5">Relawan tidak akan bisa bertugas sampai diaktifkan kembali oleh admin.</p>
 
-        {{-- Warning note --}}
+        {{-- warning text modal --}}
         <div class="border-l-[3px] border-rose-400 pl-3.5 pr-3 py-2.5 mb-7 bg-rose-50/50 rounded-r-xl">
             <p id="modalWarningText" class="text-[12px] text-rose-700 leading-relaxed"></p>
         </div>
 
-        {{-- Buttons --}}
+        {{-- button aksi modal --}}
         <div class="flex gap-3">
             <button type="button" onclick="closeModal()"
                     class="flex-1 py-3 text-sm font-medium text-slate-600 bg-slate-100 hover:bg-slate-150 rounded-2xl transition-colors duration-150 cursor-pointer">
@@ -412,7 +409,7 @@
 
 @section('scripts')
 <script>
-    // ─── Modal Logic ───────────────────────────────────────────
+    // pasang config dan handle animasi buka/tutup modal konfirmasi
     let pendingFormId = null;
 
     const iconSvgs = {
@@ -500,12 +497,12 @@
         closeModal();
     });
 
-    // Close on Escape key
+    // tutup modal pas user klik tombol escape
     document.addEventListener('keydown', (e) => {
         if (e.key === 'Escape') closeModal();
     });
 
-    // ─── Custom select dropdown logic ──────────────────────────
+    // handling dropdown select kustom (searchable)
     document.addEventListener('DOMContentLoaded', () => {
         document.querySelectorAll('.select-trigger').forEach(trigger => {
             trigger.addEventListener('click', (e) => {
@@ -514,7 +511,7 @@
                 const dropdown = wrapper.querySelector('.select-dropdown');
                 const searchInput = wrapper.querySelector('.select-search');
                 
-                // Close other custom selects
+                // tutup dropdown select kustom lainnya
                 document.querySelectorAll('.select-dropdown').forEach(d => {
                     if (d !== dropdown) d.classList.add('hidden');
                 });
@@ -559,7 +556,7 @@
                 const val = item.getAttribute('data-value');
                 hiddenInput.value = val;
 
-                // Update visible trigger text
+                // update teks yang kelihatan di tombol trigger select
                 if (val === '') {
                     selectedText.textContent = wrapper.id === 'customDisasterSelect' ? '— Pilih Bencana —' : '— Pilih Posko —';
                     selectedText.classList.add('text-slate-400');
@@ -573,12 +570,12 @@
                 dropdown.classList.add('hidden');
                 if (searchInput) searchInput.value = '';
                 
-                // Reset search display
+                // reset filter list pencarian di dropdown
                 item.parentElement.querySelectorAll('.option-item').forEach(opt => opt.style.display = '');
             });
         });
 
-        // Close on click outside
+        // tutup dropdown select pas user klik di luar dropdown
         document.addEventListener('click', () => {
             document.querySelectorAll('.select-dropdown').forEach(d => d.classList.add('hidden'));
         });

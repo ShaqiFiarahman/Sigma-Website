@@ -18,11 +18,11 @@
     --color-border: #E5E7EB;
 }
 
-/* Base */
+/* Dasar */
 html { scroll-behavior: smooth; }
 body { font-family: 'Plus Jakarta Sans', ui-sans-serif, system-ui, sans-serif; -webkit-font-smoothing: antialiased; background-color: #F4F7FC; background-image: radial-gradient(circle at 50% 0%, rgba(59, 111, 232, 0.04), transparent 50%), radial-gradient(circle at 100% 100%, rgba(59, 111, 232, 0.02), transparent 40%); background-attachment: fixed; }
 
-/* ── CSS Variables ───────────────────────────────────────────── */
+/* Variabel CSS */
 :root {
     --abyss: #0A0F1E;
     --abyss-mid: #111827;
@@ -32,14 +32,14 @@ body { font-family: 'Plus Jakarta Sans', ui-sans-serif, system-ui, sans-serif; -
     --accent-light: #5B8DF5;
 }
 
-/* ── Navbar ──────────────────────────────────────────────────── */
+/* Bilah Navigasi (Navbar) */
 #mainNavbar { background: rgba(255, 255, 255, 0.97); border-bottom: 1px solid rgba(10, 15, 30, 0.08); }
 .nav-active { background: linear-gradient(135deg, rgba(59, 111, 232, 0.10) 0%, rgba(59, 111, 232, 0.05) 100%); color: var(--accent) !important; font-weight: 600; }
 .brand-mark { background: linear-gradient(135deg, var(--abyss) 0%, #1e3a8a 100%); box-shadow: 0 2px 8px rgba(10, 15, 30, 0.25); }
 .btn-primary { background: linear-gradient(135deg, #1e3a8a 0%, var(--accent) 100%); box-shadow: 0 2px 8px rgba(59, 111, 232, 0.25); }
 .btn-primary:hover { background: linear-gradient(135deg, var(--accent) 0%, #5B8DF5 100%); box-shadow: 0 4px 14px rgba(59, 111, 232, 0.35); transform: translateY(-1px); }
 
-/* Animations */
+/* Animasi */
 @keyframes fade-up { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
 @keyframes pulse-soft { 0%, 100% { box-shadow: 0 8px 24px rgba(239,68,68,0.35); } 50% { box-shadow: 0 12px 32px rgba(239,68,68,0.6); } }
 @keyframes spin-fast { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
@@ -47,8 +47,8 @@ body { font-family: 'Plus Jakarta Sans', ui-sans-serif, system-ui, sans-serif; -
 .animate-fade-up-done { animation: none; }
 .animate-spin-fast { animation: spin-fast 0.6s linear infinite; }
 
-/* ── Profile Dropdown ───────────────────────────── */
-/* Smooth, springy entrance from the top-right anchor */
+/* Dropdown Profil */
+/* Efek transisi masuk yang halus dari sudut kanan atas */
 @keyframes dropdown-in {
     0%   { opacity: 0; transform: translateY(-8px) scale(0.96); }
     100% { opacity: 1; transform: translateY(0) scale(1); }
@@ -57,12 +57,12 @@ body { font-family: 'Plus Jakarta Sans', ui-sans-serif, system-ui, sans-serif; -
     0%   { opacity: 1; transform: translateY(0) scale(1); }
     100% { opacity: 0; transform: translateY(-6px) scale(0.97); }
 }
-/* Gentle staggered reveal for inner rows */
+/* Efek stagger muncul bertahap untuk baris bagian dalam */
 @keyframes stagger-in {
     from { opacity: 0; transform: translateY(5px); }
     to   { opacity: 1; transform: translateY(0); }
 }
-/* Panel switch: soft slide */
+/* Perpindahan panel: geser perlahan */
 @keyframes panel-slide-right { from { opacity: 0; transform: translateX(10px); } to { opacity: 1; transform: translateX(0); } }
 @keyframes panel-slide-left  { from { opacity: 0; transform: translateX(-10px); } to { opacity: 1; transform: translateX(0); } }
 
@@ -81,7 +81,7 @@ body { font-family: 'Plus Jakarta Sans', ui-sans-serif, system-ui, sans-serif; -
 .profile-dropdown.is-opening { animation: dropdown-in 0.34s cubic-bezier(0.22,1,0.36,1) both; }
 .profile-dropdown.is-closing { animation: dropdown-out 0.22s cubic-bezier(0.4,0,0.2,1) both; }
 
-/* Stagger children of the active panel */
+/* Efek stagger baris bagian dalam di panel aktif */
 .profile-dropdown .stagger-item { animation: stagger-in 0.38s cubic-bezier(0.22,1,0.36,1) both; }
 .profile-dropdown .stagger-item:nth-child(1) { animation-delay: 0.04s; }
 .profile-dropdown .stagger-item:nth-child(2) { animation-delay: 0.08s; }
@@ -92,22 +92,22 @@ body { font-family: 'Plus Jakarta Sans', ui-sans-serif, system-ui, sans-serif; -
 .profile-panel-forward { animation: panel-slide-right 0.32s cubic-bezier(0.22,1,0.36,1) both; }
 .profile-panel-back    { animation: panel-slide-left 0.32s cubic-bezier(0.22,1,0.36,1) both; }
 
-/* Avatar springs into place on open */
+/* Animasi avatar memantul saat dibuka */
 @keyframes avatar-pop { 0% { transform: scale(0.7); opacity: 0; } 70% { transform: scale(1.06); } 100% { transform: scale(1); opacity: 1; } }
 .profile-dropdown.is-opening .profile-avatar { animation: avatar-pop 0.5s cubic-bezier(0.34,1.56,0.64,1) both; animation-delay: 0.06s; }
 
-/* Trigger chevron + avatar active states */
+/* Status aktif tombol chevron dan avatar */
 #profileDropdownBtn .profile-chevron { transition: transform 0.34s cubic-bezier(0.22,1,0.36,1); }
 #profileDropdownBtn[aria-expanded="true"] .profile-chevron { transform: rotate(180deg); }
 .profile-trigger-avatar { transition: box-shadow 0.34s cubic-bezier(0.22,1,0.36,1), transform 0.3s ease; }
 #profileDropdownBtn[aria-expanded="true"] .profile-trigger-avatar { box-shadow: 0 0 0 3px rgba(59,111,232,0.25); }
 
-/* Action buttons: subtle lift */
+/* Tombol tindakan: efek angkat tipis saat hover */
 .profile-action-btn { transition: transform 0.2s cubic-bezier(0.22,1,0.36,1), background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease; }
 .profile-action-btn:hover { transform: translateY(-1px); }
 .profile-action-btn:active { transform: translateY(0) scale(0.97); }
 
-/* Inputs: smooth focus */
+/* Input: efek fokus yang halus */
 .profile-input { transition: border-color 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease; }
 .profile-input:focus { box-shadow: 0 0 0 3px rgba(59,111,232,0.12); }
 
@@ -120,7 +120,7 @@ body { font-family: 'Plus Jakarta Sans', ui-sans-serif, system-ui, sans-serif; -
     .profile-dropdown.is-opening .profile-avatar { animation: none !important; }
 }
 
-/* Welcome Banner Animations */
+/* Animasi Banner Selamat Datang */
 @keyframes welcome-slide-down {
     from { opacity: 0; transform: translateY(-20px) scale(0.98); }
     to { opacity: 1; transform: translateY(0) scale(1); }
@@ -177,7 +177,7 @@ body { font-family: 'Plus Jakarta Sans', ui-sans-serif, system-ui, sans-serif; -
     }
 }
 
-/* Menu Cards */
+/* Kartu Menu */
 .menu-card { background: #fff; border: 1px solid rgba(10,15,30,0.06); border-radius: 20px; padding: 1.5rem 1rem; transition: all 0.3s cubic-bezier(0.4,0,0.2,1); display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; min-height: 160px; cursor: pointer; position: relative; overflow: hidden; box-shadow: 0 2px 8px rgba(10,15,30,0.04); }
 .menu-card::before { content: ''; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(59,111,232,0) 0%, rgba(59,111,232,0.05) 100%); opacity: 0; transition: opacity 0.3s ease; }
 .menu-card:hover { transform: translateY(-4px); border-color: rgba(59,111,232,0.4); box-shadow: 0 12px 24px rgba(59,111,232,0.12); }
@@ -186,11 +186,11 @@ body { font-family: 'Plus Jakarta Sans', ui-sans-serif, system-ui, sans-serif; -
 .menu-icon-wrap { width: 60px; height: 60px; border-radius: 16px; background: linear-gradient(135deg, #E4F0F6, #C8DFF0); color: #0A0F1E; display: inline-flex; align-items: center; justify-content: center; font-size: 1.6rem; margin-bottom: 1.25rem; transition: all 0.3s ease; }
 .menu-card:hover .menu-icon-wrap { background: linear-gradient(135deg, #1e3a8a, #3B6FE8); color: #fff; transform: scale(1.05); box-shadow: 0 8px 16px rgba(59,111,232,0.25); }
 
-/* News */
+/* Berita */
 .news-scroll { display: flex; gap: 1.25rem; overflow-x: auto; padding: 0.5rem 0.5rem 1rem 0.5rem; margin: 0 -0.5rem; -webkit-overflow-scrolling: touch; scrollbar-width: none; -ms-overflow-style: none; }
 .news-scroll::-webkit-scrollbar { display: none; }
 
-/* Warning Banner */
+/* Banner Peringatan */
 .warning-banner { border-radius: 16px; padding: 1.25rem; display: flex; align-items: center; gap: 1rem; box-shadow: 0 4px 12px rgba(10,15,30,0.05); border: 1px solid transparent; }
 .banner-danger { background: linear-gradient(135deg, #fef2f2, #fee2e2); border-color: #fca5a5; color: #b91c1c; animation: bannerPulse 2.5s ease-in-out infinite; }
 .banner-safe { background: linear-gradient(135deg, #f0fdf4, #dcfce7); border-color: #bbf7d0; color: #15803d; }
@@ -224,7 +224,7 @@ body { font-family: 'Plus Jakarta Sans', ui-sans-serif, system-ui, sans-serif; -
 .pending-item:hover { border-color: rgba(59,111,232,0.3); box-shadow: 0 4px 12px rgba(59,111,232,0.08); }
 .period-btn.active { background: linear-gradient(135deg, #3B6FE8, #1e3a8a); color: white; box-shadow: 0 1px 4px rgba(30,58,138,0.2); }
 
-/* Modal Animations */
+/* Animasi Modal */
 @keyframes modal-backdrop-in {
     from { opacity: 0; }
     to { opacity: 1; }
@@ -286,7 +286,7 @@ body { font-family: 'Plus Jakarta Sans', ui-sans-serif, system-ui, sans-serif; -
     }
 }
 
-/* Notification Dropdown Animations */
+/* Animasi Dropdown Notifikasi */
 @keyframes notif-dropdown-in {
     0%   { opacity: 0; transform: translateY(-8px) scale(0.95); }
     100% { opacity: 1; transform: translateY(0) scale(1); }
@@ -348,22 +348,22 @@ body { font-family: 'Plus Jakarta Sans', ui-sans-serif, system-ui, sans-serif; -
     }
 }
 
-/* FAB */
+/* Tombol Aksi Melayang (FAB) */
 .fab-emergency { position: fixed; bottom: 2rem; right: 2rem; z-index: 40; background: linear-gradient(135deg, #ef4444, #dc2626); color: #fff; padding: 1rem 1.5rem; border-radius: 999px; font-weight: 800; font-size: 0.875rem; display: inline-flex; align-items: center; gap: 0.6rem; box-shadow: 0 8px 24px rgba(239,68,68,0.35); border: 1px solid #f87171; cursor: pointer; animation: pulse-soft 2.5s ease-in-out infinite; }
 .fab-emergency:hover { transform: translateY(-3px); box-shadow: 0 12px 28px rgba(239,68,68,0.45); }
 
-/* ── Filter Chips (used in laporan/search & shelter/index) ─── */
+/* Chip Filter */
 .filter-chip { background: white; border-color: #e2e8f0; color: #64748b; }
 .filter-chip:hover { border-color: #93c5fd; color: #1e40af; background: #eff6ff; }
 .filter-chip.active { background: linear-gradient(135deg, #3B6FE8 0%, #1e3a8a 100%); border-color: transparent; color: white; box-shadow: 0 2px 8px rgba(30,58,138,0.25); }
 
-/* ── Tab Buttons (admin laporan) ─────────────────────────────── */
+/* Tombol Tab */
 .tab-btn { background: white; color: #64748b; border: 1px solid #e2e8f0; }
 .tab-btn:hover { color: #1e40af; border-color: #93c5fd; }
 .tab-btn.active { background: #0F172A; color: white; border-color: transparent; }
 .laporan-item.active { background: #EFF6FF !important; }
 
-/* ── Shake Animation (form validation) ───────────────────────── */
+/* Animasi Getar */
 @keyframes shake {
     0%, 100% { transform: translateX(0); }
     15%, 45%, 75% { transform: translateX(-6px); }
@@ -375,7 +375,7 @@ body { font-family: 'Plus Jakarta Sans', ui-sans-serif, system-ui, sans-serif; -
     box-shadow: 0 0 0 4px rgba(239, 68, 68, 0.25) !important;
 }
 
-/* ── Toast Animations (disaster map) ─────────────────────────── */
+/* Animasi Notifikasi Toast */
 @keyframes slideIn {
     from { transform: translateY(-20px) scale(0.95); opacity: 0; }
     to { transform: translateY(0) scale(1); opacity: 1; }
@@ -387,7 +387,7 @@ body { font-family: 'Plus Jakarta Sans', ui-sans-serif, system-ui, sans-serif; -
 .toast-slide-in { animation: slideIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
 .toast-fade-out { animation: fadeOut 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
 
-/* ── Google Maps InfoWindow Overrides ────────────────────────── */
+/* Kustomisasi Google Maps InfoWindow */
 .gm-style-iw { padding: 0px !important; }
 .gm-style-iw-c { border-radius: 16px !important; box-shadow: 0 10px 40px rgba(10, 15, 30, 0.12) !important; padding: 0px !important; overflow: hidden !important; min-width: 240px !important; max-width: 240px !important; max-height: none !important; }
 .gm-style-iw-d { overflow: hidden !important; max-height: none !important; padding: 0px !important; min-width: 240px !important; max-width: 240px !important; }
@@ -398,7 +398,7 @@ body { font-family: 'Plus Jakarta Sans', ui-sans-serif, system-ui, sans-serif; -
 .gm-style-iw-c button.gm-ui-hover-effect:hover { opacity: 0.95 !important; background-color: rgba(255, 255, 255, 1) !important; transform: scale(1.08); }
 .gm-style-iw-c button.gm-ui-hover-effect span { margin: 0 !important; width: 10px !important; height: 10px !important; }
 
-/* Custom Popup Card Styles */
+/* Gaya Kartu Popup Kustom */
 .popup-card {
     width: 240px;
     font-family: 'Plus Jakarta Sans', sans-serif;
@@ -421,7 +421,7 @@ body { font-family: 'Plus Jakarta Sans', ui-sans-serif, system-ui, sans-serif; -
     min-height: 110px;
 }
 
-/* Photo Wrapper & Image */
+/* Pembungkus Foto & Gambar */
 .popup-photo-wrap {
     height: 110px;
     overflow: hidden;
@@ -447,7 +447,7 @@ body { font-family: 'Plus Jakarta Sans', ui-sans-serif, system-ui, sans-serif; -
     background: linear-gradient(to top, rgba(0,0,0,0.35) 0%, transparent 100%);
 }
 
-/* Body and Typography */
+/* Konten & Tipografi */
 .popup-body {
     padding: 12px;
 }
@@ -520,7 +520,7 @@ body { font-family: 'Plus Jakarta Sans', ui-sans-serif, system-ui, sans-serif; -
     color: #1e3a8a;
 }
 
-/* Shelter Header styles */
+/* Gaya Header Posko Pengungsian */
 .popup-shelter-header {
     display: flex;
     align-items: center;
@@ -569,7 +569,7 @@ body { font-family: 'Plus Jakarta Sans', ui-sans-serif, system-ui, sans-serif; -
     color: #64748B;
 }
 
-/* Logistics */
+/* Logistik */
 .popup-logistics-row {
     display: flex;
     flex-wrap: wrap;
@@ -587,7 +587,7 @@ body { font-family: 'Plus Jakarta Sans', ui-sans-serif, system-ui, sans-serif; -
     border: 1px solid #CCFBF1;
 }
 
-/* Mobile responsive popup adjustments */
+/* Penyesuaian responsif popup untuk tampilan seluler */
 @media (max-width: 640px) {
     .gm-style-iw-c, .gm-style-iw-d {
         min-width: 210px !important;
@@ -662,7 +662,7 @@ body { font-family: 'Plus Jakarta Sans', ui-sans-serif, system-ui, sans-serif; -
     }
 }
 
-/* ── Footer ──────────────────────────────────────────────────── */
+/* Kaki Halaman (Footer) */
 .u-footer {
     position: relative;
     background: rgba(255, 255, 255, 0.45);
@@ -673,7 +673,7 @@ body { font-family: 'Plus Jakarta Sans', ui-sans-serif, system-ui, sans-serif; -
     box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.6);
 }
 
-/* ── Ambient Background Orbs ─────────────────────────────────── */
+/* Efek Latar Belakang Bulatan Cahaya */
 @keyframes ambient-slow {
     0%, 100% { transform: translate(0, 0) scale(1); }
     50% { transform: translate(-10px, 10px) scale(1.02); }

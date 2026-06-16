@@ -1,4 +1,4 @@
-{{-- Warning Banner: checks nearby disasters via geolocation --}}
+{{-- banner peringatan: cek bencana terdekat via geolokasi --}}
 <div id="warningBanner" class="warning-banner banner-loading" style="transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);">
     <div class="flex items-center justify-center shrink-0 pl-1.5 pr-2" id="warningIconBg">
         <i class="bi bi-arrow-repeat text-2xl text-slate-500 animate-spin" id="warningIcon"></i>
@@ -31,7 +31,7 @@
         const dismissBtn = document.getElementById('dismissWarning');
         if (!banner) return;
 
-        // Fade out current content briefly
+        // sembunyiin konten bentar sebelum diupdate
         banner.style.opacity = '0';
         banner.style.transform = 'translateY(4px)';
 
@@ -65,7 +65,7 @@
                 if (dismissBtn) dismissBtn.className = 'shrink-0 p-2.5 rounded-full hover:bg-emerald-200/80 transition-colors text-emerald-700';
             }
 
-            // Fade in with new content
+            // tampilin konten baru
             banner.style.transition = 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)';
             banner.style.opacity = '1';
             banner.style.transform = 'translateY(0)';

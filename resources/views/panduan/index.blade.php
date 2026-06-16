@@ -11,14 +11,11 @@
 
     <div class="grid grid-cols-1 lg:grid-cols-4 gap-6 lg:items-stretch">
 
-        {{-- KOLOM KIRI: PDF Viewer (3/4) --}}
         <div class="lg:col-span-3 flex flex-col gap-3">
 
-            {{-- PDF Card --}}
             <div class="bg-white border border-slate-200/80 rounded-2xl overflow-hidden flex-1 flex flex-col"
                  style="box-shadow: 0 1px 3px rgba(10,15,30,0.06), 0 4px 16px rgba(10,15,30,0.04);">
 
-                {{-- Header --}}
                 <div class="pl-5 pr-6 py-4 border-l-4 border-l-[#3B6FE8] border-b border-slate-100 bg-white flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                     <div class="flex items-center gap-3">
                         <i class="bi bi-book-fill text-blue-600 text-xl shrink-0"></i>
@@ -35,7 +32,7 @@
                     </button>
                 </div>
 
-                {{-- PDF Viewer --}}
+                {{-- pdf viewer iframe --}}
                 <div class="flex-1 bg-white p-2" style="min-height: 600px;">
                     <iframe
                         src="/panduan-bencana.pdf#toolbar=0&navpanes=0&view=FitH"
@@ -46,7 +43,6 @@
                 </div>
             </div>
 
-            {{-- Fallback --}}
             <p class="text-center text-xs text-slate-400">
                 PDF tidak tampil?
                 <button type="button" onclick="window.open('/panduan-bencana.pdf', '_blank')" class="font-semibold hover:underline cursor-pointer" style="color: #3B6FE8;">
@@ -55,7 +51,6 @@
             </p>
         </div>
 
-        {{-- KOLOM KANAN: Panduan Cepat --}}
         <div class="flex flex-col">
             <div class="bg-white border border-slate-200/80 rounded-2xl overflow-hidden flex-1"
                  style="box-shadow: 0 1px 3px rgba(10,15,30,0.06);">
@@ -67,7 +62,6 @@
                 </div>
                 <div class="p-5 space-y-5">
 
-                    {{-- Banjir --}}
                     <div>
                         <p class="text-xs font-bold text-slate-800 flex items-center gap-1.5 mb-1.5">
                             <i class="bi bi-water text-blue-500 text-[11px]"></i> Saat Banjir
@@ -79,7 +73,6 @@
                         </ul>
                     </div>
 
-                    {{-- Kebakaran --}}
                     <div>
                         <p class="text-xs font-bold text-slate-800 flex items-center gap-1.5 mb-1.5">
                             <i class="bi bi-fire text-red-500 text-[11px]"></i> Saat Kebakaran
@@ -91,7 +84,6 @@
                         </ul>
                     </div>
 
-                    {{-- Gempa --}}
                     <div>
                         <p class="text-xs font-bold text-slate-800 flex items-center gap-1.5 mb-1.5">
                             <i class="bi bi-globe-americas text-emerald-500 text-[11px]"></i> Saat Gempa
@@ -103,7 +95,6 @@
                         </ul>
                     </div>
 
-                    {{-- Tsunami --}}
                     <div>
                         <p class="text-xs font-bold text-slate-800 flex items-center gap-1.5 mb-1.5">
                             <i class="bi bi-tsunami text-cyan-500 text-[11px]"></i> Saat Tsunami
@@ -115,7 +106,6 @@
                         </ul>
                     </div>
 
-                    {{-- Longsor --}}
                     <div>
                         <p class="text-xs font-bold text-slate-800 flex items-center gap-1.5 mb-1.5">
                             <i class="bi bi-layers text-amber-600 text-[11px]"></i> Saat Longsor
@@ -127,7 +117,6 @@
                         </ul>
                     </div>
 
-                    {{-- Gunung Meletus --}}
                     <div>
                         <p class="text-xs font-bold text-slate-800 flex items-center gap-1.5 mb-1.5">
                             <i class="bi bi-triangle text-orange-500 text-[11px]"></i> Saat Gunung Meletus

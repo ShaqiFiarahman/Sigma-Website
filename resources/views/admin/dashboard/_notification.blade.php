@@ -34,8 +34,7 @@
     const bellIcon = notifBtn?.querySelector('.bi-bell');
     if (!notifBtn) return;
 
-    let isOpen = false;
-
+    // buka dropdown notifikasi dan jalankan animasi lonceng
     function openDropdown() {
         isOpen = true;
         notifDropdown.classList.remove('hidden', 'is-closing');
@@ -48,6 +47,7 @@
         });
     }
 
+    // tutup dropdown notifikasi dengan animasi fade-out
     function closeDropdown() {
         if (!isOpen) return;
         isOpen = false;
@@ -64,9 +64,11 @@
     document.addEventListener('click', () => closeDropdown());
     notifDropdown?.addEventListener('click', (e) => e.stopPropagation());
 
+    // kelola state baca notifikasi pake localStorage biar ga ke-reset pas refresh
     function getLastSeen() { return localStorage.getItem('sigma_notif_last_seen') || '1970-01-01T00:00:00.000Z'; }
     function setLastSeen() { localStorage.setItem('sigma_notif_last_seen', new Date().toISOString()); }
 
+    // tandai semua notifikasi udah dibaca dan sembunyiin badge merah
     window.markAllRead = function() {
         setLastSeen();
         notifBadge.classList.add('hidden');
@@ -75,6 +77,7 @@
         notifCount.textContent = '0 baru';
     };
 
+    // ambil data notifikasi dari api (polling)
     function fetchNotifications() {
         fetch('{{ route("api.pending_reports") }}')
             .then(r => r.json())

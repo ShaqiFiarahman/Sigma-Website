@@ -1,11 +1,3 @@
-/**
- * SIGMA — app.js
- * Extracted common inline scripts used across multiple Blade views.
- */
-
-// ═══════════════════════════════════════════════════════════════════════════════
-// 1. MOBILE NAVBAR TOGGLE
-// ═══════════════════════════════════════════════════════════════════════════════
 document.addEventListener('DOMContentLoaded', () => {
     const toggle = document.getElementById('mobileToggle');
     const menu = document.getElementById('mobileMenu');
@@ -16,9 +8,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 });
 
-// ═══════════════════════════════════════════════════════════════════════════════
-// 2. PROFILE DROPDOWN
-// ═══════════════════════════════════════════════════════════════════════════════
+// Dropdown profil
 (function () {
     document.addEventListener('DOMContentLoaded', () => {
         const btn = document.getElementById('profileDropdownBtn');
@@ -70,16 +60,14 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
 
-        // Close with Escape key
+        // Tutup pakai tombol Escape
         document.addEventListener('keydown', (e) => {
             if (e.key === 'Escape') closeProfileDropdown();
         });
     });
 })();
 
-// ═══════════════════════════════════════════════════════════════════════════════
-// 3. PROFILE PANEL NAVIGATION (Edit Profile / Change Password)
-// ═══════════════════════════════════════════════════════════════════════════════
+// Navigasi panel profil (ubah profil / ubah kata sandi)
 window.showProfilePanel = function (panelId, direction = null) {
     const panels = ['profileMainPanel', 'profileEditPanel', 'profilePasswordPanel'];
 
@@ -90,7 +78,7 @@ window.showProfilePanel = function (panelId, direction = null) {
         el.classList.remove('profile-panel-forward', 'profile-panel-back');
     });
 
-    // Hide messages
+    // Sembunyikan pesan kesalahan/sukses
     ['profileEditError', 'profileEditSuccess', 'profilePasswordError', 'profilePasswordSuccess'].forEach(id => {
         const el = document.getElementById(id);
         if (el) el.classList.add('hidden');
@@ -103,7 +91,7 @@ window.showProfilePanel = function (panelId, direction = null) {
     if (direction === 'forward') target.classList.add('profile-panel-forward');
     else if (direction === 'back') target.classList.add('profile-panel-back');
 
-    // Re-trigger staggered reveal on main panel
+    // Picu lagi efek stagger muncul bertahap di panel utama
     if (panelId === 'profileMainPanel') {
         target.querySelectorAll('.stagger-item').forEach(item => {
             item.style.animation = 'none';
@@ -113,9 +101,7 @@ window.showProfilePanel = function (panelId, direction = null) {
     }
 };
 
-// ═══════════════════════════════════════════════════════════════════════════════
-// 4. TOAST NOTIFICATION (Disaster alerts)
-// ═══════════════════════════════════════════════════════════════════════════════
+// Notifikasi toast (peringatan bencana)
 window.showDisasterToast = function (d) {
     const container = document.getElementById('disaster-toast-container');
     const template = document.getElementById('disaster-toast-template');
@@ -177,16 +163,14 @@ window.showDisasterToast = function (d) {
     }, 10000);
 };
 
-// ═══════════════════════════════════════════════════════════════════════════════
-// 5. NEWS SCROLL INDICATORS (used in user & volunteer dashboards)
-// ═══════════════════════════════════════════════════════════════════════════════
+// Indikator gulir berita
 window.initNewsScroll = function () {
     const newsScroll = document.querySelector('.news-scroll');
     const indicatorsContainer = document.getElementById('newsIndicators');
 
     if (!newsScroll || !indicatorsContainer) return;
 
-    // Don't re-init if already has indicators
+    // Nggak usah inisialisasi ulang kalau indikator udah dipasang
     if (indicatorsContainer.children.length > 0) return;
 
     for (let i = 0; i < 3; i++) {
@@ -230,16 +214,14 @@ window.initNewsScroll = function () {
     });
 };
 
-// Auto-init news scroll on DOMContentLoaded
+// Inisialisasi otomatis gulir berita pas DOMContentLoaded
 document.addEventListener('DOMContentLoaded', () => {
     window.initNewsScroll();
 });
 
-// ═══════════════════════════════════════════════════════════════════════════════
-// 6. CONFIRM MODAL HELPER (reusable across pages)
-// ═══════════════════════════════════════════════════════════════════════════════
+// Asisten modal konfirmasi
 window.showConfirmModal = function (modalId, callback) {
-    // Support old signature: showConfirmModal(callback) with default 'confirmModal' id
+    // Dukung format lama: showConfirmModal(callback) pakai ID default 'confirmModal'
     if (typeof modalId === 'function') {
         callback = modalId;
         modalId = 'confirmModal';
@@ -275,7 +257,7 @@ window.showConfirmModal = function (modalId, callback) {
         }, 300);
     };
 
-    // Clone buttons to remove old listeners
+    // Klon tombol buat hapus event listener lama
     if (okBtn) {
         const newOkBtn = okBtn.cloneNode(true);
         okBtn.parentNode.replaceChild(newOkBtn, okBtn);
@@ -292,9 +274,7 @@ window.showConfirmModal = function (modalId, callback) {
     };
 };
 
-// ═══════════════════════════════════════════════════════════════════════════════
-// 7. ANIMATION CLEANUP (prevent fixed modals from being clipped)
-// ═══════════════════════════════════════════════════════════════════════════════
+// Pembersihan animasi
 document.addEventListener('DOMContentLoaded', () => {
     document.querySelector('main.animate-fade-up')?.addEventListener('animationend', function () {
         this.style.animation = 'none';

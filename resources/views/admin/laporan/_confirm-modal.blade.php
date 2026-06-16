@@ -1,4 +1,4 @@
-{{-- Admin Laporan: Confirm Modal --}}
+{{-- modal konfirmasi buat selesaiin laporan --}}
 <div id="confirmModal" class="fixed inset-0 z-[9999] flex items-center justify-center p-4 hidden">
     <div class="absolute inset-0 bg-slate-900/60 backdrop-blur-sm sigma-modal-backdrop"></div>
     <div class="relative bg-white rounded-2xl w-full max-w-sm overflow-hidden shadow-2xl border border-slate-100/80 sigma-modal-content">

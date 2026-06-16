@@ -20,7 +20,6 @@
                 Pantau informasi bencana dan laporkan kejadian di sekitar Anda secara cepat.
             </p>
         </div>
-        {{-- Desktop / Tablet Info --}}
         <div class="shrink-0 hidden sm:flex flex-col items-end gap-1 welcome-info">
             <p class="text-2xl font-bold text-white" id="liveClock">--:--</p>
             <p class="text-xs" style="color: rgba(228,240,246,0.45);" id="liveDate">—</p>
@@ -32,7 +31,6 @@
             </p>
         </div>
 
-        {{-- Mobile Info (Compact single line horizontal bar below welcome text) --}}
         <div class="sm:hidden flex flex-wrap items-center gap-x-2 gap-y-1 text-xs font-medium text-white/75 mt-2.5 pb-1">
             <span id="liveClockMobile">--:--</span>
             <span class="text-white/40">&middot;</span>

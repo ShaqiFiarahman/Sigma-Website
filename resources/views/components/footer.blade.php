@@ -2,7 +2,7 @@
 <footer class="py-10 u-footer">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8 text-xs text-slate-500 mb-8">
-            <!-- Column 1: Brand & Info -->
+            <!-- kolom 1: merek dan info -->
             <div>
                 <span class="font-extrabold text-[#2B52C3] text-sm block mb-2 tracking-wide">SIGMA</span>
                 <p class="text-slate-600 mb-4 leading-relaxed max-w-xs">Sistem Informasi Gawat Darurat dan Mitigasi Bencana</p>
@@ -10,7 +10,7 @@
                 <p class="text-slate-500">BMKG &bull; BNPB &bull; Laporan Masyarakat</p>
             </div>
 
-            <!-- Column 2: Menu -->
+            <!-- kolom 2: menu -->
             <div class="flex flex-col md:items-center">
                 <div class="text-left">
                     <span class="font-bold text-slate-900 text-sm block mb-3">Menu</span>
@@ -30,7 +30,7 @@
                             <a href="{{ route('shelter') }}" class="hover:text-[#2B52C3] font-medium transition-colors">Info Posko</a>
                             <a href="{{ route('panduan') }}" class="hover:text-[#2B52C3] font-medium transition-colors">Panduan Bencana</a>
                         @else
-                            {{-- Default: Masyarakat --}}
+                            {{-- default: masyarakat --}}
                             <a href="{{ route('laporan.create') }}" class="hover:text-[#2B52C3] font-medium transition-colors">Buat Laporan</a>
                             <a href="{{ route('laporan.index') }}" class="hover:text-[#2B52C3] font-medium transition-colors">Cari Bencana</a>
                             <a href="{{ route('volunteer.create') }}" class="hover:text-[#2B52C3] font-medium transition-colors">Daftar Relawan</a>
@@ -41,7 +41,7 @@
                 </div>
             </div>
 
-            <!-- Column 3: Tim -->
+            <!-- kolom 3: tim -->
             <div class="flex flex-col md:items-center">
                 <div class="text-left">
                     <span class="font-bold text-slate-900 text-sm block mb-3">Tim Pengembang</span>
@@ -58,7 +58,7 @@
                 </div>
             </div>
 
-            <!-- Column 4: Unduh Aplikasi -->
+            <!-- kolom 4: unduh aplikasi -->
             <div class="flex flex-col md:items-end">
                 <div class="text-left flex flex-col items-start">
                     <span class="font-bold text-slate-900 text-sm block mb-3">Unduh Aplikasi</span>
@@ -74,7 +74,7 @@
             </div>
         </div>
 
-        <!-- Footer Bottom -->
+        <!-- footer bottom section -->
         <div class="border-t border-slate-200/50 pt-6 flex justify-center items-center">
             <p class="text-slate-400 text-[11px] font-medium text-center">&copy; 2026 SIGMA &bull; Data: BMKG & BNPB</p>
         </div>

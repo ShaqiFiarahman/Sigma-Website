@@ -1,5 +1,5 @@
 <div class="lg:col-span-2 space-y-5">
-    {{-- Tentang Relawan --}}
+    {{-- info singkat tentang relawan --}}
     <div class="bg-white border border-slate-200/80 rounded-2xl overflow-hidden" style="box-shadow: 0 1px 3px rgba(10,15,30,0.06);">
         <div class="px-5 py-4 border-b border-slate-100 bg-slate-50">
             <h3 class="font-bold text-slate-800 flex items-center gap-2 text-sm">
@@ -18,7 +18,7 @@
         </div>
     </div>
 
-    {{-- FAQ --}}
+    {{-- faq pertanyaan umum --}}
     <div class="bg-white border border-slate-200/80 rounded-2xl overflow-hidden" style="box-shadow: 0 1px 3px rgba(10,15,30,0.06);">
         <div class="px-5 py-4 border-b border-slate-100 bg-slate-50">
             <h3 class="font-bold text-slate-800 flex items-center gap-2 text-sm">

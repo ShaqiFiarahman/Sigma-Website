@@ -1,4 +1,4 @@
-{{-- Shelter Edit: Scripts --}}
+{{-- script pendukung edit posko --}}
 <script>
     document.getElementById('photoInput')?.addEventListener('change', function() {
         const file = this.files[0];
@@ -15,7 +15,7 @@
         }
     });
 
-    // Delete confirmation
+    // validasi konfirmasi hapus posko (tombol baru aktif kalo user ketik nama posko dengan bener)
     const expectedName = @json($shelter->name);
     document.getElementById('deleteConfirmInput')?.addEventListener('input', function() {
         const btn = document.getElementById('deleteBtn');
@@ -30,7 +30,7 @@
         }
     });
 
-    // Google Map Picker
+    // setup google maps map picker
     let map, marker;
     const defaultLat = parseFloat(document.getElementById('latitudeInput')?.value) || -7.5755;
     const defaultLng = parseFloat(document.getElementById('longitudeInput')?.value) || 110.8243;
@@ -67,7 +67,7 @@
             updateCoordinates(event.latLng.lat(), event.latLng.lng(), true);
         });
 
-        // Places Autocomplete
+        // inisialisasi google places autocomplete untuk pencarian alamat
         const addressInput = document.getElementById('addressInput');
         if (addressInput && window.google && google.maps && google.maps.places) {
             const autocomplete = new google.maps.places.Autocomplete(addressInput, {

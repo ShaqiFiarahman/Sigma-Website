@@ -1,5 +1,5 @@
 <div class="grid grid-cols-1 lg:grid-cols-5 gap-6 mb-8">
-    {{-- Chart --}}
+    {{-- section area chart --}}
     <div class="lg:col-span-3 bg-white border border-slate-200/60 rounded-2xl p-6" style="box-shadow: 0 2px 8px rgba(10,15,30,0.04);">
         <div class="flex items-center justify-between mb-6">
             <div>
@@ -17,7 +17,7 @@
         </div>
     </div>
 
-    {{-- Recent Pending --}}
+    {{-- section pending report terbaru --}}
     <div class="lg:col-span-2 bg-white border border-slate-200/60 rounded-2xl overflow-hidden flex flex-col" style="box-shadow: 0 2px 8px rgba(10,15,30,0.04);">
         <div class="px-5 py-4 flex items-center justify-between border-b border-slate-100">
             <div>
@@ -60,6 +60,7 @@
     gradient.addColorStop(0, 'rgba(59,111,232,0.12)');
     gradient.addColorStop(1, 'rgba(59,111,232,0)');
 
+    // bikin atau hancurin chart lama trus bikin baru pake chart.js
     function createChart(labels, dataTotal, dataVerified, dataPending) {
         if (reportChart) reportChart.destroy();
         reportChart = new Chart(ctx, {
@@ -76,6 +77,7 @@
         });
     }
 
+    // hitung ulang stats berdasarkan filter periode yang dipilih (1 hari, 7 hari, dll)
     function computeStats(period) {
         const now = new Date();
         let cutoff = null;
@@ -105,16 +107,20 @@
         if (peakEl) peakEl.textContent = maxVal > 0 ? `Puncak: ${labels[dataTotal.indexOf(maxVal)]} (${maxVal} laporan)` : 'Belum ada data';
     }
 
+    // inisialisasi chart pertama kali pas halaman dibuka
     createChart(@json($chartLabels), @json($chartData), @json($chartVerified), @json($chartPending));
 
+    // pasang event listener buat klik tombol ganti periode filter
     document.querySelectorAll('.period-btn').forEach(btn => { btn.addEventListener('click', () => { document.querySelectorAll('.period-btn').forEach(b => { b.classList.remove('active'); b.classList.add('text-slate-500'); }); btn.classList.add('active'); btn.classList.remove('text-slate-500'); currentPeriod = btn.dataset.period; computeStats(currentPeriod); }); });
 
+    // render daftar pending report terbaru ke dalam kontainer html
     function renderPendingList(items) {
         const c = document.getElementById('pending-list'); if(!c) return;
         if (!items||items.length===0) { c.innerHTML = '<div class="flex flex-col items-center justify-center py-8 text-center"><div class="w-12 h-12 rounded-2xl flex items-center justify-center mb-3 bg-emerald-50"><i class="bi bi-check-all text-xl text-emerald-600"></i></div><p class="text-sm font-bold text-slate-700">Semua terverifikasi</p></div>'; return; }
         c.innerHTML = items.map(item => `<div class="pending-item" id="pending-item-${item.id}"><div class="flex items-start justify-between gap-2 mb-2"><h4 class="text-[13px] font-bold text-slate-900 leading-tight line-clamp-1">${item.judul}</h4><span class="shrink-0 text-[10px] text-slate-400">${item.tanggal}</span></div><p class="text-[11px] text-slate-500 mb-3"><i class="bi bi-geo-alt text-slate-300 text-[10px]"></i> ${(item.lokasi||'').substring(0,40)}</p><div class="flex items-center"><a href="/laporan/detail/${item.id}" class="px-4 py-1.5 text-[10px] font-bold text-white rounded-lg transition-all duration-200 hover:opacity-90 shadow-sm cursor-pointer" style="background: linear-gradient(135deg, #1e3a8a 0%, #3B6FE8 100%); box-shadow: 0 2px 6px rgba(59, 111, 232, 0.15);">Detail</a></div></div>`).join('');
     }
 
+    // ambil data pending report dari api secara realtime (polling)
     function fetchAdminStats() {
         fetch('{{ route("api.pending_reports") }}').then(r=>r.json()).then(data => {
             renderPendingList(data.map(d=>({id:d.id,judul:d.title,tanggal:d.date,lokasi:d.reporter})));

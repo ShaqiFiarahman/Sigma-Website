@@ -1,5 +1,4 @@
 <div class="space-y-4 lg:sticky lg:top-24 self-start">
-    {{-- Tips --}}
     <div class="bg-white border border-slate-200/80 rounded-2xl shadow-sm overflow-hidden" style="box-shadow: 0 1px 3px rgba(10,15,30,0.06);">
         <div class="px-5 py-3 border-b border-slate-100 bg-slate-50">
             <h3 class="font-bold text-slate-800 flex items-center gap-2 text-sm">
@@ -35,7 +34,6 @@
         </div>
     </div>
 
-    {{-- Nomor Darurat --}}
     <div class="bg-white border border-slate-200/80 rounded-2xl shadow-sm overflow-hidden" style="box-shadow: 0 1px 3px rgba(10,15,30,0.06);">
         <div class="px-5 py-3 border-b border-slate-100 bg-slate-50">
             <h3 class="font-bold text-slate-800 flex items-center gap-2 text-sm">
