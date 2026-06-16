@@ -10,6 +10,7 @@ class SupabaseService
     protected $url;
     protected $key;
 
+    // Autentikasi & Manajemen Pengguna Supabase
     public function __construct()
     {
         $this->url = rtrim(config('services.supabase.url'), '/');
@@ -18,6 +19,7 @@ class SupabaseService
 
     public function register($email, $password, $metadata = [])
     {
+        // Kirim POST request ke endpoint signup Supabase untuk mendaftarkan user baru
         $response = Http::withHeaders([
             'apikey' => $this->key,
             'Content-Type' => 'application/json',
@@ -27,6 +29,7 @@ class SupabaseService
             'data' => $metadata,
         ]);
 
+        // Jika pendaftaran berhasil, kembalikan response data user dari Supabase
         if ($response->successful()) {
             return $response->json();
         }
@@ -39,6 +42,7 @@ class SupabaseService
 
     public function login($email, $password)
     {
+        // Kirim POST request ke endpoint token Supabase untuk autentikasi user
         $response = Http::withHeaders([
             'apikey' => $this->key,
             'Content-Type' => 'application/json',
@@ -47,6 +51,7 @@ class SupabaseService
             'password' => $password,
         ]);
 
+        // Jika login berhasil, kembalikan data token akses user
         if ($response->successful()) {
             return $response->json();
         }
@@ -62,8 +67,10 @@ class SupabaseService
         return ['error' => $message];
     }
 
+    // Metode Pembantu
     protected function translateLoginError(string $raw): string
     {
+        // Saring pesan error dari Supabase untuk diterjemahkan ke bahasa Indonesia yang ramah
         if (str_contains($raw, 'invalid login credentials') || str_contains($raw, 'invalid password')) {
             return 'Email atau kata sandi yang Anda masukkan salah. Silakan periksa kembali.';
         }
@@ -93,11 +100,13 @@ class SupabaseService
 
     public function getUser($accessToken)
     {
+        // Kirim GET request ke endpoint user Supabase untuk mengambil info profil user aktif
         $response = Http::withHeaders([
             'apikey' => $this->key,
             'Authorization' => "Bearer {$accessToken}",
         ])->get("{$this->url}/auth/v1/user");
 
+        // Jika pengambilan berhasil, kembalikan data info user
         if ($response->successful()) {
             return $response->json();
         }
@@ -107,12 +116,14 @@ class SupabaseService
 
     public function updateUser($accessToken, $data)
     {
+        // Kirim PUT request ke endpoint user Supabase untuk memperbarui detail user
         $response = Http::withHeaders([
             'apikey' => $this->key,
             'Authorization' => "Bearer {$accessToken}",
             'Content-Type' => 'application/json',
         ])->put("{$this->url}/auth/v1/user", $data);
 
+        // Jika pembaruan berhasil, kembalikan response data user terbaru
         if ($response->successful()) {
             return $response->json();
         }

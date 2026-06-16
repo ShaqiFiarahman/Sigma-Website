@@ -28,7 +28,7 @@ class Disaster extends Model
         'updated_at' => 'datetime',
     ];
 
-    // Status constants (sesuai Android ReportStatus enum)
+    // Konstanta Status (sesuai enum Android ReportStatus)
     const STATUS_PENDING  = 'PENDING';
     const STATUS_DECLINE  = 'DECLINE';
     const STATUS_RESOLVED = 'RESOLVED';
@@ -36,9 +36,7 @@ class Disaster extends Model
     const STATUS_SIAGA_2  = 'SIAGA_2';
     const STATUS_AWAS     = 'AWAS';
 
-    /**
-     * Display metadata (icon, color, name) per canonical disaster type.
-     */
+    // Metadata tampilan (ikon, warna, nama) untuk setiap jenis bencana
     private const TYPE_META = [
         'flood'      => ['icon' => 'bi-water',                 'color' => 'text-blue-500',    'name' => 'Banjir'],
         'fire'       => ['icon' => 'bi-fire',                  'color' => 'text-red-500',     'name' => 'Kebakaran'],
@@ -48,19 +46,14 @@ class Disaster extends Model
         'tsunami'    => ['icon' => 'bi-water',                 'color' => 'text-cyan-500',    'name' => 'Tsunami'],
     ];
 
-    /**
-     * Fallback metadata when the type cannot be determined.
-     */
+    // Metadata cadangan jika jenis bencana tidak dapat ditentukan
     private const TYPE_FALLBACK = [
         'icon' => 'bi-exclamation-triangle',
         'color' => 'text-slate-500',
         'name' => 'Lainnya / Tidak Diketahui',
     ];
 
-    /**
-     * Keyword → canonical type, used to guess the type from the title
-     * when disaster_type is "unknown". Order matters (first match wins).
-     */
+    // Kata kunci untuk menebak jenis bencana dari judul jika tidak diketahui
     private const TITLE_KEYWORDS = [
         'banjir'    => 'flood',
         'kebakaran' => 'fire',
@@ -73,6 +66,7 @@ class Disaster extends Model
         'angin'     => 'storm',
     ];
 
+    // Hubungan Database
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
@@ -83,9 +77,8 @@ class Disaster extends Model
         return $this->belongsTo(User::class, 'verified_by');
     }
 
-    /**
-     * Get human-readable status label
-     */
+    // Accessors & Mutators
+    // Dapatkan label status yang mudah dibaca
     public function getStatusLabelAttribute(): string
     {
         return match($this->status) {
@@ -99,9 +92,7 @@ class Disaster extends Model
         };
     }
 
-    /**
-     * Get severity level for display (maps to tingkat_bencana)
-     */
+    // Dapatkan tingkat keparahan bencana untuk tampilan
     public function getTingkatAttribute(): ?string
     {
         return match($this->status) {
@@ -113,14 +104,13 @@ class Disaster extends Model
         };
     }
 
-    /**
-     * Resolve display metadata (icon, color, name) for this disaster.
-     * Uses disaster_type when known, otherwise guesses from the title.
-     */
+    // Metode Pembantu
+    // Tentukan metadata tampilan berdasarkan jenis bencana atau tebakan judul
     private function typeMeta(): array
     {
         $type = strtolower($this->disaster_type ?? 'unknown');
 
+        // Jika tipe bencana belum diketahui, tebak tipe berdasarkan kata kunci di judul
         if ($type === 'unknown') {
             $type = $this->guessTypeFromTitle();
         }
@@ -128,13 +118,12 @@ class Disaster extends Model
         return self::TYPE_META[$type] ?? self::TYPE_FALLBACK;
     }
 
-    /**
-     * Guess the canonical type from keywords in the title.
-     */
+    // Tebak jenis bencana berdasarkan kata kunci pada judul
     private function guessTypeFromTitle(): string
     {
         $title = strtolower($this->title ?? '');
 
+        // Cari kecocokan kata kunci dalam judul untuk menentukan kategori bencana
         foreach (self::TITLE_KEYWORDS as $keyword => $type) {
             if (str_contains($title, $keyword)) {
                 return $type;
@@ -144,25 +133,19 @@ class Disaster extends Model
         return 'unknown';
     }
 
-    /**
-     * Get disaster type icon class
-     */
+    // Dapatkan kelas ikon jenis bencana
     public function getTypeIconAttribute(): string
     {
         return $this->typeMeta()['icon'];
     }
 
-    /**
-     * Get disaster type color class
-     */
+    // Dapatkan kelas warna jenis bencana
     public function getTypeColorAttribute(): string
     {
         return $this->typeMeta()['color'];
     }
 
-    /**
-     * Get disaster type label in Indonesian
-     */
+    // Dapatkan nama label jenis bencana dalam Bahasa Indonesia
     public function getTypeNameAttribute(): string
     {
         return $this->typeMeta()['name'];

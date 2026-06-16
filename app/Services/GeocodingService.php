@@ -7,16 +7,11 @@ use Illuminate\Support\Facades\Log;
 
 class GeocodingService
 {
-    /**
-     * Reverse geocode coordinates to a human-readable location name.
-     *
-     * @param float $latitude
-     * @param float $longitude
-     * @return string
-     */
+    // Geocoding Terbalik
     public function reverseGeocode(float $latitude, float $longitude): string
     {
         try {
+            // Kirim HTTP request ke OpenStreetMap Nominatim API untuk reverse geocode
             $response = Http::withHeaders([
                 'User-Agent' => 'SigmaApp/1.0',
             ])->timeout(5)->get('https://nominatim.openstreetmap.org/reverse', [
@@ -26,6 +21,7 @@ class GeocodingService
                 'zoom' => 18,
             ]);
 
+            // Kalau request berhasil, kembalikan nama lokasi yang didapatkan
             if ($response->successful()) {
                 return $response->json('display_name') ?? 'Lokasi tidak diketahui';
             }

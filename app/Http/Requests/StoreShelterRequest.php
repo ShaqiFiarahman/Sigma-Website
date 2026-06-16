@@ -6,21 +6,17 @@ use Illuminate\Foundation\Http\FormRequest;
 
 class StoreShelterRequest extends FormRequest
 {
-    /**
-     * Determine if the user is authorized to make this request.
-     */
+    // Otorisasi Permintaan
     public function authorize(): bool
     {
+        // Pastiin hanya user dengan role admin yang bisa membuat atau mengedit posko
         return strtolower(auth()->user()->role ?? '') === 'admin';
     }
 
-    /**
-     * Get the validation rules that apply to the request.
-     *
-     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
-     */
+    // Aturan Validasi
     public function rules(): array
     {
+        // Definisikan aturan validasi untuk input data posko pengungsian
         return [
             'name'             => 'required|string|max:255',
             'address'          => 'nullable|string|max:500',
@@ -35,13 +31,10 @@ class StoreShelterRequest extends FormRequest
         ];
     }
 
-    /**
-     * Get custom messages for validator errors.
-     *
-     * @return array<string, string>
-     */
+    // Pesan Validasi Kustom
     public function messages(): array
     {
+        // Berikan pesan error kustom dalam bahasa Indonesia untuk input data posko
         return [
             'name.required'             => 'Nama posko wajib diisi.',
             'capacity_current.required' => 'Kapasitas saat ini wajib diisi.',

@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -21,11 +20,7 @@ class User extends Authenticatable
     public $incrementing = false;
     protected $keyType = 'string';
 
-    /**
-     * Get the attributes that should be cast.
-     *
-     * @return array<string, string>
-     */
+    // Dapatkan atribut yang harus di-cast
     protected function casts(): array
     {
         return [
@@ -34,13 +29,16 @@ class User extends Authenticatable
         ];
     }
 
+    // Hubungan Database
     public function disasters(): HasMany
     {
         return $this->hasMany(Disaster::class);
     }
 
+    // Aksesor & Mutator
     public function getShortNameAttribute(): string
     {
+        // Ambil maksimal dua kata pertama dari nama lengkap user
         $name = trim($this->full_name ?? '');
         $words = explode(' ', $name);
         return implode(' ', array_slice($words, 0, 2));

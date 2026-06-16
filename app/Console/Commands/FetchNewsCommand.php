@@ -7,12 +7,10 @@ use Illuminate\Console\Attributes\Signature;
 use Illuminate\Console\Command;
 
 #[Signature('news:fetch')]
-#[Description('Fetch disaster news from RSS feeds')]
+#[Description('Ambil berita bencana dari RSS feed')]
 class FetchNewsCommand extends Command
 {
-    /**
-     * Execute the console command.
-     */
+    // Command Ambil Berita
     public function handle(\App\Services\NewsService $newsService)
     {
         $this->info('Fetching news...');

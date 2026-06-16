@@ -12,12 +12,11 @@ class DashboardController extends Controller
 {
     use FetchesNews;
 
-    /**
-     * Show the volunteer dashboard for approved volunteers
-     */
+    // Beranda Relawan
     public function index()
     {
         $user = auth()->user();
+        // Ambil data relawan yang berstatus aktif/disetujui berdasarkan ID user
         $volunteerData = Volunteer::where('user_id', $user->id)
             ->where('status', Volunteer::STATUS_APPROVED)
             ->with(['disaster', 'assignedByUser'])
@@ -26,12 +25,15 @@ class DashboardController extends Controller
         $news = $this->getNews();
         $menu = config('menu.relawan');
 
+        // Hitung total laporan yang pernah dibuat oleh relawan ini
         $totalReports = VolunteerReport::where('volunteer_id', $volunteerData->id)->count();
+        // Hitung jumlah laporan yang dibuat relawan ini pada bulan berjalan
         $reportsThisMonth = VolunteerReport::where('volunteer_id', $volunteerData->id)
             ->whereMonth('created_at', now()->month)
             ->whereYear('created_at', now()->year)
             ->count();
 
+        // Ambil 3 laporan terakhir yang dibuat oleh relawan ini beserta data bencananya
         $recentReports = VolunteerReport::where('volunteer_id', $volunteerData->id)
             ->with('disaster')
             ->latest()
@@ -39,7 +41,9 @@ class DashboardController extends Controller
             ->get();
 
         $teamMembers = collect();
+        // Jika relawan memiliki tugas penugasan, cari anggota tim lain dengan tugas yang sama
         if ($volunteerData->assignment) {
+            // Ambil data anggota tim relawan lain yang ditugaskan di lokasi bencana yang sama
             $teamMembers = Volunteer::where('status', Volunteer::STATUS_APPROVED)
                 ->where('assignment', $volunteerData->assignment)
                 ->where('id', '!=', $volunteerData->id)
@@ -59,13 +63,15 @@ class DashboardController extends Controller
         ]);
     }
 
+    // Ketersediaan Relawan
     public function toggleAvailability(Request $request)
     {
-        $user = auth()->user();
-        $volunteer = Volunteer::where('user_id', $user->id)
+        // Ambil data relawan aktif untuk memperbarui status ketersediaan
+        $volunteer = Volunteer::where('user_id', auth()->id())
             ->where('status', Volunteer::STATUS_APPROVED)
             ->firstOrFail();
 
+        // Pastikan status ketersediaan yang dikirim bernilai available atau unavailable
         $request->validate([
             'availability' => 'required|in:available,unavailable',
         ]);
@@ -76,10 +82,11 @@ class DashboardController extends Controller
             ->with('msg', 'Status ketersediaan berhasil diperbarui.');
     }
 
+    // Manajemen Penugasan
     public function dismissNotification()
     {
-        $user = auth()->user();
-        $volunteer = Volunteer::where('user_id', $user->id)
+        // Ambil data relawan aktif untuk menolak/membaca notifikasi penugasan
+        $volunteer = Volunteer::where('user_id', auth()->id())
             ->where('status', Volunteer::STATUS_APPROVED)
             ->firstOrFail();
 
@@ -90,11 +97,12 @@ class DashboardController extends Controller
 
     public function acceptAssignment()
     {
-        $user = auth()->user();
-        $volunteer = Volunteer::where('user_id', $user->id)
+        // Ambil data relawan aktif untuk menerima penugasan
+        $volunteer = Volunteer::where('user_id', auth()->id())
             ->where('status', Volunteer::STATUS_APPROVED)
             ->firstOrFail();
 
+        // Jika status penugasan bukan pending, kembalikan ke dashboard dengan error
         if ($volunteer->assignment_status !== 'pending') {
             return redirect()->route('dashboard')
                 ->with('error', 'Tidak ada penugasan yang menunggu konfirmasi.');
@@ -112,15 +120,17 @@ class DashboardController extends Controller
 
     public function rejectAssignment(Request $request)
     {
+        // Validasi alasan penolakan penugasan agar tidak kosong
         $request->validate([
             'rejection_reason' => 'required|string|max:500',
         ]);
 
-        $user = auth()->user();
-        $volunteer = Volunteer::where('user_id', $user->id)
+        // Ambil data relawan aktif untuk menolak penugasan
+        $volunteer = Volunteer::where('user_id', auth()->id())
             ->where('status', Volunteer::STATUS_APPROVED)
             ->firstOrFail();
 
+        // Jika status penugasan bukan pending, kembalikan dengan pesan error
         if ($volunteer->assignment_status !== 'pending') {
             return redirect()->route('dashboard')
                 ->with('error', 'Tidak ada penugasan yang menunggu konfirmasi.');

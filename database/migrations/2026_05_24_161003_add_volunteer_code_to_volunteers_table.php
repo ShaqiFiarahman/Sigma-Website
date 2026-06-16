@@ -12,7 +12,7 @@ return new class extends Migration
             $table->string('volunteer_code')->nullable()->after('user_id');
         });
 
-        // Populate existing volunteers
+        // Isi data kode relawan yang sudah ada
         $volunteers = \Illuminate\Support\Facades\DB::table('volunteers')->orderBy('id')->get();
         foreach ($volunteers as $v) {
             $phone = preg_replace('/\D/', '', $v->phone_number);
@@ -25,9 +25,6 @@ return new class extends Migration
         }
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::table('volunteers', function (Blueprint $table) {

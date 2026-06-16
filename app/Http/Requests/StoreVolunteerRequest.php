@@ -6,21 +6,17 @@ use Illuminate\Foundation\Http\FormRequest;
 
 class StoreVolunteerRequest extends FormRequest
 {
-    /**
-     * Determine if the user is authorized to make this request.
-     */
+    // Otorisasi Permintaan
     public function authorize(): bool
     {
+        // Pastiin user sudah login sebelum mendaftar sebagai relawan
         return auth()->check();
     }
 
-    /**
-     * Get the validation rules that apply to the request.
-     *
-     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
-     */
+    // Aturan Validasi
     public function rules(): array
     {
+        // Definisikan aturan validasi untuk input pendaftaran relawan
         return [
             'name'         => 'required|string|max:255',
             'skill'        => 'required|in:MEDIS,SAR,LOGISTIK,KONSUMSI,PSIKOSOSIAL,PENDIDIKAN',
@@ -29,13 +25,10 @@ class StoreVolunteerRequest extends FormRequest
         ];
     }
 
-    /**
-     * Get custom messages for validator errors.
-     *
-     * @return array<string, string>
-     */
+    // Pesan Validasi Kustom
     public function messages(): array
     {
+        // Berikan pesan error kustom dalam bahasa Indonesia untuk input data relawan
         return [
             'name.required'         => 'Nama lengkap wajib diisi.',
             'skill.required'        => 'Keahlian wajib dipilih.',

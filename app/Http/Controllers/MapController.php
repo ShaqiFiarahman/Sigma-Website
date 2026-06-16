@@ -4,21 +4,16 @@ namespace App\Http\Controllers;
 
 use App\Models\Disaster;
 use App\Models\Shelter;
-use Illuminate\Http\Request;
 
 class MapController extends Controller
 {
-    /**
-     * Show interactive map with disaster markers
-     */
+    // Tampilan Peta
     public function index()
     {
         return view('user.map');
     }
 
-    /**
-     * Show search & filter disasters page (sesuai Android SearchDisasterScreen)
-     */
+    // Pencarian Laporan Bencana
     public function search()
     {
         $user = auth()->user();
@@ -26,53 +21,51 @@ class MapController extends Controller
 
         $query = Disaster::latest();
 
+        // Jika pengguna bukan admin, batasi agar hanya melihat bencana publik aktif atau laporannya sendiri
         if (strtolower($role) !== 'admin') {
-            // Citizens/Volunteers can see active public disasters (SIAGA_1, SIAGA_2, AWAS - i.e. not RESOLVED/selesai)
-            // AND their own reports (including pending, rejected, or resolved)
+            // Filter laporan dengan status tertentu
             $query->where(function($q) use ($user) {
                 $q->whereIn('status', [
                     'SIAGA_1',
                     'SIAGA_2',
                     'AWAS'
                 ]);
+                // Jika user login, tampilkan juga laporan milik mereka sendiri
                 if ($user) {
                     $q->orWhere('user_id', $user->id);
                 }
             });
         }
 
+        // Ambil data bencana hasil filter ke database
         $disasters = $query->get();
 
         return view('laporan.search', compact('disasters'));
     }
 
-    /**
-     * Show shelter info page (sesuai Android ShelterInfoScreen)
-     */
+    // Daftar Posko Pengungsian
     public function shelterPage()
     {
         $query = Shelter::query();
 
-        // Server-side filter
+        // Jika ada filter status pengungsian, tambahkan kondisi filter pada query
         if (request('status')) {
             $query->where('status', request('status'));
         }
+        // Jika ada parameter pencarian nama, lakukan filter pencarian LIKE
         if (request('q')) {
             $query->where('name', 'like', '%' . request('q') . '%');
         }
-        if (request('sort') === 'terdekat') {
-            // Default order, client will sort
-        }
 
+        // Ambil data pengungsian dengan pagination dan transformasikan ke format array
         $shelters = $query->paginate(6)->through(fn($s) => $this->shelterToArray($s));
         return view('shelter.index', compact('shelters'));
     }
 
-    /**
-     * API: Get disasters as JSON for map markers
-     */
+    // Endpoint Data JSON
     public function disasters()
     {
+        // Ambil koordinat bencana aktif yang valid untuk marker peta
         $disasters = Disaster::whereNotNull('latitude')
             ->whereNotNull('longitude')
             ->whereIn('status', [
@@ -103,12 +96,10 @@ class MapController extends Controller
         return response()->json($disasters);
     }
 
-    /**
-     * API: Get shelters as JSON for map markers
-     */
     public function shelters()
     {
         try {
+            // Ambil semua data lokasi pengungsian beserta informasi logistik dan kapasitasnya
             $shelters = Shelter::all()->map(fn($s) => $this->shelterToArray($s))->toArray();
             return response()->json($shelters);
         } catch (\Exception $e) {
@@ -120,16 +111,14 @@ class MapController extends Controller
         }
     }
 
-    /**
-     * Convert Shelter model to array format for views/API
-     */
+    // Fungsi Bantuan
     private function shelterToArray(Shelter $s): array
     {
         return [
             'id'            => $s->id,
             'name'          => $s->name,
             'address'       => $s->address,
-            'distance'      => '—', // Will be calculated client-side
+            'distance'      => '—', // Dihitung di sisi klien
             'capacity'      => $s->capacity_label,
             'status'        => $s->status,
             'lat'           => $s->latitude,

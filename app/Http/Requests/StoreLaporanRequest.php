@@ -6,21 +6,17 @@ use Illuminate\Foundation\Http\FormRequest;
 
 class StoreLaporanRequest extends FormRequest
 {
-    /**
-     * Determine if the user is authorized to make this request.
-     */
+    // Otorisasi Permintaan
     public function authorize(): bool
     {
+        // Pastiin user sudah login sebelum membuat laporan
         return auth()->check();
     }
 
-    /**
-     * Get the validation rules that apply to the request.
-     *
-     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
-     */
+    // Aturan Validasi
     public function rules(): array
     {
+        // Definisikan aturan validasi untuk input laporan bencana
         return [
             'judul'     => 'required|string|max:255',
             'deskripsi' => 'required|string',
@@ -31,13 +27,10 @@ class StoreLaporanRequest extends FormRequest
         ];
     }
 
-    /**
-     * Get custom messages for validator errors.
-     *
-     * @return array<string, string>
-     */
+    // Pesan Validasi Kustom
     public function messages(): array
     {
+        // Berikan pesan error kustom dalam bahasa Indonesia untuk setiap aturan validasi
         return [
             'judul.required'     => 'Judul laporan wajib diisi.',
             'deskripsi.required' => 'Deskripsi laporan wajib diisi.',

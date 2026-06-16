@@ -5,7 +5,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="google-site-verification" content="3W_tHhKZuwz5ezm514XgrspY6bgIn7p5cGe1aui6dhI" />
-    <title>@yield('title') | SIGMA - Sistem Informasi Mitigasi Bencana</title>
+    @if(trim(View::yieldContent('title')) === 'SIGMA')
+        <title>SIGMA</title>
+    @else
+        <title>@yield('title') | SIGMA - Sistem Informasi Mitigasi Bencana</title>
+    @endif
     <meta name="description"
         content="@yield('meta_description', 'SIGMA (Sistem Informasi Gawat Darurat dan Mitigasi Bencana) - Pantau peta bencana real-time, cari info posko shelter terdekat, dan kirim laporan darurat di sekitar Anda.')">
     <meta name="keywords"

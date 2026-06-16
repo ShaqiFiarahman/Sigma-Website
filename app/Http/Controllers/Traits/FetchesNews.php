@@ -6,14 +6,10 @@ use App\Models\News;
 
 trait FetchesNews
 {
-    /**
-     * Get latest disaster-related news from the last 7 days.
-     *
-     * @param int $limit
-     * @return array
-     */
+    // Trait Ambil Berita
     private function getNews(int $limit = 9): array
     {
+        // Ambil berita bencana terbaru dalam 7 hari terakhir dibatasi jumlah maksimalnya
         return News::where('published_at', '>=', now()->subDays(7))
             ->latest('published_at')
             ->limit($limit)

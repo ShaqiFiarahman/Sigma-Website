@@ -12,51 +12,40 @@ class ImageUploadService
     protected string $supabaseUrl;
     protected string $supabaseKey;
 
+    // Konstruktor Layanan Unggah
     public function __construct()
     {
         $this->supabaseUrl = rtrim(config('services.supabase.url'), '/');
         $this->supabaseKey = config('services.supabase.service_key') ?? config('services.supabase.key') ?? '';
     }
 
-    /**
-     * Upload a file to Supabase Storage with local fallback.
-     * Compresses the image before uploading.
-     *
-     * @param UploadedFile $file
-     * @param string $bucket  Supabase bucket name
-     * @param string $disk    Local storage disk for fallback
-     * @param int $quality    Compression quality (1-100)
-     * @return string         Public URL of the uploaded file
-     */
+    // Unggah Berkas Gambar
     public function upload(UploadedFile $file, string $bucket = 'laporan', string $disk = 'public', int $quality = 60): string
     {
-        // Store locally first for compression
+        // Simpan secara lokal dulu sebelum dikompres
         $path = $file->store($bucket, $disk);
         $absolutePath = storage_path('app/public/' . $path);
 
-        // Compress the image
+        // Kompres ukuran gambar
         $this->compressImage($absolutePath, $quality);
 
-        // Attempt Supabase upload
+        // Coba unggah ke Supabase
+        // Kirim gambar ke storage Supabase jika konfigurasi API key dan URL sudah siap
         if ($this->supabaseUrl && $this->supabaseKey) {
             $url = $this->uploadToSupabase($absolutePath, $bucket);
+            // Jika upload ke Supabase berhasil, hapus berkas lokal dan gunakan URL online
             if ($url) {
                 @unlink($absolutePath);
                 return $url;
             }
         }
 
-        // Fallback to local storage URL
+        // Gunakan penyimpanan lokal sebagai cadangan
         return Storage::url($path);
     }
 
-    /**
-     * Upload a file to Supabase Storage bucket.
-     *
-     * @param string $absolutePath  Full path to the local file
-     * @param string $bucket        Supabase bucket name
-     * @return string|null          Public URL on success, null on failure
-     */
+    // Integrasi API Supabase
+    // Hubungkan dan Unggah ke Supabase
     private function uploadToSupabase(string $absolutePath, string $bucket): ?string
     {
         $filename = basename($absolutePath);
@@ -70,6 +59,7 @@ class ImageUploadService
             ])->withBody($fileContent, $mimeType)
               ->post("{$this->supabaseUrl}/storage/v1/object/{$bucket}/{$filename}");
 
+            // Jika upload ke Supabase Storage berhasil, kembalikan URL publik gambar
             if ($response->successful()) {
                 return "{$this->supabaseUrl}/storage/v1/object/public/{$bucket}/{$filename}";
             }
@@ -82,16 +72,12 @@ class ImageUploadService
         return null;
     }
 
-    /**
-     * Compress an image file in place.
-     *
-     * @param string $filePath  Absolute path to the image
-     * @param int $quality      Compression quality (1-100)
-     * @return bool
-     */
+    // Utilitas Kompresi Gambar
+    // Kompres Berkas Gambar
     private function compressImage(string $filePath, int $quality = 60): bool
     {
         $info = @getimagesize($filePath);
+        // Jangan lanjutkan proses jika berkas yang diunggah bukan gambar yang valid
         if (!$info) {
             return false;
         }
@@ -103,6 +89,7 @@ class ImageUploadService
             default      => null,
         };
 
+        // Gagalkan kompresi jika resource gambar tidak berhasil dibuat
         if (!$image) {
             return false;
         }

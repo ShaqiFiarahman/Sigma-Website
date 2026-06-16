@@ -9,13 +9,10 @@ use Symfony\Component\HttpFoundation\Response;
 
 class RoleMiddleware
 {
-    /**
-     * Handle an incoming request.
-     *
-     * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
-     */
+    // Periksa Peran Pengguna
     public function handle(Request $request, Closure $next, ...$roles): Response
     {
+        // Kalau user belum login, langsung redirect ke halaman login
         if (!Auth::check()) {
             return redirect()->route('login');
         }
@@ -24,6 +21,7 @@ class RoleMiddleware
         $userRole = strtolower($user->role);
         $roles = array_map('strtolower', $roles);
 
+        // Jika role user terdaftar dalam daftar role yang diperbolehkan, lanjutkan request
         if (in_array($userRole, $roles)) {
             return $next($request);
         }

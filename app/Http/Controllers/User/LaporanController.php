@@ -16,8 +16,10 @@ class LaporanController extends Controller
         private ImageUploadService $imageUpload,
     ) {}
 
+    // Buat Laporan
     public function create()
     {
+        // Ambil riwayat laporan bencana terakhir milik user jika sudah login
         $riwayat = auth()->check()
             ? Disaster::where('user_id', auth()->id())->latest()->limit(5)->get()
             : collect();
@@ -25,20 +27,20 @@ class LaporanController extends Controller
         return view('laporan.create', compact('riwayat'));
     }
 
+    // Simpan Laporan
     public function store(StoreLaporanRequest $request)
     {
         $user = auth()->user();
 
-        // Reverse geocode the coordinates
+        // Dapatkan nama lokasi berdasarkan koordinat
         $locationName = $this->geocoding->reverseGeocode(
             (float) $request->latitude,
             (float) $request->longitude
         );
 
-        // Upload photos
         $photoUrls = $this->uploadPhotos($request);
 
-        // Create the disaster report
+        // Simpan data laporan bencana baru ke database
         Disaster::create([
             'user_id'       => $user->id,
             'title'         => $request->judul,
@@ -55,16 +57,20 @@ class LaporanController extends Controller
         return redirect()->route('laporan.index')->with('msg', 'created');
     }
 
+    // Tampilkan Laporan
     public function show($id)
     {
+        // Cari data bencana beserta relasi user pembuat laporan berdasarkan ID
         $disaster = Disaster::with('user')->findOrFail($id);
         $laporan = $this->toArray($disaster);
 
+        // Ambil laporan medis terakhir dari relawan di lokasi bencana
         $latestMedis = VolunteerReport::where('disaster_id', $id)
             ->where('skill_type', 'MEDIS')
             ->latest()
             ->first();
 
+        // Ambil laporan SAR terakhir dari relawan di lokasi bencana
         $latestSar = VolunteerReport::where('disaster_id', $id)
             ->where('skill_type', 'SAR')
             ->latest()
@@ -73,16 +79,14 @@ class LaporanController extends Controller
         return view('laporan.show', compact('laporan', 'latestMedis', 'latestSar'));
     }
 
-    /**
-     * Upload all photos from the request.
-     *
-     * @return array<string>
-     */
+    // Fungsi Upload
     private function uploadPhotos(StoreLaporanRequest $request): array
     {
         $photoUrls = [];
 
+        // Jika ada file foto yang diunggah, proses masing-masing file
         if ($request->hasFile('foto')) {
+            // Iterasi dan upload setiap file foto ke Supabase Storage
             foreach ($request->file('foto') as $file) {
                 $photoUrls[] = $this->imageUpload->upload(
                     file: $file,
@@ -94,11 +98,9 @@ class LaporanController extends Controller
         return $photoUrls;
     }
 
-    /**
-     * Transform a Disaster model into a display-friendly array.
-     */
     private function toArray(Disaster $d): array
     {
+        // Tentukan teks lokasi berdasarkan ketersediaan koordinat dan nama tempat
         $lokasi = $d->location
             ? $d->location
             : (($d->latitude && $d->longitude)

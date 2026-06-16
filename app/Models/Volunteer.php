@@ -30,8 +30,10 @@ class Volunteer extends Model
         'assignment_notified_at' => 'datetime',
     ];
 
+    // Event Model
     protected static function booted()
     {
+        // Ketika data relawan berhasil dibuat, generate kode relawan unik secara otomatis
         static::created(function ($volunteer) {
             $phone = preg_replace('/\D/', '', $volunteer->phone_number);
             $last4 = substr(str_pad($phone, 4, '0', STR_PAD_LEFT), -4);
@@ -67,6 +69,7 @@ class Volunteer extends Model
         ];
     }
 
+    // Hubungan Database
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
@@ -82,6 +85,7 @@ class Volunteer extends Model
         return $this->belongsTo(User::class, 'assigned_by');
     }
 
+    // Aksesor & Mutator
     public function getStatusLabelAttribute(): string
     {
         return match($this->status) {

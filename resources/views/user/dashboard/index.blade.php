@@ -1,5 +1,5 @@
 @extends('layouts.app')
-@section('title', 'Peta Bencana Real-Time & Informasi Mitigasi')
+@section('title', 'SIGMA')
 
 @section('content')
 
@@ -16,7 +16,8 @@
             @if($volunteerData->status === 'PENDING')
                 <section class="animate-fade-up" style="animation-delay: 0.05s;">
                     <div class="bg-white rounded-2xl border border-slate-100 p-6 relative">
-                        <button onclick="this.parentElement.parentElement.remove()" class="absolute top-4 right-4 p-1.5 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition-colors">
+                        <button onclick="this.parentElement.parentElement.remove()"
+                            class="absolute top-4 right-4 p-1.5 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition-colors">
                             <i class="bi bi-x-lg text-xs"></i>
                         </button>
                         <div class="flex items-start gap-4">
@@ -26,7 +27,8 @@
                             <div>
                                 <p class="text-sm font-bold text-slate-900">Pendaftaran relawan sedang diproses</p>
                                 <p class="text-xs text-slate-500 mt-1">Menunggu verifikasi admin. Estimasi 1–3 hari kerja.</p>
-                                <p class="text-[11px] text-slate-400 mt-2">Didaftarkan {{ $volunteerData->created_at?->format('d M Y, H:i') }}</p>
+                                <p class="text-[11px] text-slate-400 mt-2">Didaftarkan
+                                    {{ $volunteerData->created_at?->format('d M Y, H:i') }}</p>
                             </div>
                         </div>
                     </div>
@@ -35,7 +37,8 @@
             @elseif($volunteerData->status === 'FIRED')
                 <section class="animate-fade-up" style="animation-delay: 0.05s;">
                     <div class="bg-white rounded-2xl border border-slate-100 p-6 relative">
-                        <button onclick="this.parentElement.parentElement.remove()" class="absolute top-4 right-4 p-1.5 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition-colors">
+                        <button onclick="this.parentElement.parentElement.remove()"
+                            class="absolute top-4 right-4 p-1.5 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition-colors">
                             <i class="bi bi-x-lg text-xs"></i>
                         </button>
                         <div class="flex items-start gap-4">
@@ -44,7 +47,8 @@
                             </div>
                             <div>
                                 <p class="text-sm font-bold text-slate-900 uppercase">Status relawan dinonaktifkan</p>
-                                <p class="text-xs text-slate-500 mt-1">Akun relawan Anda telah dinonaktifkan oleh admin. Hubungi admin untuk informasi lebih lanjut.</p>
+                                <p class="text-xs text-slate-500 mt-1">Akun relawan Anda telah dinonaktifkan oleh admin. Hubungi
+                                    admin untuk informasi lebih lanjut.</p>
                             </div>
                         </div>
                     </div>
@@ -62,9 +66,9 @@
         <x-disaster-map />
     </div>
 
-@section('footer')
-    <x-footer />
-@endsection
+    @section('footer')
+        <x-footer />
+    @endsection
 
 
 

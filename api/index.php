@@ -1,6 +1,6 @@
 <?php
 
-// Set environment variables for writable cache paths in Vercel serverless environment
+// Atur variabel lingkungan untuk jalur cache yang dapat ditulis di lingkungan serverless Vercel
 $cachePath = '/tmp';
 $_ENV['APP_SERVICES_CACHE'] = $cachePath . '/services.php';
 $_ENV['APP_PACKAGES_CACHE'] = $cachePath . '/packages.php';
@@ -24,5 +24,5 @@ putenv('APP_EVENTS_CACHE=' . $cachePath . '/events.php');
 $_SERVER['SCRIPT_NAME'] = '/index.php';
 $_SERVER['PHP_SELF'] = '/index.php';
 
-// Forward request to Laravel's public/index.php
+// Teruskan permintaan ke public/index.php milik Laravel
 require __DIR__ . '/../public/index.php';

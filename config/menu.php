@@ -2,16 +2,10 @@
 
 return [
 
-    /*
-    |--------------------------------------------------------------------------
-    | Dashboard Service Menus
-    |--------------------------------------------------------------------------
-    |
-    | Menu layanan yang ditampilkan di dashboard, dipisahkan per peran.
-    | Memindahkan ini ke config membuatnya mudah diubah tanpa menyentuh
-    | controller, dan bisa di-cache lewat `php artisan config:cache`.
-    |
-    */
+    // Menu Layanan Dashboard
+    // Menu layanan yang ditampilkan di dashboard, dipisahkan per peran.
+    // Memindahkan ini ke config membuatnya mudah diubah tanpa menyentuh
+    // controller, dan bisa di-cache lewat `php artisan config:cache`.
 
     // Menu untuk masyarakat umum
     'masyarakat' => [

@@ -10,9 +10,10 @@ use Illuminate\Support\Facades\DB;
 
 class DashboardController extends Controller
 {
+    // Statistik Beranda Admin
     public function index()
     {
-        // ─── Statistics (1 query instead of 7) ───────────
+        // Ambil jumlah laporan bencana yang dikelompokkan berdasarkan statusnya
         $statusCounts = Disaster::select('status', DB::raw('count(*) as total'))
             ->groupBy('status')
             ->pluck('total', 'status');
@@ -25,7 +26,7 @@ class DashboardController extends Controller
         $siaga1  = $statusCounts->get('SIAGA_1', 0);
         $siaga2  = $statusCounts->get('SIAGA_2', 0);
 
-        // ─── Volunteer Stats (1 query instead of 3) ──────
+        // Ambil jumlah pendaftaran relawan yang dikelompokkan berdasarkan status persetujuan
         $volunteerCounts = Volunteer::select('status', DB::raw('count(*) as total'))
             ->groupBy('status')
             ->pluck('total', 'status');
@@ -34,9 +35,9 @@ class DashboardController extends Controller
         $approvedVolunteers = $volunteerCounts->get(Volunteer::STATUS_APPROVED, 0);
         $pendingVolunteers  = $volunteerCounts->get(Volunteer::STATUS_PENDING, 0);
 
-        // ─── Chart: 7 hari terakhir (1 query instead of 21) ──
         $startDate = now()->subDays(6)->startOfDay();
 
+        // Ambil statistik harian bencana buatan user dalam 7 hari terakhir
         $dailyStatsRaw = Disaster::where('created_at', '>=', $startDate)
             ->select(
                 DB::raw('DATE(created_at) as date'),
@@ -53,6 +54,7 @@ class DashboardController extends Controller
         $chartVerified = [];
         $chartPending  = [];
 
+        // Iterasi untuk mengisi data chart selama 7 hari ke belakang
         for ($i = 6; $i >= 0; $i--) {
             $date = now()->subDays($i);
             $dateKey = $date->toDateString();
@@ -62,7 +64,7 @@ class DashboardController extends Controller
             $chartPending[]  = (int) ($dailyStatsRaw[$dateKey]->pending_count ?? 0);
         }
 
-        // ─── All disasters for client-side period filtering ──
+        // Ambil daftar semua bencana untuk di-filter di sisi klien
         $allDisasters = Disaster::select('id', 'status', 'created_at')
             ->latest()
             ->get()
@@ -79,11 +81,10 @@ class DashboardController extends Controller
         ));
     }
 
-    /**
-     * API: Get pending reports for admin notification dropdown
-     */
+    // API Waktu Nyata
     public function pendingReports(): JsonResponse
     {
+        // Ambil 10 laporan bencana pending terbaru untuk notifikasi admin
         return response()->json(
             Disaster::where('status', 'PENDING')
                 ->latest()
@@ -99,12 +100,9 @@ class DashboardController extends Controller
         );
     }
 
-    /**
-     * API: Get admin statistics for real-time dashboard updates
-     */
     public function stats(): JsonResponse
     {
-        // Retrieve only columns needed for all_disasters list and grouping to optimize memory usage
+        // Ambil semua data bencana secara ringkas untuk perhitungan statistik waktu nyata
         $disasters = Disaster::select('id', 'status', 'created_at')->get();
         $statusCounts = $disasters->groupBy('status')->map(fn($group) => $group->count());
 
@@ -116,14 +114,15 @@ class DashboardController extends Controller
         $siaga2 = $statusCounts->get('SIAGA_2', 0);
         $selesai = $total - $pending - $decline;
 
-        // Optimize whereDate to standard >= operator to utilize created_at index
+        // Hitung jumlah laporan bencana yang masuk hari ini
         $todayCount = Disaster::where('created_at', '>=', today())->count();
 
+        // Hitung jumlah laporan bencana terverifikasi selama seminggu terakhir
         $weekVerified = Disaster::where('created_at', '>=', now()->subWeek())
             ->whereNotIn('status', ['PENDING', 'DECLINE'])
             ->count();
 
-        // Limit columns retrieved for pending items
+        // Ambil 5 laporan bencana pending terbaru untuk dashboard admin
         $pendingItems = Disaster::where('status', 'PENDING')
             ->latest()
             ->limit(5)

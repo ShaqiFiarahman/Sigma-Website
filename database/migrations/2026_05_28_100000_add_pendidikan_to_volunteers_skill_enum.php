@@ -7,26 +7,22 @@ use Illuminate\Support\Facades\DB;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
+
     public function up(): void
     {
         $driver = Schema::getConnection()->getDriverName();
 
         if ($driver === 'pgsql') {
-            // PostgreSQL: change column type to varchar to allow any value
-            // since Laravel doesn't natively support PostgreSQL enums well
+            // PostgreSQL: ubah tipe kolom ke varchar untuk mengizinkan nilai apa pun
+            // karena Laravel tidak mendukung enum PostgreSQL dengan baik secara bawaan
             DB::statement("ALTER TABLE volunteers ALTER COLUMN skill TYPE VARCHAR(255)");
         } elseif ($driver === 'mysql') {
             DB::statement("ALTER TABLE volunteers MODIFY COLUMN skill ENUM('MEDIS', 'SAR', 'LOGISTIK', 'KONSUMSI', 'PSIKOSOSIAL', 'PENDIDIKAN')");
         }
-        // SQLite doesn't enforce enum constraints
+        // SQLite tidak memaksakan batasan enum
     }
 
-    /**
-     * Reverse the migrations.
-     */
+
     public function down(): void
     {
         $driver = Schema::getConnection()->getDriverName();

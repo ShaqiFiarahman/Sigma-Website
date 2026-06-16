@@ -23,6 +23,7 @@ class VolunteerReport extends Model
         'updated_at'  => 'datetime',
     ];
 
+    // Hubungan Database
     public function volunteer(): BelongsTo
     {
         return $this->belongsTo(Volunteer::class);
@@ -33,8 +34,10 @@ class VolunteerReport extends Model
         return $this->belongsTo(Disaster::class);
     }
 
+    // Skema Formulir Dinamis
     public static function getFieldsForSkill(string $skill): array
     {
+        // Tentukan skema formulir input laporan secara dinamis berdasarkan jenis keahlian relawan
         return match ($skill) {
             'MEDIS' => [
                 ['name' => 'total_korban',     'label' => 'Total Korban',          'type' => 'number'],

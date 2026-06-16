@@ -15,6 +15,7 @@ class ShelterController extends Controller
         private ImageUploadService $imageUpload,
     ) {}
 
+    // Manajemen Posko
     public function create()
     {
         return view('admin.shelter.create');
@@ -24,10 +25,12 @@ class ShelterController extends Controller
     {
         $data = $this->buildShelterData($request);
 
+        // Simpan data posko baru ke database
         $shelter = Shelter::create($data);
 
+        // Jika file foto diunggah, simpan foto posko ke storage
         if ($request->hasFile('photo')) {
-            $photoUrl = $this->uploadShelterPhoto($request->file('photo'), $shelter->id);
+            $photoUrl = $this->uploadShelterPhoto($request->file('photo'));
             $shelter->update(['photo_url' => $photoUrl]);
         }
 
@@ -36,7 +39,9 @@ class ShelterController extends Controller
 
     public function edit($id)
     {
+        // Cari data posko pengungsian berdasarkan ID
         $shelter = Shelter::findOrFail($id);
+        // Cari daftar relawan aktif yang ditugaskan ke posko pengungsian ini
         $assignedVolunteers = Volunteer::where('status', 'APPROVED')
             ->where('assignment', $shelter->name)
             ->get();
@@ -45,11 +50,13 @@ class ShelterController extends Controller
 
     public function update(StoreShelterRequest $request, $id)
     {
+        // Cari data posko pengungsian yang akan diperbarui
         $shelter = Shelter::findOrFail($id);
         $data = $this->buildShelterData($request);
 
+        // Jika ada upload foto baru, ganti foto lama dengan mengunggah foto baru ke storage
         if ($request->hasFile('photo')) {
-            $data['photo_url'] = $this->uploadShelterPhoto($request->file('photo'), $shelter->id);
+            $data['photo_url'] = $this->uploadShelterPhoto($request->file('photo'));
         }
 
         $shelter->update($data);
@@ -59,14 +66,13 @@ class ShelterController extends Controller
 
     public function destroy($id)
     {
+        // Cari data posko pengungsian yang akan dihapus
         $shelter = Shelter::findOrFail($id);
         $shelter->delete();
         return redirect()->route('shelter')->with('msg', 'Posko berhasil dihapus.');
     }
 
-    /**
-     * Build the shelter data array from the request.
-     */
+    // Fungsi Bantuan
     private function buildShelterData(StoreShelterRequest $request): array
     {
         return [
@@ -75,6 +81,7 @@ class ShelterController extends Controller
             'capacity_current' => $request->capacity_current,
             'capacity_max' => $request->capacity_max,
             'status' => $request->status,
+            // Pecah logistik yang berbentuk string koma menjadi array yang dibersihkan spasinya
             'logistics' => $request->logistics ? array_map('trim', explode(',', $request->logistics)) : [],
             'contact_phone' => $request->contact_phone,
             'latitude' => $request->latitude,
@@ -82,10 +89,7 @@ class ShelterController extends Controller
         ];
     }
 
-    /**
-     * Upload a shelter photo using the ImageUploadService.
-     */
-    private function uploadShelterPhoto(UploadedFile $file, int $shelterId): string
+    private function uploadShelterPhoto(UploadedFile $file): string
     {
         return $this->imageUpload->upload(
             file: $file,

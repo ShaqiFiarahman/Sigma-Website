@@ -17,10 +17,13 @@ class AuthController extends Controller
         $this->supabase = $supabase;
     }
 
+    // Tampilan Autentikasi
     public function showAuth()
     {
+        // Kalau user sudah login, langsung alihkan ke dashboard biar tidak perlu login lagi
         if (Auth::check()) {
             $user = Auth::user();
+            // Cek role user untuk menentukan halaman dashboard tujuan
             if (strtolower($user->role) === 'admin') {
                 return redirect()->route('admin.dashboard');
             }
@@ -29,8 +32,10 @@ class AuthController extends Controller
         return view('auth.authenticate');
     }
 
+    // Proses Login
     public function login(Request $request)
     {
+        // Validasi input email dan password dari form login
         $credentials = $request->validate([
             'email' => ['required', 'email'],
             'password' => ['required'],
@@ -38,25 +43,25 @@ class AuthController extends Controller
 
         $response = $this->supabase->login($credentials['email'], $credentials['password']);
 
+        // Kalau proses login di Supabase error, kembalikan ke halaman login dengan pesan error
         if (isset($response['error'])) {
             return back()->withErrors([
                 'email' => $response['error'],
             ])->onlyInput('email');
         }
 
-        // Successfully logged into Supabase
-        // Now sync with local user
         $supabaseUser = $this->supabase->getUser($response['access_token']);
         
+        // Gagalkan proses login kalau data profil user tidak bisa ditarik dari Supabase
         if (!$supabaseUser) {
             return back()->withErrors(['email' => 'Gagal mengambil data pengguna. Silakan coba login kembali.']);
         }
 
+        // Cari data user lokal berdasarkan email untuk sinkronisasi database
         $user = User::where('email', $credentials['email'])->first();
 
+        // Kalau data user lokal belum ada, buat user baru untuk sinkronisasi
         if (!$user) {
-            // This should ideally not happen if they are registered, 
-            // but just in case we sync it here.
             $user = User::create([
                 'id' => $supabaseUser['id'],
                 'full_name' => $supabaseUser['user_metadata']['full_name'] ?? $supabaseUser['user_metadata']['name'] ?? 'User',
@@ -66,11 +71,13 @@ class AuthController extends Controller
             ]);
         }
 
+        // Login user ke sistem auth lokal Laravel
         Auth::login($user, $request->has('remember'));
 
         $request->session()->regenerate();
         $request->session()->put('supabase_token', $response['access_token']);
 
+        // Arahkan ke dashboard admin kalau rolenya memang admin
         if (strtolower($user->role) === 'admin') {
             return redirect()->route('admin.dashboard');
         }
@@ -78,6 +85,7 @@ class AuthController extends Controller
         return redirect()->route('dashboard');
     }
 
+    // Proses Registrasi
     public function showRegister()
     {
         return redirect()->route('login');
@@ -85,6 +93,7 @@ class AuthController extends Controller
 
     public function register(Request $request)
     {
+        // Validasi data input form registrasi sebelum dikirim ke Supabase
         $data = $request->validate([
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:profiles'],
@@ -96,19 +105,17 @@ class AuthController extends Controller
             'role' => 'Masyarakat',
         ]);
 
+        // Kalau proses registrasi di Supabase gagal, kembalikan dengan pesan error
         if (isset($response['error'])) {
             return back()->withErrors([
                 'email' => $response['error'],
             ])->withInput();
         }
 
-        // We don't need to manually create the user locally here anymore 
-        // if the Supabase Trigger is already doing it in public.profiles.
-        // However, we should check if we need to set a local password if we ever use it.
-
         return redirect()->route('login')->with('success', 'Registration successful! Please login.');
     }
 
+    // Proses Keluar
     public function logout(Request $request)
     {
         Auth::logout();
@@ -119,11 +126,10 @@ class AuthController extends Controller
         return redirect('/');
     }
 
-    /**
-     * Update authenticated user profile details
-     */
+    // Pembaruan Profil
     public function updateProfile(Request $request)
     {
+        // Validasi agar nama lengkap baru wajib diisi dan berupa string
         $data = $request->validate([
             'full_name' => ['required', 'string', 'max:255'],
         ]);
@@ -131,14 +137,15 @@ class AuthController extends Controller
         $user = Auth::user();
         $accessToken = session('supabase_token');
 
+        // Kalau token akses Supabase tersedia, perbarui nama lengkap user di Supabase
         if ($accessToken) {
-            // Update in Supabase
             $response = $this->supabase->updateUser($accessToken, [
                 'data' => [
                     'full_name' => $data['full_name'],
                 ]
             ]);
 
+            // Kirim response error kalau proses pembaruan di Supabase gagal
             if (isset($response['error'])) {
                 return response()->json([
                     'success' => false,
@@ -147,7 +154,6 @@ class AuthController extends Controller
             }
         }
 
-        // Update locally
         $user->full_name = $data['full_name'];
         $user->save();
 
@@ -158,11 +164,9 @@ class AuthController extends Controller
         ]);
     }
 
-    /**
-     * Update authenticated user password
-     */
     public function updatePassword(Request $request)
     {
+        // Validasi input password lama dan konfirmasi password baru
         $data = $request->validate([
             'current_password' => ['required', 'string'],
             'password' => ['required', 'string', 'min:8', 'confirmed'],
@@ -170,7 +174,7 @@ class AuthController extends Controller
 
         $user = Auth::user();
 
-        // Verify current password locally
+        // Verifikasi password saat ini secara lokal untuk memastikan keaslian user
         if (!Hash::check($data['current_password'], $user->password)) {
             return response()->json([
                 'success' => false,
@@ -180,12 +184,13 @@ class AuthController extends Controller
 
         $accessToken = session('supabase_token');
 
+        // Kalau token akses Supabase tersedia, perbarui kata sandi di Supabase
         if ($accessToken) {
-            // Update password in Supabase
             $response = $this->supabase->updateUser($accessToken, [
                 'password' => $data['password'],
             ]);
 
+            // Kirim response error jika penggantian password di Supabase gagal
             if (isset($response['error'])) {
                 return response()->json([
                     'success' => false,
@@ -194,7 +199,6 @@ class AuthController extends Controller
             }
         }
 
-        // Update locally
         $user->password = Hash::make($data['password']);
         $user->save();
 
