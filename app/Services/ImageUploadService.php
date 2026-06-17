@@ -22,35 +22,28 @@ class ImageUploadService
     // Unggah Berkas Gambar
     public function upload(UploadedFile $file, string $bucket = 'laporan', string $disk = 'public', int $quality = 60): string
     {
-        // Gunakan folder temporary sistem yang dapat ditulisi (seperti /tmp di Vercel/Lambda)
-        $tempDir = sys_get_temp_dir();
-        $filename = uniqid('upload_', true) . '.' . $file->getClientOriginalExtension();
-        
-        // Pindahkan berkas ke folder temporary
-        $file->move($tempDir, $filename);
-        $absolutePath = $tempDir . DIRECTORY_SEPARATOR . $filename;
+        // Berkas unggahan PHP secara default sudah berada di folder temporary (/tmp di Vercel/Lambda)
+        $absolutePath = $file->getPathname();
+        $filename = $file->hashName();
 
-        // Kompres ukuran gambar di folder temporary
+        // Kompres ukuran gambar langsung di file temporary asli
         $this->compressImage($absolutePath, $quality);
 
         // Coba unggah ke Supabase
         // Kirim gambar ke storage Supabase jika konfigurasi API key dan URL sudah siap
         if ($this->supabaseUrl && $this->supabaseKey) {
-            $url = $this->uploadToSupabase($absolutePath, $bucket);
-            // Jika upload ke Supabase berhasil, hapus berkas lokal dan gunakan URL online
+            $url = $this->uploadToSupabase($absolutePath, $bucket, $filename);
+            // Jika upload ke Supabase berhasil, gunakan URL online
             if ($url) {
-                @unlink($absolutePath);
                 return $url;
             }
         }
 
         // Gunakan penyimpanan lokal sebagai cadangan jika Supabase gagal atau tidak dikonfigurasi
         try {
-            $path = Storage::disk($disk)->putFileAs($bucket, new \Illuminate\Http\File($absolutePath), $filename);
-            @unlink($absolutePath);
+            $path = Storage::disk($disk)->putFileAs($bucket, $file, $filename);
             return Storage::url($path);
         } catch (\Exception $e) {
-            @unlink($absolutePath);
             Log::error("Gagal menyimpan file ke penyimpanan lokal cadangan: " . $e->getMessage());
             throw $e;
         }
@@ -58,9 +51,8 @@ class ImageUploadService
 
     // Integrasi API Supabase
     // Hubungkan dan Unggah ke Supabase
-    private function uploadToSupabase(string $absolutePath, string $bucket): ?string
+    private function uploadToSupabase(string $absolutePath, string $bucket, string $filename): ?string
     {
-        $filename = basename($absolutePath);
         $mimeType = mime_content_type($absolutePath);
         $fileContent = file_get_contents($absolutePath);
 
