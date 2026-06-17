@@ -10,6 +10,7 @@
     <meta name="keywords"
         content="SIGMA, portal bencana, mitigasi bencana, tanggap darurat, peta bencana, posko evakuasi, shelter, relawan bencana">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+    <link rel="shortcut icon" href="{{ asset('images/icon_sigma.png') }}" type="image/png">
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     <style>
         :root {
@@ -270,7 +271,7 @@
                 <div class="mb-8 text-center sm:text-left flex flex-col items-center sm:items-start gap-3">
                     <div class="w-12 h-12 rounded-xl flex items-center justify-center text-white transition-all duration-300"
                         style="background: linear-gradient(135deg, #0A0F1E 0%, #1e3a8a 100%); box-shadow: 0 4px 12px rgba(10,15,30,0.25);">
-                        <i class="bi bi-shield-check text-xl"></i>
+                        <img src="{{ asset('images/icon_sigma.png') }}" class="w-7 h-7 object-contain" alt="SIGMA Logo">
                     </div>
                     <div>
                         <h2 class="text-2xl font-bold text-slate-900 leading-tight">Buat Akun</h2>
@@ -314,7 +315,7 @@
                 <div class="mb-8 text-center sm:text-left flex flex-col items-center sm:items-start gap-3">
                     <div class="w-12 h-12 rounded-xl flex items-center justify-center text-white transition-all duration-300"
                         style="background: linear-gradient(135deg, #0A0F1E 0%, #1e3a8a 100%); box-shadow: 0 4px 12px rgba(10,15,30,0.25);">
-                        <i class="bi bi-shield-check text-xl"></i>
+                        <img src="{{ asset('images/icon_sigma.png') }}" class="w-7 h-7 object-contain" alt="SIGMA Logo">
                     </div>
                     <div>
                         <h2 class="text-2xl font-bold text-slate-900 leading-tight">Selamat Datang</h2>

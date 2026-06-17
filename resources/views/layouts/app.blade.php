@@ -26,6 +26,7 @@
     <noscript>
         <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
     </noscript>
+    <link rel="shortcut icon" href="{{ asset('images/icon_sigma.png') }}" type="image/png">
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 
@@ -54,7 +55,7 @@
                     class="flex items-center gap-2.5 shrink-0 group">
                     <div
                         class="brand-mark w-10 h-10 rounded-lg flex items-center justify-center text-white transition-all duration-300 group-hover:scale-105 group-hover:shadow-lg">
-                        <i class="bi bi-shield-check text-base"></i>
+                        <img src="{{ asset('images/icon_sigma.png') }}" class="w-6 h-6 object-contain" alt="SIGMA Logo">
                     </div>
                     <div class="flex flex-col">
                         <span class="font-bold tracking-tight text-slate-900 text-lg leading-none">SIGMA</span>

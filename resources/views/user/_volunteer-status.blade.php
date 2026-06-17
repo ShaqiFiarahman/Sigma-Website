@@ -42,7 +42,7 @@
                 <div class="rounded-2xl overflow-hidden border border-slate-200" style="background: linear-gradient(180deg, #0A0F1E 0%, #1e3a8a 40%, #ffffff 40%);">
                     <div class="px-6 pt-6 pb-8 text-center">
                         <div class="flex items-center justify-center gap-2 mb-4">
-                            <div class="w-8 h-8 rounded-lg flex items-center justify-center" style="background: rgba(255,255,255,0.15);"><i class="bi bi-shield-check text-white text-sm"></i></div>
+                            <div class="w-8 h-8 rounded-lg flex items-center justify-center" style="background: rgba(255,255,255,0.15);"><img src="{{ asset('images/icon_sigma.png') }}" class="w-5.5 h-5.5 object-contain" alt="SIGMA Logo"></div>
                             <span class="text-xs font-bold text-white/70 uppercase tracking-widest">SIGMA</span>
                         </div>
                         <p class="text-sm font-bold text-emerald-400 uppercase tracking-wide">Selamat! Anda Dinyatakan</p>
@@ -75,7 +75,7 @@
                 <div class="rounded-2xl overflow-hidden border border-slate-200" style="background: linear-gradient(180deg, #7f1d1d 0%, #dc2626 40%, #ffffff 40%);">
                     <div class="px-6 pt-6 pb-8 text-center">
                         <div class="flex items-center justify-center gap-2 mb-4">
-                            <div class="w-8 h-8 rounded-lg flex items-center justify-center" style="background: rgba(255,255,255,0.15);"><i class="bi bi-shield-check text-white text-sm"></i></div>
+                            <div class="w-8 h-8 rounded-lg flex items-center justify-center" style="background: rgba(255,255,255,0.15);"><img src="{{ asset('images/icon_sigma.png') }}" class="w-5.5 h-5.5 object-contain" alt="SIGMA Logo"></div>
                             <span class="text-xs font-bold text-white/70 uppercase tracking-widest">SIGMA</span>
                         </div>
                         <p class="text-sm font-bold text-white/90 uppercase tracking-wide">Anda Dinyatakan Tidak Lulus</p>
