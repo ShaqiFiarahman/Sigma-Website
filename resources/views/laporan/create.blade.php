@@ -362,13 +362,59 @@
                 }
             });
 
+            // Fungsi kompresi gambar menggunakan Canvas
+            function compressImage(file, maxWidth, maxHeight, quality) {
+                return new Promise((resolve, reject) => {
+                    const reader = new FileReader();
+                    reader.readAsDataURL(file);
+                    reader.onload = (event) => {
+                        const img = new Image();
+                        img.src = event.target.result;
+                        img.onload = () => {
+                            const canvas = document.createElement('canvas');
+                            let width = img.width;
+                            let height = img.height;
+
+                            // Atur ukuran proporsional gambar
+                            if (width > height) {
+                                if (width > maxWidth) {
+                                    height = Math.round((height * maxWidth) / width);
+                                    width = maxWidth;
+                                }
+                            } else {
+                                if (height > maxHeight) {
+                                    width = Math.round((width * maxHeight) / height);
+                                    height = maxHeight;
+                                }
+                            }
+
+                            canvas.width = width;
+                            canvas.height = height;
+
+                            const ctx = canvas.getContext('2d');
+                            ctx.drawImage(img, 0, 0, width, height);
+
+                            canvas.toBlob((blob) => {
+                                if (blob) {
+                                    resolve(blob);
+                                } else {
+                                    reject(new Error('Gagal melakukan kompresi canvas'));
+                                }
+                            }, 'image/jpeg', quality);
+                        };
+                        img.onerror = (err) => reject(err);
+                    };
+                    reader.onerror = (err) => reject(err);
+                });
+            }
+
             const submitBtn = document.getElementById('submitBtn');
-            form.addEventListener('submit', (e) => {
+            form.addEventListener('submit', async (e) => {
+                e.preventDefault(); // Hentikan kiriman form bawaan
+
                 const lat = document.getElementById('latitude').value;
                 const lng = document.getElementById('longitude').value;
                 if (!lat || !lng) {
-                    e.preventDefault();
-                    
                     const mapContainer = document.getElementById('mapContainer');
                     const mapHelpText = document.getElementById('mapHelpText');
                     const mapHelpIcon = document.getElementById('mapHelpIcon');
@@ -390,8 +436,42 @@
                     }
                     return;
                 }
-                submitBtn.innerHTML = '<i class="bi bi-hourglass-split"></i> Mengirim...';
+
+                // Ubah status tombol menjadi mengompres gambar
+                submitBtn.innerHTML = '<i class="bi bi-hourglass-split"></i> Mengompres Gambar...';
                 submitBtn.disabled = true;
+
+                try {
+                    const files = fileInput.files;
+                    if (files && files.length > 0) {
+                        const dt = new DataTransfer();
+                        for (let i = 0; i < files.length; i++) {
+                            const file = files[i];
+                            // Kompres jika file adalah gambar
+                            if (file.type.startsWith('image/')) {
+                                try {
+                                    const compressedBlob = await compressImage(file, 1200, 1200, 0.7);
+                                    const compressedFile = new File([compressedBlob], file.name, {
+                                        type: 'image/jpeg',
+                                        lastModified: Date.now()
+                                    });
+                                    dt.items.add(compressedFile);
+                                } catch (err) {
+                                    console.error('Gagal mengompres gambar:', err);
+                                    dt.items.add(file); // fallback ke file asli jika gagal kompres
+                                }
+                            } else {
+                                dt.items.add(file);
+                            }
+                        }
+                        fileInput.files = dt.files;
+                    }
+                } catch (err) {
+                    console.error('Error saat proses kompresi:', err);
+                }
+
+                submitBtn.innerHTML = '<i class="bi bi-hourglass-split"></i> Mengirim...';
+                form.submit();
             });
         })();
     </script>
