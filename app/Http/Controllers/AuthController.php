@@ -69,6 +69,13 @@ class AuthController extends Controller
                 'password' => Hash::make($credentials['password']),
                 'role' => $supabaseUser['user_metadata']['role'] ?? 'Masyarakat',
             ]);
+        } else {
+            // Jika data user lokal sudah ada tapi password lokal kosong/NULL (misal hasil sync profil tanpa password),
+            // simpan hash password yang valid yang baru saja digunakan untuk login.
+            if (empty($user->password)) {
+                $user->password = Hash::make($credentials['password']);
+                $user->save();
+            }
         }
 
         // Login user ke sistem auth lokal Laravel
@@ -174,8 +181,17 @@ class AuthController extends Controller
 
         $user = Auth::user();
 
-        // Verifikasi password saat ini secara lokal untuk memastikan keaslian user
-        if (!Hash::check($data['current_password'], $user->password)) {
+        // Verifikasi password saat ini secara lokal atau ke Supabase jika kosong
+        $passwordCorrect = false;
+        if (!empty($user->password)) {
+            $passwordCorrect = Hash::check($data['current_password'], $user->password);
+        } else {
+            // Jika password lokal kosong, lakukan verifikasi ke Supabase
+            $response = $this->supabase->login($user->email, $data['current_password']);
+            $passwordCorrect = !isset($response['error']);
+        }
+
+        if (!$passwordCorrect) {
             return response()->json([
                 'success' => false,
                 'message' => 'Kata sandi lama yang Anda masukkan salah.',
