@@ -22,11 +22,15 @@ class ImageUploadService
     // Unggah Berkas Gambar
     public function upload(UploadedFile $file, string $bucket = 'laporan', string $disk = 'public', int $quality = 60): string
     {
-        // Simpan secara lokal dulu sebelum dikompres
-        $path = $file->store($bucket, $disk);
-        $absolutePath = storage_path('app/public/' . $path);
+        // Gunakan folder temporary sistem yang dapat ditulisi (seperti /tmp di Vercel/Lambda)
+        $tempDir = sys_get_temp_dir();
+        $filename = uniqid('upload_', true) . '.' . $file->getClientOriginalExtension();
+        
+        // Pindahkan berkas ke folder temporary
+        $file->move($tempDir, $filename);
+        $absolutePath = $tempDir . DIRECTORY_SEPARATOR . $filename;
 
-        // Kompres ukuran gambar
+        // Kompres ukuran gambar di folder temporary
         $this->compressImage($absolutePath, $quality);
 
         // Coba unggah ke Supabase
@@ -40,8 +44,16 @@ class ImageUploadService
             }
         }
 
-        // Gunakan penyimpanan lokal sebagai cadangan
-        return Storage::url($path);
+        // Gunakan penyimpanan lokal sebagai cadangan jika Supabase gagal atau tidak dikonfigurasi
+        try {
+            $path = Storage::disk($disk)->putFileAs($bucket, new \Illuminate\Http\File($absolutePath), $filename);
+            @unlink($absolutePath);
+            return Storage::url($path);
+        } catch (\Exception $e) {
+            @unlink($absolutePath);
+            Log::error("Gagal menyimpan file ke penyimpanan lokal cadangan: " . $e->getMessage());
+            throw $e;
+        }
     }
 
     // Integrasi API Supabase
