@@ -80,6 +80,12 @@ class ImageUploadService
     // Kompres Berkas Gambar
     private function compressImage(string $filePath, int $quality = 60): bool
     {
+        // Jika ekstensi GD tidak terpasang atau tidak aktif di server (misal di Vercel), lewati kompresi
+        if (!function_exists('imagecreatefromjpeg')) {
+            Log::warning("Ekstensi GD PHP tidak terpasang di server ini. Kompresi gambar sisi server dilewati.");
+            return false;
+        }
+
         $info = @getimagesize($filePath);
         // Jangan lanjutkan proses jika berkas yang diunggah bukan gambar yang valid
         if (!$info) {
