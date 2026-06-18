@@ -2,10 +2,7 @@
 @section('title', 'Riwayat Laporan Tugas')
 
 @section('page-actions')
-    <a href="{{ route('volunteer.report.create') }}" class="inline-flex items-center gap-1.5 px-4 py-2 text-sm font-bold text-white rounded-lg transition-all hover:-translate-y-0.5"
-        style="background: linear-gradient(135deg, #1e3a8a, #3B6FE8); box-shadow: 0 2px 8px rgba(59,111,232,0.3);">
-        <i class="bi bi-plus-lg text-xs"></i> Buat Laporan
-    </a>
+    <x-ui.back-button :route="route('volunteer.dashboard')" label="Kembali" />
 @endsection
 
 @section('content')

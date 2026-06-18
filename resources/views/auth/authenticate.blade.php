@@ -262,7 +262,7 @@
 
 <body class="min-h-screen flex items-center justify-center p-6">
 
-    <div class="auth-card" id="authCard">
+    <div class="auth-card {{ old('name') ? 'right-panel-active' : '' }}" id="authCard">
         {{-- section form registrasi --}}
         <div class="form-container sign-up-container">
             <form action="{{ route('register.post') }}" method="POST"
@@ -278,6 +278,15 @@
                         <p class="text-sm text-slate-500 mt-1">Bergabung dengan SIGMA hari ini.</p>
                     </div>
                 </div>
+
+                @if ($errors->any())
+                    <div class="mb-4 p-3 rounded-lg bg-red-50 text-red-600 text-xs border border-red-100">
+                        @foreach ($errors->all() as $error)
+                            <p>{{ $error }}</p>
+                        @endforeach
+                    </div>
+                @endif
+
 
                 <div class="space-y-4">
                     <div class="input-group">
