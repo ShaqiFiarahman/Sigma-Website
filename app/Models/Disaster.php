@@ -28,7 +28,7 @@ class Disaster extends Model
         'updated_at' => 'datetime',
     ];
 
-    // Konstanta Status (sesuai enum Android ReportStatus)
+    // Konstanta Status
     const STATUS_PENDING  = 'PENDING';
     const STATUS_DECLINE  = 'DECLINE';
     const STATUS_RESOLVED = 'RESOLVED';
@@ -36,7 +36,7 @@ class Disaster extends Model
     const STATUS_SIAGA_2  = 'SIAGA_2';
     const STATUS_AWAS     = 'AWAS';
 
-    // Metadata tampilan (ikon, warna, nama) untuk setiap jenis bencana
+    // Metadata tampilan untuk setiap jenis bencana
     private const TYPE_META = [
         'flood'      => ['icon' => 'bi-water',                 'color' => 'text-blue-500',    'name' => 'Banjir'],
         'fire'       => ['icon' => 'bi-fire',                  'color' => 'text-red-500',     'name' => 'Kebakaran'],
