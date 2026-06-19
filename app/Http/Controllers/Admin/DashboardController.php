@@ -70,7 +70,7 @@ class DashboardController extends Controller
             ->get()
             ->map(fn($d) => [
                 'status' => $d->status,
-                'date' => $d->created_at->toISOString(),
+                'date' => $d->created_at?->toISOString(),
             ]);
 
         return view('admin.dashboard.index', compact(
