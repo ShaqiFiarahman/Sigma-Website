@@ -187,7 +187,7 @@
                     zoom: 13,
                     center: defaultLocation,
                     disableDefaultUI: true,
-                    gestureHandling: 'cooperative',
+                    gestureHandling: 'greedy',
                     styles: [
                         { featureType: "poi", stylers: [{ visibility: "off" }] },
                         { featureType: "transit", stylers: [{ visibility: "off" }] },

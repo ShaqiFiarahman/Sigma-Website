@@ -56,7 +56,7 @@
             center: center,
             mapTypeId: 'terrain', // Tipe peta fisik / medan (Terrain)
             disableDefaultUI: true,
-            gestureHandling: 'cooperative',
+            gestureHandling: 'greedy',
             styles: [
                 { featureType: "water", elementType: "geometry", stylers: [{ color: "#c8dff0" }] },
                 { featureType: "poi", stylers: [{ visibility: "off" }] },

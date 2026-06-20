@@ -14,7 +14,7 @@
             </div>
             <span id="notifCount" class="hidden">0 baru</span>
         </div>
-        <div id="notifList" class="max-h-72 overflow-y-auto pb-2">
+        <div id="notifList" class="max-h-72 overflow-y-auto pb-2 custom-scrollbar">
             <div class="px-5 py-8 text-center"><p class="text-xs text-slate-400">Memuat...</p></div>
         </div>
         <div class="px-5 py-3 border-t border-slate-100 bg-slate-50 flex items-center justify-center">
@@ -33,6 +33,8 @@
     const markReadBtn = document.getElementById('markReadBtn');
     const bellIcon = notifBtn?.querySelector('.bi-bell');
     if (!notifBtn) return;
+
+    let isOpen = false;
 
     // buka dropdown notifikasi dan jalankan animasi lonceng
     function openDropdown() {
