@@ -43,7 +43,7 @@
                     ">{{ $d->status_label }}</span>
                 </div>
                 <div class="flex items-center gap-1.5 text-[10px] text-slate-400">
-                    <span>{{ $d->created_at->diffForHumans() }}</span>
+                    <span>{{ $d->created_at?->diffForHumans() ?? 'Tanggal tidak tersedia' }}</span>
                     <span>·</span>
                     <span class="truncate">{{ $d->reporter_name }}</span>
                 </div>
